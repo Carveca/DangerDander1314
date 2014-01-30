@@ -38,7 +38,10 @@ std::string Entity::GetName()
 	return m_name;
 }
 
-
+void Entity::SetPosition(sf::Vector2f position)
+{
+	m_position = position;
+}
 
 sf::Vector2f Entity::GetPosition()
 {

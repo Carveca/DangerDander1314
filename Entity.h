@@ -17,7 +17,7 @@ public:
 	void Update();
 
 	sf::Vector2f GetPosition();
-	void SetPosition();
+	void SetPosition(sf::Vector2f position);
 
 	std::string GetName();
 	void SetName(std::string name);
