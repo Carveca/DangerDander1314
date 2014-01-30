@@ -8,7 +8,7 @@ int main()
 {
 	Player player;
 
-	std::string name = "LOL";
+	std::string name = "LOL!";
 
 	player.SetName(name);
 
