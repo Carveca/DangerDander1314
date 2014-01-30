@@ -33,26 +33,50 @@ void CollisionManager::CheckCollision()
 {
 	m_colliders.clear();
 
-	for( int checker = 0; checker < m_colliders.size(); checker++)
+	sf::Vector2f off;
+
+	for( int object = 0; object < m_colliders.size(); object++)
 	{
-		for(int checked = 0; checked < m_colliders.size(); checked++)
+		for(int other = 0; other < m_colliders.size(); other++)
 		{
 
-			if( m_colliders[checker]->GetColliderCircle() == false && m_colliders[checked]->GetColliderCircle() == false )
+			if( m_colliders[object]->GetColliderCircle() == false && m_colliders[other]->GetColliderCircle() == false )
 			{
 
-				m_colliders[checker]->GetCollider()->OverlapBoxVsBox( m_colliders[checked] );
+				if(m_colliders[object]->GetCollider()->OverlapBoxVsBox( m_colliders[other], off ))
+				{
+				
+					std::pair<InteractiveObject*, sf::Vector2f> collision_pair;
+					collision_pair = std::make_pair (m_colliders[object], off);
+					m_colliders[object]->AddCollision(collision_pair);
+
+				}
 
 			}
 
-			else if( m_colliders[checker]->GetColliderCircle() == true && m_colliders[checked]->GetColliderCircle() == true )
+			else if( m_colliders[object]->GetColliderCircle() == true && m_colliders[other]->GetColliderCircle() == true )
 			{
-				m_colliders[checker]->GetCollider()->OverlapCircleVsCircle( m_colliders[checked] );
+
+				if(m_colliders[object]->GetCollider()->OverlapCircleVsCircle( m_colliders[other], off ))
+				{
+
+					std::pair<InteractiveObject*, sf::Vector2f> collision_pair;
+					collision_pair = std::make_pair (m_colliders[object], off);
+					m_colliders[object]->AddCollision(collision_pair);
+
+				}
+
 			}
 
 			else
 			{
-				m_colliders[checker]->GetCollider()->OverlapBoxVsBox( m_colliders[checked] );
+				if(m_colliders[object]->GetCollider()->OverlapBoxVsBox( m_colliders[other], off ))
+				{
+
+					std::pair<InteractiveObject*, sf::Vector2f> collision_pair;
+					collision_pair = std::make_pair (m_colliders[object], off);
+					m_colliders[object]->AddCollision(collision_pair);
+				}
 			}
 
 
