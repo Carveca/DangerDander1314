@@ -1,10 +1,7 @@
 //Character header class
 
 #pragma once
-
 #include "InteractiveObject.h"
-
-#include <SFML/System/Clock.hpp>
 
 class Character : public InteractiveObject
 {
@@ -20,6 +17,8 @@ public:
 	void MoveDown();
 	void MoveDownRight();
 	void MoveDownLeft();
+
+	//method move med vector2 som parameter som är riktningen, antingen -1 eller 1. 
 
 protected:
 	sf::Clock m_deltatime;

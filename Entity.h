@@ -1,10 +1,7 @@
 //Entity header file
 
 #pragma once
-
 #include <string>
-
-#include <SFML/System/Vector2.hpp>
 
 class Entity
 {
@@ -17,7 +14,7 @@ public:
 	void Update();
 
 	sf::Vector2f GetPosition();
-	void SetPosition();
+	void SetPosition(sf::Vector2f position);
 
 	std::string GetName();
 	void SetName(std::string name);

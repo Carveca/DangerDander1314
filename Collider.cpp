@@ -1,5 +1,5 @@
 //Collider source file
-
+#include "stdafx.h"
 #include "Collider.h"
 #include "InteractiveObject.h"
 
@@ -19,8 +19,10 @@ Collider::~Collider()
 
 //Overlap methods
 
-bool Collider::OverlapBoxVsBox(InteractiveObject* other)
+bool Collider::OverlapBoxVsBox(InteractiveObject* other, sf::Vector2f &offset)
 {
+	sf::Vector2f off;
+
 	float distance_X			= fabs( m_position.x - other->GetCollider()->GetPosition().x);
 	float control_distance_X	= (m_extension.x * 0.5f) + (other->GetCollider()->GetExtension().x * 0.5f);
 
@@ -31,6 +33,37 @@ bool Collider::OverlapBoxVsBox(InteractiveObject* other)
 	{
 		if(distance_Y <= control_distance_Y)
 		{
+			float delta_X = distance_X / (m_extension.x + other->GetCollider()->GetExtension().x);
+			float delta_Y = distance_Y / (m_extension.y + other->GetCollider()->GetExtension().y);
+
+			if(delta_X >= delta_Y)
+			{
+				if(m_position.x > other->GetCollider()->GetPosition().x)
+				{
+					off.x = control_distance_X - distance_X;
+				}
+				else
+				{
+					off.x = -(control_distance_X - distance_X);
+				}
+				
+			}
+			else if(delta_X < delta_Y)
+			{
+				if(m_position.y > other->GetCollider()->GetPosition().y)
+				{
+					off.y = control_distance_Y - distance_Y;
+				}
+
+				else
+				{
+					off.y = -(control_distance_Y - distance_Y);
+				}
+
+			}
+
+			offset += off;
+
 			return true;	
 		}
 	}
@@ -38,15 +71,17 @@ bool Collider::OverlapBoxVsBox(InteractiveObject* other)
 	return false;
 }
 
-bool Collider::OverlapCircleVsCircle(InteractiveObject* other)
+bool Collider::OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &offset)
 {
+	sf::Vector2f off;
+
 	sf::Vector2f centered_this = m_position;
-	centered_this.x += (m_extension.x * 0.5f);
-	centered_this.y += (m_extension.y * 0.5f);
+		centered_this.x += (m_extension.x * 0.5f);
+		centered_this.y += (m_extension.y * 0.5f);
 
 	sf::Vector2f centered_other = other->GetCollider()->GetPosition();
-	centered_other.x += (other->GetCollider()->GetExtension().x * 0.5);
-	centered_other.y += (other->GetCollider()->GetExtension().y * 0.5);
+		centered_other.x += (other->GetCollider()->GetExtension().x * 0.5);
+		centered_other.y += (other->GetCollider()->GetExtension().y * 0.5);
 
 	float distance_X	= fabs( centered_this.x - centered_other.x );
 	float distance_Y	= fabs( centered_this.y - centered_other.y );
@@ -56,9 +91,39 @@ bool Collider::OverlapCircleVsCircle(InteractiveObject* other)
 
 	if( distance_REAL <= radiuses_sum )
 	{
+
+		float delta_X = distance_X / (m_extension.x + other->GetCollider()->GetExtension().x);
+		float delta_Y = distance_Y / (m_extension.y + other->GetCollider()->GetExtension().y);
+
+		if( delta_X > delta_Y)
+		{
+			if(m_position.x > other->GetCollider()->GetExtension().x)
+			{
+				off.x = radiuses_sum - distance_X;
+			}
+			else
+			{
+				off.x = -(radiuses_sum - distance_X);
+			}
+		}
+
+		else if( delta_X <= delta_Y)
+		{
+
+			if(m_position.y > other->GetCollider()->GetExtension().y)
+			{
+				off.y = radiuses_sum - distance_Y;
+			}
+			else
+			{
+				off.y = -(radiuses_sum - distance_Y);
+			}
+		}
+
+		offset += off;
 		return true;		
 	}
-
+	
 	return false;
 }
 

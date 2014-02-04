@@ -1,9 +1,6 @@
 //Collider header file
 
 #pragma once
-
-#include <SFML/System/Vector2.hpp>
-
 class InteractiveObject;
 
 class Collider
@@ -12,8 +9,8 @@ public:
 	Collider();
 	~Collider();
 
-	bool OverlapBoxVsBox(InteractiveObject* other);
-	bool OverlapCircleVsCircle(InteractiveObject* other);
+	bool OverlapBoxVsBox(InteractiveObject* other, sf::Vector2f &offset);
+	bool OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &offset);
 			
 	sf::Vector2f GetPosition();
 	void SetPosition(sf::Vector2f position);

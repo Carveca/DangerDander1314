@@ -1,7 +1,6 @@
 //Entity source file
-
+#include "stdafx.h"
 #include "Entity.h"
-#include <SFML/System.hpp>
 
 Entity::Entity()
 {
@@ -38,7 +37,10 @@ std::string Entity::GetName()
 	return m_name;
 }
 
-
+void Entity::SetPosition(sf::Vector2f position)
+{
+	m_position = position;
+}
 
 sf::Vector2f Entity::GetPosition()
 {

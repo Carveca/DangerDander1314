@@ -1,5 +1,5 @@
 //Character source file
-
+#include "stdafx.h"
 #include "Character.h"
 
 
