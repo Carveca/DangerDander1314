@@ -13,6 +13,12 @@ bool GameState::Enter()
 	return true;
 }
 
+void GameState::Exit()
+{
+	//Cleanup goes here
+}
+
+
 bool GameState::Update(float deltatime)
 {
 	std::cout<<"GameState"<<std::endl;

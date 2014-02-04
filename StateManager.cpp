@@ -50,6 +50,7 @@ void StateManager::SetState(const std::string &type){
 void StateManager::ChangeState(){
 	std::string next = m_current->Next();
 	if(m_current!=nullptr){
+		m_current->Exit();
 		m_current=nullptr;
 	}
 	for(unsigned int i=0;i<m_states.size();i++){

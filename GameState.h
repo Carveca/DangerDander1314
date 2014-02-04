@@ -10,6 +10,7 @@ public:
 	GameState();
 
 	bool Enter();
+	void Exit();
 	bool Update(float deltatime);
 	void Draw();
 	std::string Next();

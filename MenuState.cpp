@@ -13,6 +13,11 @@ bool MenuState::Enter()
 	return true;
 }
 
+void MenuState::Exit()
+{
+	//Cleanup goes here
+}
+
 bool MenuState::Update(float deltatime)
 {
 	std::cout<<"MenuState"<<std::endl;
