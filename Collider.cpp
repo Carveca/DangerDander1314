@@ -3,6 +3,8 @@
 #include "Collider.h"
 #include "InteractiveObject.h"
 
+#include <SFML/System/Vector2.hpp>
+
 Collider::Collider()
 {
 	m_position.x = 0.0f;

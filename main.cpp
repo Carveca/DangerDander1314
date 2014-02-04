@@ -5,13 +5,17 @@
 #include <string>
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+//#include <SFML/Window.hpp>
 
 int main()
 {
 
-	sf::Window GameWindow;
+	sf::RenderWindow GameWindow;
 	GameWindow.create(sf::VideoMode(1920, 1080), "Dangerous Dander");
+
+	sf::Sprite sprite;
+
+	
 
 	while(GameWindow.isOpen())
 	{
