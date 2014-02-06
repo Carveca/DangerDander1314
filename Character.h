@@ -8,19 +8,10 @@ class Character : public InteractiveObject
 public:
 	Character();
 	~Character();
-
-	void MoveUp();
-	void MoveUpRight();
-	void MoveUpLeft();
-	void MoveRight();
-	void MoveLeft();
-	void MoveDown();
-	void MoveDownRight();
-	void MoveDownLeft();
-
-	//method move med vector2 som parameter som är riktningen, antingen -1 eller 1. 
+	
+	void Move(sf::Vector2f direction, float deltatime);
 
 protected:
-	sf::Clock m_deltatime;
+	float m_deltatime;
 
 };

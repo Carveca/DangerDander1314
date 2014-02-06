@@ -5,6 +5,7 @@
 
 InteractiveObject::InteractiveObject()
 {
+	m_speed = 1.0f;
 	
 	m_collider = nullptr;
 

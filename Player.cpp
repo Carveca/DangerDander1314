@@ -1,10 +1,15 @@
 //Player source file
 #include "stdafx.h"
 #include "Player.h"
+#include "Collider.h"
 
-Player::Player()
+Player::Player(sf::Sprite sprite) 
 {
 	m_name = "Player";
+	m_collider = new Collider;
+
+	m_sprite = sprite;
+	m_speed = 300.0f;
 }
 
 Player::~Player()
@@ -24,8 +29,8 @@ void Player::Cleanup()
 
 void Player::Update()
 {
-	
 
+	m_sprite.setPosition(m_position);
 
 	HandleCollision();
 
@@ -43,4 +48,9 @@ void Player::HandleCollision()
 	}
 	
 	m_collisions.clear();
+}
+
+sf::Sprite Player::GetSprite()
+{
+	return m_sprite;
 }

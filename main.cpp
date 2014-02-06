@@ -2,59 +2,43 @@
 //
 
 #include "stdafx.h"
+#include "Engine.h"
+#include "Player.h"
 
 int _tmain(int argc, _TCHAR* argv[])
-{
-	sf::RenderWindow window(sf::VideoMode(1024, 640), "Caption");
-	sf::CircleShape shape(10.0f);
+{	
+	/*
+	sf::RenderWindow window( sf::VideoMode(1920, 1080), "test");
+	sf::Texture texture;
+	texture.loadFromFile("main_spritesheet.png", sf::IntRect(0, 0, 139, 97));
 	sf::Sprite sprite;
+	sprite.setTexture(texture);
+
+	Player player(sprite);
+
+	  while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+        window.clear();
+		window.draw(player.GetSprite());
+        window.display();
+    }
+	 */
+
 	
-	sf::Vector2u size;
-	size.x = 100;
-	size.y = 100;
+	Engine engine;
 
-	sf::Vector2u size2;
-	size2 = window.getSize();
-
-	while(window.isOpen())
+	if(engine.Initialize())
 	{
-		sf::Event event;
-
-		while(window.pollEvent(event))
-		{
-			if(event.type == sf::Event::Closed)
-			{
-				window.close();
-			}
-			
-			else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
-			{
-				window.close();
-			}
-
-			else if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-			{
-				window.setSize(size);
-			}
-
-			else if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
-			{
-				window.setSize(size2);
-			}
-
-			window.clear(sf::Color(0x11, 0x22, 0x33, 0xff));
-			window.draw(shape);
-			window.display();
-
-		}
-
-		
-
-
+		engine.Run();
 	}
-
-
-
+	
+	
 	return 0;
 }
 
