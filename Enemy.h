@@ -11,12 +11,12 @@ public:
 
 	void AI();
 
-	int GetPoints();
-	int GetAttackPower();
+	virtual int GetPoints();
+	virtual int GetAttackPower();
 
 
 protected:
 	int m_points;
-	int m_attack_power;
+	int m_attackPower;
 
 };

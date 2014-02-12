@@ -18,6 +18,8 @@ public:
 	sf::Vector2f OffsetBoxVsBox();
 	sf::Vector2f OffsetCircleVsCircle();
 
+	std::vector<InteractiveObject*> GetColliders();
+
 private:
 	
 	std::vector<InteractiveObject*> m_colliders;

@@ -7,21 +7,29 @@ class Entity
 {
 public:
 	Entity();
+	Entity(sf::Sprite sprite, sf::Vector2f position);
 	~Entity();
 
-	void Initialize();
-	void Cleanup();	
-	void Update();
+	virtual void Initialize();
+	virtual void Cleanup();	
+	virtual void Update();
 
-	sf::Vector2f GetPosition();
-	void SetPosition(sf::Vector2f position);
+	virtual sf::Vector2f GetPosition();
+	virtual void SetPosition(sf::Vector2f position);
 
-	std::string GetName();
-	void SetName(std::string name);
+	virtual std::string GetName();
+	virtual void SetName(std::string name);
+
+	virtual sf::Sprite GetSprite();
+
+	virtual sf::Vector2f GetExtension();
 
 protected:
 	std::string m_name;
-
+	sf::Sprite m_sprite;
 	sf::Vector2f m_position;
+	sf::Vector2f m_extension;
 
+	float m_frameCounter;
+	int m_imageNR;
 };

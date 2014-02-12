@@ -4,6 +4,8 @@
 #include "InteractiveObject.h"
 #include "Collider.h"
 
+#include <iostream>
+
 CollisionManager::CollisionManager()
 {
 
@@ -31,59 +33,43 @@ void CollisionManager::Cleanup()
 
 void CollisionManager::CheckCollision()
 {
-	m_colliders.clear();
-
 	sf::Vector2f off;
-
+	
 	for( int object = 0; object < m_colliders.size(); object++)
 	{
 		for(int other = 0; other < m_colliders.size(); other++)
 		{
-
 			if( m_colliders[object]->GetColliderCircle() == false && m_colliders[other]->GetColliderCircle() == false )
 			{
-
 				if(m_colliders[object]->GetCollider()->OverlapBoxVsBox( m_colliders[other], off ))
-				{
-				
+				{					
 					std::pair<InteractiveObject*, sf::Vector2f> collision_pair;
-					collision_pair = std::make_pair (m_colliders[object], off);
+					collision_pair = std::make_pair (m_colliders[other], off);
 					m_colliders[object]->AddCollision(collision_pair);
-
 				}
-
 			}
-
 			else if( m_colliders[object]->GetColliderCircle() == true && m_colliders[other]->GetColliderCircle() == true )
 			{
-
 				if(m_colliders[object]->GetCollider()->OverlapCircleVsCircle( m_colliders[other], off ))
 				{
-
 					std::pair<InteractiveObject*, sf::Vector2f> collision_pair;
-					collision_pair = std::make_pair (m_colliders[object], off);
+					collision_pair = std::make_pair (m_colliders[other], off);
 					m_colliders[object]->AddCollision(collision_pair);
-
 				}
-
-			}
-
+			}			
 			else
 			{
 				if(m_colliders[object]->GetCollider()->OverlapBoxVsBox( m_colliders[other], off ))
-				{
-
+				{					
 					std::pair<InteractiveObject*, sf::Vector2f> collision_pair;
-					collision_pair = std::make_pair (m_colliders[object], off);
+					collision_pair = std::make_pair (m_colliders[other], off);
 					m_colliders[object]->AddCollision(collision_pair);
 				}
 			}
-
-
-		}
-		
+		}		
 	}
 
+	m_colliders.clear();
 }
 
 sf::Vector2f OffsetBoxVsBox( )
@@ -106,4 +92,9 @@ sf::Vector2f OffsetCircleVsCircle( )
 
 
 	return offset;
+}
+
+std::vector<InteractiveObject*> CollisionManager::GetColliders()
+{
+	return m_colliders;
 }

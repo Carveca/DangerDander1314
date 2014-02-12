@@ -6,12 +6,13 @@
 class EnemyMelee : public Enemy
 {
 public:
-	EnemyMelee();
+	EnemyMelee(sf::Sprite sprite, sf::Vector2f position);
 	~EnemyMelee();
 
 	void MeleeAttack();
+	void Update(float elapsedTime);
+	void HandleCollision();
 
 protected:
 	
-
 };

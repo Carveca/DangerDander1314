@@ -9,7 +9,7 @@ public:
 	Character();
 	~Character();
 	
-	void Move(sf::Vector2f direction, float deltatime);
+	virtual void Move(sf::Vector2f direction, float deltatime);
 
 protected:
 	float m_deltatime;

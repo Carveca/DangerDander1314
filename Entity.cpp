@@ -4,7 +4,14 @@
 
 Entity::Entity()
 {
+
+}
+
+Entity::Entity(sf::Sprite sprite, sf::Vector2f position)
+{
 	m_name = "Name";
+	m_position = position;
+	m_sprite = sprite;
 }
 
 Entity::~Entity()
@@ -45,4 +52,14 @@ void Entity::SetPosition(sf::Vector2f position)
 sf::Vector2f Entity::GetPosition()
 {
 	return m_position;
+}
+
+sf::Sprite Entity::GetSprite()
+{
+	return m_sprite;
+}
+
+sf::Vector2f Entity::GetExtension()
+{
+	return m_extension;
 }

@@ -24,5 +24,5 @@ int Enemy::GetPoints()
 
 int Enemy::GetAttackPower()
 {
-	return m_attack_power;
+	return m_attackPower;
 }

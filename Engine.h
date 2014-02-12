@@ -4,6 +4,9 @@
 
 class Player;
 class SpriteManager;
+class EnemyMelee;
+class CollisionManager;
+class Entity;
 
 class Engine
 {
@@ -16,15 +19,21 @@ public:
 	void Run();
 
 protected:
+	CollisionManager* m_collisionManager;
 	SpriteManager* m_sprite_manager;
 	Player* m_player;
+	EnemyMelee* m_enemy;
+	EnemyMelee* m_enemy2;
+	
+	Entity* m_level;
 		
 	sf::RenderWindow m_window;
-	sf::Texture PlayerTexture;
-	sf::Sprite PlayerSprite;
+	sf::Texture PlayerTexture, EnemyMeleeTexture, LevelTexture;
+	sf::Sprite PlayerSprite, EnemyMeleeSprite, LevelSprite;
 	sf::Clock m_clock;
 	sf::Vector2f m_direction;
 
-	float m_elapsed_time;
+	float m_elapsedTime;
+	float m_angle;
 
 };

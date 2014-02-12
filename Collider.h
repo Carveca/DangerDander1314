@@ -17,10 +17,14 @@ public:
 
 	sf::Vector2f GetExtension();
 	void SetExtension(sf::Vector2f extension);
+
+	float GetRadius();
+	void SetRadius(float value);
 	
 
 protected:
 	sf::Vector2f m_position;
 	sf::Vector2f m_extension;
 
+	float m_radius;
 };

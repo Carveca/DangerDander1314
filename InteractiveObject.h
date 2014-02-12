@@ -12,20 +12,20 @@ public:
 	InteractiveObject();
 	~InteractiveObject();
 
-	int GetHP();
+	virtual int GetHP();
 	
-	void HandleCollision();
+	virtual void HandleCollision();
 
-	bool GetColliderCircle();
+	virtual bool GetColliderCircle();
 
-	Collider* GetCollider();
+	virtual Collider* GetCollider();
 
-	void AddCollision(std::pair<InteractiveObject*, sf::Vector2f> collision_pair);
+	virtual void AddCollision(std::pair<InteractiveObject*, sf::Vector2f> collision_pair);
 
 protected:
 	int m_hp;
 	float m_speed;
-	bool m_collider_circle;
+	bool m_colliderCircle;
 
 	Collider* m_collider;
 

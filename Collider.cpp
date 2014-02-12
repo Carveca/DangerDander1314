@@ -5,11 +5,7 @@
 
 Collider::Collider()
 {
-	m_position.x = 0.0f;
-	m_position.y = 0.0f;
-	m_extension.x = 1.0f;
-	m_extension.y = 1.0f;
-
+	
 }
 
 Collider::~Collider()
@@ -74,6 +70,8 @@ bool Collider::OverlapBoxVsBox(InteractiveObject* other, sf::Vector2f &offset)
 bool Collider::OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &offset)
 {
 	sf::Vector2f off;
+	off.x = 0.0f;
+	off.y = 0.0f;
 
 	sf::Vector2f centered_this = m_position;
 		centered_this.x += (m_extension.x * 0.5f);
@@ -87,36 +85,34 @@ bool Collider::OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &off
 	float distance_Y	= fabs( centered_this.y - centered_other.y );
 	float distance_REAL = sqrt( pow(distance_X, 2.0f) + pow(distance_Y, 2.0f) );
 
-	float radiuses_sum	= (m_extension.x * 0.5f) + (other->GetCollider()->GetExtension().x * 0.5f);
+	float radiuses_sum	= m_radius + other->GetCollider()->GetRadius();
 
 	if( distance_REAL <= radiuses_sum )
 	{
+		float delta_X = fabs(radiuses_sum - distance_X);
+		float delta_Y = fabs(radiuses_sum - distance_Y);
 
-		float delta_X = distance_X / (m_extension.x + other->GetCollider()->GetExtension().x);
-		float delta_Y = distance_Y / (m_extension.y + other->GetCollider()->GetExtension().y);
-
-		if( delta_X > delta_Y)
+		if( delta_X < delta_Y)
 		{
-			if(m_position.x > other->GetCollider()->GetExtension().x)
+			if(m_position.x > other->GetCollider()->GetPosition().x)
 			{
-				off.x = radiuses_sum - distance_X;
+				off.x = delta_X;
 			}
 			else
 			{
-				off.x = -(radiuses_sum - distance_X);
+				off.x = -delta_X;
 			}
 		}
 
-		else if( delta_X <= delta_Y)
+		else if( delta_X > delta_Y)
 		{
-
-			if(m_position.y > other->GetCollider()->GetExtension().y)
+			if(m_position.y > other->GetCollider()->GetPosition().y)
 			{
-				off.y = radiuses_sum - distance_Y;
+				off.y = delta_Y;
 			}
 			else
 			{
-				off.y = -(radiuses_sum - distance_Y);
+				off.y = -delta_Y;
 			}
 		}
 
@@ -150,3 +146,12 @@ void Collider::SetExtension(sf::Vector2f extension)
 	m_extension = extension;
 }
 	
+float Collider::GetRadius()
+{
+	return m_radius;
+}
+
+void Collider::SetRadius(float value)
+{
+	m_radius = value;
+}

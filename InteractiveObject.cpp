@@ -9,9 +9,9 @@ InteractiveObject::InteractiveObject()
 	
 	m_collider = nullptr;
 
-	m_collider_circle = false;
+	m_colliderCircle = false;
 
-	m_hp = 0;
+	m_hp = 1;
 
 }
 
@@ -37,7 +37,7 @@ Collider* InteractiveObject::GetCollider()
 
 bool InteractiveObject::GetColliderCircle()
 {
-	return m_collider_circle;
+	return m_colliderCircle;
 }
 
 void InteractiveObject::AddCollision(std::pair<InteractiveObject*, sf::Vector2f> collision_pair)
