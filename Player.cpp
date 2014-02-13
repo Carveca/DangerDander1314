@@ -11,8 +11,11 @@ Player::Player(sf::Sprite sprite, sf::Vector2f position)
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
+
 	m_name = "Player";
 	m_speed = 300.0f;
+	m_hp = 90;
+	m_hpDrain = -1;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
@@ -27,8 +30,10 @@ Player::Player(sf::Sprite sprite, sf::Vector2f position)
 	m_frameCounter = 0.0f;
 	
 	m_attackTimer = 0.0f;
-	m_weaponSize = 30;
-	m_playerAttack = nullptr;
+	m_drainTimer = 0.0f;
+
+	m_weaponSize = 60;
+	m_isAttacking = false;
 }
 
 Player::~Player()
@@ -48,25 +53,22 @@ void Player::Cleanup()
 
 void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 {	
+	//Move
 	Move(direction, elapsedtime);
 	m_collider->SetPosition(m_position);
 	m_sprite.setPosition(m_position);
 	
-	if(m_attackTimer == 0.5)
-	{
-		sf::Vector2f weaponPos = m_position;
-		weaponPos.x += 30;
-		weaponPos.y -= 30;
-		m_playerAttack = new PlayerAttack(weaponPos, m_weaponSize);
+	//Attack
+	m_isAttacking = false;
 
-		std::cout << "X: " << m_playerAttack->GetPosition().x << " Y: " << m_playerAttack->GetPosition().y << std::endl;
-	}
-
+	if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+		m_isAttacking = true;
+	
 	m_attackTimer -= elapsedtime;
 	if(m_attackTimer < -10)
 		m_attackTimer = 0.0f;
 
-	//change frame
+	//Sprite
 	m_sprite.setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
 	m_frameCounter += elapsedtime;
 	if(m_frameCounter >= 0.1f)
@@ -78,11 +80,20 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 	}
 	m_sprite.setRotation(angle);
 		
+	//Collision
 	HandleCollision();
 
+	//HP
+	m_drainTimer += elapsedtime;
+	if(m_drainTimer >= 1.0)
+	{
+		m_hp += m_hpDrain;
+		m_drainTimer = 0.0;
+	}
+
+	//Bounds
 	if(m_position.x < 0)
 		m_position.x = 0;
-
 	if(m_position.y < 0)
 		m_position.y = 0;
 
@@ -97,9 +108,14 @@ void Player::HandleCollision()
 			
 		}
 
-		if(m_collisions[i].first->GetName() == "EnemyMelee")
+		else if(m_collisions[i].first->GetName() == "EnemyMelee")
 		{
 			std::cout << "EnemyMelee Collision" << std::endl;
+			m_position += m_collisions[i].second;
+		}
+
+		else if(m_collisions[i].first->GetName() == "PlayerAttack")
+		{
 			m_position += m_collisions[i].second;
 		}
 	}
@@ -125,5 +141,25 @@ float Player::GetAttackTimer()
 
 void Player::WeaponStick()
 {
-	m_weaponSize = 60;
+	m_weaponSize = 120;
+}
+
+bool Player::GetAttacking()
+{
+	return m_isAttacking;
+}
+
+int Player::GetWeaponSize()
+{
+	return m_weaponSize;
+}
+
+void Player::ChangeHP(int value)
+{
+	m_hp += value;
+
+	if(m_hp > 100)
+		m_hp = 100;
+	if(m_hp < 0)
+		m_hp = 0;
 }
