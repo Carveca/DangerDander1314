@@ -29,7 +29,7 @@ void Entity::Cleanup()
 
 }
 
-void Entity::Update(float elapsedtime)
+void Entity::Update()
 {
 
 }

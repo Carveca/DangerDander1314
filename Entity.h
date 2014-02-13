@@ -12,7 +12,7 @@ public:
 
 	virtual void Initialize();
 	virtual void Cleanup();	
-	virtual void Update(float elapsedtime);
+	virtual void Update();
 
 	virtual sf::Vector2f GetPosition();
 	virtual void SetPosition(sf::Vector2f position);
