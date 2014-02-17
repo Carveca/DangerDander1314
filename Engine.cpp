@@ -8,6 +8,7 @@
 #include "PlayerAttack.h"
 #include "PumpMeter.h"
 #include "EnemyMelee.h"
+#include "Level.h"
 
 #include "Collider.h"
 #include "CollisionManager.h"
@@ -40,12 +41,25 @@ bool Engine::Initialize()
 	m_sprite_manager = new SpriteManager;
 	m_sprite_manager->Initialize("../Sprites/");
 
+	//Level
+	m_sprite_manager->LoadSprite("gamespacecity.png", "Level", 0, 0, 1920, 1080, 1, 1);
+	LevelTexture = m_sprite_manager->GetTextures()["LevelTexture"];
+	LevelSprite = m_sprite_manager->GetSprites()["Level"];
+	LevelSprite.setTexture(LevelTexture);
+	
+
+	sf::Vector2f LevelPos = sf::Vector2f(0, -1080);
+	sf::Vector2f LevelPos2 = sf::Vector2f(0, 0);
+	m_level_bottom = new Level(LevelSprite, LevelPos);
+	m_level_top = new Level(LevelSprite, LevelPos2);
+
+	
 	//PumpMeter
 	m_sprite_manager->LoadSprite("pumpbar.png", "PumpMeter", 0, 0, 500, 65, 1, 1);
 	PumpTexture = m_sprite_manager->GetTextures()["PumpMeterTexture"];
 	PumpSprite = m_sprite_manager->GetSprites()["PumpMeter"];
 	PumpSprite.setTexture(PumpTexture);
-	sf::Vector2f PumpPos = sf::Vector2f(710, 50);
+	sf::Vector2f PumpPos = sf::Vector2f(100, 50);
 	m_pumpMeter = new PumpMeter(PumpSprite, PumpPos);
 
 	//Player
@@ -69,13 +83,11 @@ bool Engine::Initialize()
 	m_objectContainer.push_back(new EnemyMelee(EnemyMeleeSprite, enemyPOS2));
 
 	//Attack
-	m_sprite_manager->LoadSprite("immage.png", "Attack", 0, 0, 96, 128, 1, 1);
+	m_sprite_manager->LoadSprite("image.png", "Attack", 0, 0, 96, 128, 1, 1);
 	AttackTexture = m_sprite_manager->GetTextures()["AttackTexture"];
 	AttackSprite = m_sprite_manager->GetSprites()["Attack"];
 	AttackSprite.setTexture(AttackTexture);	
-	sf::Vector2f attackPOS = sf::Vector2f(900.0f, 300.0f);
-	m_attack = new PlayerAttack(AttackSprite, attackPOS, 60);
-			
+				
 	return true;
 }
 
@@ -208,8 +220,9 @@ void Engine::Run()
 		}
 
 		//Update misc
-		m_attack->Update(m_elapsedTime);
 		m_pumpMeter->Update(m_player->GetHP());
+		m_level_top->Update(m_elapsedTime);
+		m_level_bottom->Update(m_elapsedTime);
 
 		//Collision
 		m_collisionManager->Add(m_player);
@@ -222,12 +235,12 @@ void Engine::Run()
 			}
 		}
 
-		m_collisionManager->Add(m_attack);
 		if(!m_attackContainer.empty())
 		{
 			m_collisionManager->Add(m_attackContainer[0]);
 		}		
 		m_collisionManager->CheckCollision();
+
 
 		//Draw
 		Draw();
@@ -239,6 +252,9 @@ void Engine::Draw()
 {
 
 		m_window.clear(sf::Color(0x11, 0x11, 0x11, 0xff));
+		//Level
+		m_window.draw(m_level_top->GetSprite());
+		m_window.draw(m_level_bottom->GetSprite());
 		//Player
 		m_window.draw(m_player->GetSprite());
 		//Enemies
@@ -250,8 +266,6 @@ void Engine::Draw()
 			}
 		}
 		//attacks
-		m_window.draw(m_attack->GetSprite());
-
 		if(!m_attackContainer.empty())
 		{
 			m_window.draw(m_attackContainer[0]->GetSprite());
@@ -259,6 +273,8 @@ void Engine::Draw()
 
 		//Pump
 		m_window.draw(m_pumpMeter->GetSprite());
+
+		//m_window.draw(m_level_bottom->GetSprite());
 
 		m_window.display();	
 

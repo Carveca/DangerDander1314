@@ -6,6 +6,7 @@ class Player;
 class PlayerAttack;
 class PumpMeter;
 class EnemyMelee;
+class Level;
 
 class SpriteManager;
 class CollisionManager;
@@ -34,13 +35,14 @@ protected:
 
 	EnemyMelee* m_enemy;
 	EnemyMelee* m_enemy2;
-	
-	PlayerAttack* m_attack;
 
+	Level* m_level_bottom;
+	Level* m_level_top;
 		
 	sf::RenderWindow m_window;
 	sf::Texture PlayerTexture, EnemyMeleeTexture, LevelTexture, AttackTexture, PumpTexture;
 	sf::Sprite PlayerSprite, EnemyMeleeSprite, LevelSprite, AttackSprite, PumpSprite;
+	sf::Sprite *LevelSpriteTop, *LevelSpriteBottom;
 	sf::Clock m_clock;
 	sf::Vector2f m_direction;
 

@@ -27,6 +27,8 @@ EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
 	
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
+
+	m_yDirection = -1;
 }
 
 EnemyMelee::~EnemyMelee()
@@ -41,6 +43,8 @@ void EnemyMelee::MeleeAttack()
 
 void EnemyMelee::Update(float elapsedTime)
 {
+	m_position.y += m_yDirection * m_speed * elapsedTime;
+
 	m_collider->SetPosition(GetPosition());
 	m_sprite.setPosition(GetPosition());
 
@@ -54,9 +58,25 @@ void EnemyMelee::Update(float elapsedTime)
 			m_imageNR = 0;
 	}
 	
-	
-
 	HandleCollision();
+
+		//Bounds
+	if(m_position.x < 0)
+		m_position.x = 0;
+	if(m_position.x > 1920)
+		m_position.x = 1920;
+	if(m_position.y < 0)
+	{
+		m_position.y = 0;
+		m_yDirection = -m_yDirection;
+		m_sprite.rotate(180);
+	}
+	if(m_position.y > 1080)
+	{
+		m_position.y = 1080;
+		m_yDirection = -m_yDirection;
+		m_sprite.rotate(180);
+	}
 }
 
 void EnemyMelee::HandleCollision()

@@ -14,5 +14,5 @@ public:
 	void HandleCollision();
 
 protected:
-	
+	int m_yDirection;
 };

@@ -69,10 +69,8 @@ bool Collider::OverlapBoxVsBox(InteractiveObject* other, sf::Vector2f &offset)
 
 bool Collider::OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &offset)
 {
-	sf::Vector2f off;
-	off.x = 0.0f;
-	off.y = 0.0f;
-
+	sf::Vector2f off = sf::Vector2f(0.0f, 0.0f);
+	
 	sf::Vector2f centered_this = m_position;
 		centered_this.x += (m_extension.x * 0.5f);
 		centered_this.y += (m_extension.y * 0.5f);

@@ -61,7 +61,7 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 	//Attack
 	m_isAttacking = false;
 
-	if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+	if(m_attackTimer <= 0.2 && m_attackTimer > 0.0)
 		m_isAttacking = true;
 	
 	m_attackTimer -= elapsedtime;
@@ -94,9 +94,12 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 	//Bounds
 	if(m_position.x < 0)
 		m_position.x = 0;
+	if(m_position.x > 1920)
+		m_position.x = 1920;
 	if(m_position.y < 0)
 		m_position.y = 0;
-
+	if(m_position.y > 1080)
+		m_position.y = 1080;
 }
 
 void Player::HandleCollision()
@@ -131,7 +134,7 @@ sf::Sprite Player::GetSprite()
 void Player::Attack()
 {
 	if(m_attackTimer <= 0)
-		m_attackTimer = 0.5;
+		m_attackTimer = 0.3;
 }
 
 float Player::GetAttackTimer()
