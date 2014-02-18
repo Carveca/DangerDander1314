@@ -89,13 +89,15 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 	{
 		m_hp += m_hpDrain;
 		m_drainTimer = 0.0;
-	}
 
+		m_hpDrain = -1;
+	}
+	
 	//Bounds
-	if(m_position.x < 0)
-		m_position.x = 0;
-	if(m_position.x > 1920)
-		m_position.x = 1920;
+	if(m_position.x < 280)
+		m_position.x = 280;
+	if(m_position.x > 1640)
+		m_position.x = 1640;
 	if(m_position.y < 0)
 		m_position.y = 0;
 	if(m_position.y > 1080)
@@ -113,7 +115,6 @@ void Player::HandleCollision()
 
 		else if(m_collisions[i].first->GetName() == "EnemyMelee")
 		{
-			std::cout << "EnemyMelee Collision" << std::endl;
 			m_position += m_collisions[i].second;
 		}
 
@@ -121,6 +122,12 @@ void Player::HandleCollision()
 		{
 			m_position += m_collisions[i].second;
 		}
+
+		else if(m_collisions[i].first->GetName() == "AOEattack")
+		{
+			m_hpDrain = 1;
+		}
+		
 	}
 	
 	m_collisions.clear();
@@ -163,6 +170,6 @@ void Player::ChangeHP(int value)
 
 	if(m_hp > 100)
 		m_hp = 100;
-	if(m_hp < 0)
+	else if(m_hp < 0)
 		m_hp = 0;
 }

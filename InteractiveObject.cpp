@@ -40,7 +40,7 @@ bool InteractiveObject::GetColliderCircle()
 	return m_colliderCircle;
 }
 
-void InteractiveObject::AddCollision(std::pair<InteractiveObject*, sf::Vector2f> collision_pair)
+void InteractiveObject::AddCollision(std::pair<InteractiveObject*, sf::Vector2f> &collision_pair)
 {
 	m_collisions.push_back(collision_pair);
 }

@@ -8,6 +8,7 @@
 #include "PlayerAttack.h"
 #include "PumpMeter.h"
 #include "EnemyMelee.h"
+#include "EnemyAOE.h"
 #include "Level.h"
 
 #include "Collider.h"
@@ -34,6 +35,8 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
+	sf::Clock initTimer;
+
 	m_window.create(sf::VideoMode(1920, 1080), "Dangerous Dander");
 		
 	m_collisionManager = new CollisionManager;
@@ -42,18 +45,20 @@ bool Engine::Initialize()
 	m_sprite_manager->Initialize("../Sprites/");
 
 	//Level
-	m_sprite_manager->LoadSprite("gamespacecity.png", "Level", 0, 0, 1920, 1080, 1, 1);
+	m_sprite_manager->LoadSprite("new_gamespace.png", "Level", 0, 0, 1920, 1080, 1, 1);
 	LevelTexture = m_sprite_manager->GetTextures()["LevelTexture"];
 	LevelSprite = m_sprite_manager->GetSprites()["Level"];
 	LevelSprite.setTexture(LevelTexture);
 	
+	std::cout << initTimer.restart().asSeconds() << std::endl;
 
-	sf::Vector2f LevelPos = sf::Vector2f(0, -1080);
-	sf::Vector2f LevelPos2 = sf::Vector2f(0, 0);
-	m_level_bottom = new Level(LevelSprite, LevelPos);
-	m_level_top = new Level(LevelSprite, LevelPos2);
-
+	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1080.0f);
+	m_level_top = new Level(LevelSprite, LevelPos);
+	sf::Vector2f LevelPos2 = sf::Vector2f(0.0f, 0.0f);
+	m_level_bottom = new Level(LevelSprite, LevelPos2);
 	
+	std::cout << initTimer.restart().asSeconds() << std::endl;
+
 	//PumpMeter
 	m_sprite_manager->LoadSprite("pumpbar.png", "PumpMeter", 0, 0, 500, 65, 1, 1);
 	PumpTexture = m_sprite_manager->GetTextures()["PumpMeterTexture"];
@@ -62,31 +67,37 @@ bool Engine::Initialize()
 	sf::Vector2f PumpPos = sf::Vector2f(100, 50);
 	m_pumpMeter = new PumpMeter(PumpSprite, PumpPos);
 
+	std::cout << initTimer.restart().asSeconds() << std::endl;
+
 	//Player
 	m_sprite_manager->LoadSprite("player_move.png", "Player", 0, 0, 2048, 256, 1, 1);
 	PlayerTexture = m_sprite_manager->GetTextures()["PlayerTexture"];
 	PlayerSprite = m_sprite_manager->GetSprites()["Player"];
 	PlayerSprite.setTexture(PlayerTexture);
-	sf::Vector2f playerPOS = sf::Vector2f(400.0f, 200.0f);
+	sf::Vector2f playerPOS = sf::Vector2f(800.0f, 200.0f);
 	m_player = new Player(PlayerSprite, playerPOS);
 	
+	std::cout << initTimer.restart().asSeconds() << std::endl;
+
 	//Enemy
-	m_sprite_manager->LoadSprite("AOE.png", "EnemyMelee", 0, 0, 1024, 128, 1, 1);
-	EnemyMeleeTexture = m_sprite_manager->GetTextures()["EnemyMeleeTexture"];
-	EnemyMeleeSprite = m_sprite_manager->GetSprites()["EnemyMelee"];
-	EnemyMeleeSprite.setTexture(EnemyMeleeTexture);
-	sf::Vector2f enemyPOS = sf::Vector2f(400.0f, 500.0f);
-	sf::Vector2f enemyPOS2 = sf::Vector2f(600.0f, 600.0f);
-	//m_enemy = new EnemyMelee(EnemyMeleeSprite, enemyPOS);
-	//m_enemy2 = new EnemyMelee(EnemyMeleeSprite, enemyPOS2);
-	m_objectContainer.push_back(new EnemyMelee(EnemyMeleeSprite, enemyPOS));
-	m_objectContainer.push_back(new EnemyMelee(EnemyMeleeSprite, enemyPOS2));
+	m_sprite_manager->LoadSprite("AOE.png", "EnemyAoe", 0, 0, 1024, 128, 1, 1);
+	EnemyAoeTexture = m_sprite_manager->GetTextures()["EnemyAoeTexture"];
+	EnemyAoeSprite = m_sprite_manager->GetSprites()["EnemyAoe"];
+	EnemyAoeSprite.setTexture(EnemyAoeTexture);
+	sf::Vector2f enemyPOS = sf::Vector2f(400.0f, 50.0f);
+	sf::Vector2f enemyPOS2 = sf::Vector2f(900.0f, 900.0f);
+	m_objectContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS));
+	m_objectContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS2));
+	
+	std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//Attack
 	m_sprite_manager->LoadSprite("image.png", "Attack", 0, 0, 96, 128, 1, 1);
 	AttackTexture = m_sprite_manager->GetTextures()["AttackTexture"];
 	AttackSprite = m_sprite_manager->GetSprites()["Attack"];
 	AttackSprite.setTexture(AttackTexture);	
+
+	std::cout << initTimer.restart().asSeconds() << std::endl;
 				
 	return true;
 }
@@ -99,9 +110,12 @@ void Engine::Cleanup()
 
 void Engine::Run()
 {
+	//Init a clock
+	sf::Clock m_clock;
+
 	while(m_window.isOpen())
 	{				
-		m_elapsedTime = m_clock.restart().asSeconds();	
+		m_elapsedTime = m_clock.restart().asSeconds();
 
 		sf::Event event;			
 		while(m_window.pollEvent(event))
@@ -192,7 +206,7 @@ void Engine::Run()
 			m_attackContainer.push_back( new PlayerAttack(AttackSprite ,attackPOS, m_player->GetWeaponSize() ) );
 		}
 
-		std::cout << m_player->GetHP() << std::endl;
+		//std::cout << m_player->GetHP() << std::endl;
 
 		if(!m_attackContainer.empty())
 			{
@@ -244,7 +258,12 @@ void Engine::Run()
 
 		//Draw
 		Draw();
-						
+
+
+		if(m_player->GetHP() >= 100 || m_player->GetHP() <= 0)
+		{
+			break;
+		}						
 	}
 }
 
@@ -252,9 +271,10 @@ void Engine::Draw()
 {
 
 		m_window.clear(sf::Color(0x11, 0x11, 0x11, 0xff));
-		//Level
+		//Level	
 		m_window.draw(m_level_top->GetSprite());
 		m_window.draw(m_level_bottom->GetSprite());
+
 		//Player
 		m_window.draw(m_player->GetSprite());
 		//Enemies
@@ -273,8 +293,6 @@ void Engine::Draw()
 
 		//Pump
 		m_window.draw(m_pumpMeter->GetSprite());
-
-		//m_window.draw(m_level_bottom->GetSprite());
 
 		m_window.display();	
 

@@ -1,11 +1,12 @@
-//EnemyMelee source file
+//EnemyAOE.cpp
+
 #include "stdafx.h"
-#include "EnemyMelee.h"
+#include "EnemyAOE.h"
 #include "Collider.h"
+#include "AOEattack.h"
 
-#include <iostream>
 
-EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
+EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -13,7 +14,7 @@ EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
-	m_name = "EnemyMelee";
+	m_name = "EnemyAOE";
 	m_speed = 300;
 
 	m_collider = new Collider;
@@ -21,6 +22,8 @@ EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
 	m_collider->SetRadius(60);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
+
+	m_attack = new AOEattack; //?
 
 	m_sprite = sprite;
 	m_sprite.setOrigin(64, 64);
@@ -31,19 +34,25 @@ EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
 	m_yDirection = -1;
 }
 
-EnemyMelee::~EnemyMelee()
+EnemyAOE::~EnemyAOE()
+{
+	m_collisions.clear();
+}
+
+void EnemyAOE::Attack()
 {
 
 }
 
-void EnemyMelee::MeleeAttack()
+void EnemyAOE::Update(float elapsedTime)
 {
+	m_deltatime += elapsedTime;
 
-}
-
-void EnemyMelee::Update(float elapsedTime)
-{
-	m_position.y += m_yDirection * m_speed * elapsedTime;
+	if(m_deltatime >= 0.01)
+	{
+		m_position.y += m_yDirection * m_speed * m_deltatime;
+		m_deltatime = 0.0f;
+	}
 
 	m_collider->SetPosition(m_position);
 	m_sprite.setPosition(m_position);
@@ -79,17 +88,20 @@ void EnemyMelee::Update(float elapsedTime)
 	}
 }
 
-void EnemyMelee::HandleCollision()
+void EnemyAOE::HandleCollision()
 {
-	for(unsigned int i = 0; i < m_collisions.size(); i++)
+	for(int i = 0; i < m_collisions.size(); i++)
 	{
 		if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
-			std::cout << "Attacked!" << std::endl;
 			m_hp -= 1;
 		}
-
 	}
-	
+
 	m_collisions.clear();
+}
+
+AOEattack* EnemyAOE::GetAttack()
+{
+	return m_attack;
 }

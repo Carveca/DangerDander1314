@@ -20,9 +20,11 @@ public:
 
 	virtual Collider* GetCollider();
 
-	virtual void AddCollision(std::pair<InteractiveObject*, sf::Vector2f> collision_pair);
+	virtual void AddCollision(std::pair<InteractiveObject*, sf::Vector2f> &collision_pair);
 
 protected:
+	Entity* m_parent;
+
 	int m_hp;
 	float m_speed;
 	bool m_colliderCircle;

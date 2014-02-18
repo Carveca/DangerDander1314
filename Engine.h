@@ -6,7 +6,10 @@ class Player;
 class PlayerAttack;
 class PumpMeter;
 class EnemyMelee;
+class EnemyAOE;
 class Level;
+
+//#include "Level.h"
 
 class SpriteManager;
 class CollisionManager;
@@ -40,15 +43,12 @@ protected:
 	Level* m_level_top;
 		
 	sf::RenderWindow m_window;
-	sf::Texture PlayerTexture, EnemyMeleeTexture, LevelTexture, AttackTexture, PumpTexture;
-	sf::Sprite PlayerSprite, EnemyMeleeSprite, LevelSprite, AttackSprite, PumpSprite;
-	sf::Sprite *LevelSpriteTop, *LevelSpriteBottom;
-	sf::Clock m_clock;
+	sf::Texture PlayerTexture, EnemyMeleeTexture, EnemyAoeTexture, LevelTexture, AttackTexture, PumpTexture;
+	sf::Sprite PlayerSprite, EnemyMeleeSprite, EnemyAoeSprite, LevelSprite, AttackSprite, PumpSprite;
 	sf::Vector2f m_direction;
 
 	float m_elapsedTime;
 	float m_angle;
-
 
 	std::vector<PlayerAttack*> m_attackContainer;
 	std::vector<InteractiveObject*> m_objectContainer;
