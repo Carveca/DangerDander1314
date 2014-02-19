@@ -26,13 +26,14 @@ PlayerAttack::PlayerAttack(sf::Sprite sprite, sf::Vector2f position, int size)
 
 PlayerAttack::~PlayerAttack()
 {
-
+	delete m_collider;
+	m_collider = nullptr;
 }
 
 void PlayerAttack::Update(float elapsedTime)
 {
-	m_sprite.setPosition(m_position);
-	m_collider->SetPosition(m_position);
+	//m_sprite.setPosition(m_position);
+	//m_collider->SetPosition(m_position);
 	m_sprite.setTextureRect(sf::IntRect(0, 0, 120, 120));
 	
 	m_life -= elapsedTime;

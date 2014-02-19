@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include <vector>
 class Collider;
+class AOEattack;
 
 class InteractiveObject : public Entity
 {
@@ -21,6 +22,8 @@ public:
 	virtual Collider* GetCollider();
 
 	virtual void AddCollision(std::pair<InteractiveObject*, sf::Vector2f> &collision_pair);
+
+	//virtual AOEattack* GetAttack();
 
 protected:
 	Entity* m_parent;

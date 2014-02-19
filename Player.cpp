@@ -38,7 +38,8 @@ Player::Player(sf::Sprite sprite, sf::Vector2f position)
 
 Player::~Player()
 {
-
+	delete m_collider;
+	m_collider = nullptr;
 }
 
 void Player::Initialize()
@@ -85,7 +86,7 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 
 	//HP
 	m_drainTimer += elapsedtime;
-	if(m_drainTimer >= 1.0)
+	if(m_drainTimer >= 0.1)
 	{
 		m_hp += m_hpDrain;
 		m_drainTimer = 0.0;
@@ -113,21 +114,21 @@ void Player::HandleCollision()
 			
 		}
 
-		else if(m_collisions[i].first->GetName() == "EnemyMelee")
+		else if(m_collisions[i].first->GetName() == "EnemyAOE")
 		{
 			m_position += m_collisions[i].second;
 		}
 
 		else if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
-			m_position += m_collisions[i].second;
+			//m_position += m_collisions[i].second;
 		}
 
 		else if(m_collisions[i].first->GetName() == "AOEattack")
 		{
 			m_hpDrain = 1;
 		}
-		
+
 	}
 	
 	m_collisions.clear();

@@ -15,6 +15,8 @@
 #include "CollisionManager.h"
 #include "SpriteManager.h"
 
+#include "SpawnerAOEenemy.h"
+
 
 #include "Entity.h"
 
@@ -35,6 +37,13 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
+	/*
+	typedef int det_är_en_int;
+	det_är_en_int x = 10;
+
+	typedef float Int;
+	*/
+
 	sf::Clock initTimer;
 
 	m_window.create(sf::VideoMode(1920, 1080), "Dangerous Dander");
@@ -50,14 +59,14 @@ bool Engine::Initialize()
 	LevelSprite = m_sprite_manager->GetSprites()["Level"];
 	LevelSprite.setTexture(LevelTexture);
 	
-	std::cout << initTimer.restart().asSeconds() << std::endl;
+	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1080.0f);
 	m_level_top = new Level(LevelSprite, LevelPos);
 	sf::Vector2f LevelPos2 = sf::Vector2f(0.0f, 0.0f);
 	m_level_bottom = new Level(LevelSprite, LevelPos2);
 	
-	std::cout << initTimer.restart().asSeconds() << std::endl;
+	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//PumpMeter
 	m_sprite_manager->LoadSprite("pumpbar.png", "PumpMeter", 0, 0, 500, 65, 1, 1);
@@ -67,29 +76,40 @@ bool Engine::Initialize()
 	sf::Vector2f PumpPos = sf::Vector2f(100, 50);
 	m_pumpMeter = new PumpMeter(PumpSprite, PumpPos);
 
-	std::cout << initTimer.restart().asSeconds() << std::endl;
+	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//Player
 	m_sprite_manager->LoadSprite("player_move.png", "Player", 0, 0, 2048, 256, 1, 1);
 	PlayerTexture = m_sprite_manager->GetTextures()["PlayerTexture"];
 	PlayerSprite = m_sprite_manager->GetSprites()["Player"];
 	PlayerSprite.setTexture(PlayerTexture);
-	sf::Vector2f playerPOS = sf::Vector2f(800.0f, 200.0f);
+	sf::Vector2f playerPOS = sf::Vector2f(960.0f, 500.0f);
 	m_player = new Player(PlayerSprite, playerPOS);
 	
-	std::cout << initTimer.restart().asSeconds() << std::endl;
+	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//Enemy
 	m_sprite_manager->LoadSprite("AOE.png", "EnemyAoe", 0, 0, 1024, 128, 1, 1);
 	EnemyAoeTexture = m_sprite_manager->GetTextures()["EnemyAoeTexture"];
 	EnemyAoeSprite = m_sprite_manager->GetSprites()["EnemyAoe"];
 	EnemyAoeSprite.setTexture(EnemyAoeTexture);
-	sf::Vector2f enemyPOS = sf::Vector2f(400.0f, 50.0f);
-	sf::Vector2f enemyPOS2 = sf::Vector2f(900.0f, 900.0f);
-	m_objectContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS));
-	m_objectContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS2));
-	
-	std::cout << initTimer.restart().asSeconds() << std::endl;
+
+	m_sprite_manager->LoadSprite("aoe_attack.png", "AOE", 0, 0, 256, 256, 1, 1);
+	AOEtexture = m_sprite_manager->GetTextures()["AOETexture"];
+	AOEsprite = m_sprite_manager->GetSprites()["AOE"];
+	AOEsprite.setTexture(AOEtexture);
+
+	sf::Vector2f enemyPOS = sf::Vector2f(400.0f, -90.0f);
+
+	m_spawner_AOEenemy = new SpawnerAOEenemy(EnemyAoeSprite, AOEsprite, enemyPOS);
+
+	m_AOEenemyContainer.push_back(m_spawner_AOEenemy->Spawn());
+
+
+	//sf::Vector2f enemyPOS2 = sf::Vector2f(900.0f, 900.0f);
+	//m_AOEenemyContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS, AOEsprite));
+	//m_AOEenemyContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS2, AOEsprite));
+	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//Attack
 	m_sprite_manager->LoadSprite("image.png", "Attack", 0, 0, 96, 128, 1, 1);
@@ -97,7 +117,7 @@ bool Engine::Initialize()
 	AttackSprite = m_sprite_manager->GetSprites()["Attack"];
 	AttackSprite.setTexture(AttackTexture);	
 
-	std::cout << initTimer.restart().asSeconds() << std::endl;
+	//std::cout << initTimer.restart().asSeconds() << std::endl;
 				
 	return true;
 }
@@ -131,6 +151,18 @@ void Engine::Run()
 		{
 			m_player->Attack();
 		}
+
+		/*
+		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
+		{
+			if(!m_HappyPillContainer.empty())
+			{
+				m_HappyPillContainer.pop_back(); //vector
+				m_player->ChangeHP(-50);
+			}
+		}
+		*/
+
 		//Movement Input
 		m_direction.x = 0.0f;
 		m_direction.y = 0.0f;			
@@ -184,7 +216,7 @@ void Engine::Run()
 		//Player Attack
 		if(m_player->GetAttacking() == true && m_attackContainer.size() < 1)
 		{
-			std::cout << "Attack!" << std::endl;			
+			//std::cout << "Attack!" << std::endl;			
 			sf::Vector2f attackPOS = m_player->GetPosition();
 			if(m_angle == 0) //up
 				attackPOS += sf::Vector2f(0, -128);
@@ -217,35 +249,56 @@ void Engine::Run()
 				}
 			}
 		//Update Enemies
-		if(!m_objectContainer.empty())
+		if(!m_AOEenemyContainer.empty())
 		{
-			for(int object = 0; object < m_objectContainer.size(); object++)
+			for(int object = 0; object < m_AOEenemyContainer.size(); object++)
 			{
-				m_objectContainer[object]->Update(m_elapsedTime);
+				m_AOEenemyContainer[object]->Update(m_elapsedTime);
 				
-				if(m_objectContainer[object]->GetHP() == 0)
+				if(m_AOEenemyContainer[object]->GetHP() == 0)
 				{
-					delete m_objectContainer[object];
-					m_objectContainer[object] = nullptr;
-					m_objectContainer.erase(m_objectContainer.begin() + object);
+					delete m_AOEenemyContainer[object];
+					m_AOEenemyContainer[object] = nullptr;
+					m_AOEenemyContainer.erase(m_AOEenemyContainer.begin() + object);
 					m_player->ChangeHP(20);
-				}				
+				}	
+
+				else if(m_AOEenemyContainer[object]->GetPosition().y >= 1080)
+				{
+					delete m_AOEenemyContainer[object];
+					m_AOEenemyContainer[object] = nullptr;
+					m_AOEenemyContainer.erase(m_AOEenemyContainer.begin() + object);
+				}
+
 			}
 		}
 
 		//Update misc
 		m_pumpMeter->Update(m_player->GetHP());
+		
 		m_level_top->Update(m_elapsedTime);
 		m_level_bottom->Update(m_elapsedTime);
+
+
+		if(m_AOEenemyContainer.size() < 15)
+		{
+			m_spawner_AOEenemy->Update(m_elapsedTime);
+
+			if(m_spawner_AOEenemy->GetSpawnState() == true)
+			{
+				m_AOEenemyContainer.push_back(m_spawner_AOEenemy->Spawn());
+			}
+		}
 
 		//Collision
 		m_collisionManager->Add(m_player);
 
-		if(!m_objectContainer.empty())
+		if(!m_AOEenemyContainer.empty())
 		{
-			for(int object = 0; object < m_objectContainer.size(); object++)
+			for(int object = 0; object < m_AOEenemyContainer.size(); object++)
 			{
-				m_collisionManager->Add(m_objectContainer[object]);
+				m_collisionManager->Add(m_AOEenemyContainer[object]);
+				m_collisionManager->Add(m_AOEenemyContainer[object]->GetAttack());
 			}
 		}
 
@@ -262,7 +315,7 @@ void Engine::Run()
 
 		if(m_player->GetHP() >= 100 || m_player->GetHP() <= 0)
 		{
-			break;
+			m_window.close();
 		}						
 	}
 }
@@ -274,22 +327,26 @@ void Engine::Draw()
 		//Level	
 		m_window.draw(m_level_top->GetSprite());
 		m_window.draw(m_level_bottom->GetSprite());
-
-		//Player
-		m_window.draw(m_player->GetSprite());
+		
 		//Enemies
-		if(!m_objectContainer.empty())
+		if(!m_AOEenemyContainer.empty())
 		{
-			for(int object = 0; object < m_objectContainer.size(); object++)
+			for(int object = 0; object < m_AOEenemyContainer.size(); object++)
 			{
-				m_window.draw(m_objectContainer[object]->GetSprite());
+				m_window.draw(m_AOEenemyContainer[object]->GetAttack()->GetSprite());
+				m_window.draw(m_AOEenemyContainer[object]->GetSprite());				
 			}
 		}
+		
 		//attacks
 		if(!m_attackContainer.empty())
 		{
 			m_window.draw(m_attackContainer[0]->GetSprite());
 		}
+
+		//Player
+		m_window.draw(m_player->GetSprite());
+
 
 		//Pump
 		m_window.draw(m_pumpMeter->GetSprite());

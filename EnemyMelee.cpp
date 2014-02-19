@@ -33,7 +33,8 @@ EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
 
 EnemyMelee::~EnemyMelee()
 {
-
+	delete m_collider;
+	m_collider = nullptr;
 }
 
 void EnemyMelee::MeleeAttack()

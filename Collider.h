@@ -23,7 +23,7 @@ public:
 	
 
 protected:
-	Entity* m_parent;
+	//Entity* m_parent;
 
 	sf::Vector2f m_position;
 	sf::Vector2f m_extension;

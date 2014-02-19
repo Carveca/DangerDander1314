@@ -13,6 +13,7 @@ class Level;
 
 class SpriteManager;
 class CollisionManager;
+class SpawnerAOEenemy;
 
 class Entity;
 class InteractiveObject;
@@ -41,15 +42,17 @@ protected:
 
 	Level* m_level_bottom;
 	Level* m_level_top;
+
+	SpawnerAOEenemy* m_spawner_AOEenemy;
 		
 	sf::RenderWindow m_window;
-	sf::Texture PlayerTexture, EnemyMeleeTexture, EnemyAoeTexture, LevelTexture, AttackTexture, PumpTexture;
-	sf::Sprite PlayerSprite, EnemyMeleeSprite, EnemyAoeSprite, LevelSprite, AttackSprite, PumpSprite;
+	sf::Texture PlayerTexture, EnemyMeleeTexture, EnemyAoeTexture, LevelTexture, AttackTexture, PumpTexture, AOEtexture;
+	sf::Sprite PlayerSprite, EnemyMeleeSprite, EnemyAoeSprite, LevelSprite, AttackSprite, PumpSprite, AOEsprite;
 	sf::Vector2f m_direction;
 
 	float m_elapsedTime;
 	float m_angle;
 
 	std::vector<PlayerAttack*> m_attackContainer;
-	std::vector<InteractiveObject*> m_objectContainer;
+	std::vector<EnemyAOE*> m_AOEenemyContainer;
 };

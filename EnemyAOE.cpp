@@ -6,7 +6,7 @@
 #include "AOEattack.h"
 
 
-EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position)
+EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksprite)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -23,20 +23,25 @@ EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position)
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
-	m_attack = new AOEattack; //?
+	m_attack = new AOEattack(attacksprite, m_position); 
 
 	m_sprite = sprite;
 	m_sprite.setOrigin(64, 64);
+	m_sprite.rotate(180);
 	
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
 
-	m_yDirection = -1;
+	m_yDirection = 1;
 }
 
 EnemyAOE::~EnemyAOE()
 {
 	m_collisions.clear();
+
+	delete m_collider;
+	m_collider = nullptr;
+	
 }
 
 void EnemyAOE::Attack()
@@ -74,18 +79,14 @@ void EnemyAOE::Update(float elapsedTime)
 		m_position.x = 0;
 	if(m_position.x > 1920)
 		m_position.x = 1920;
-	if(m_position.y < 0)
+	if(m_position.y < -100)
 	{
 		m_position.y = 0;
 		m_yDirection = -m_yDirection;
 		m_sprite.rotate(180);
 	}
-	if(m_position.y > 1080)
-	{
-		m_position.y = 1080;
-		m_yDirection = -m_yDirection;
-		m_sprite.rotate(180);
-	}
+	
+	m_attack->Update(m_position);
 }
 
 void EnemyAOE::HandleCollision()

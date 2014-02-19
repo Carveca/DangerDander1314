@@ -28,7 +28,8 @@ private:
 class EnemyAOE : public Enemy
 {
 public:
-	EnemyAOE(sf::Sprite sprite, sf::Vector2f position);
+	EnemyAOE();
+	EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksprite);
 	~EnemyAOE();
 
 	void Attack();

@@ -11,7 +11,7 @@ public:
 	AOEattack(sf::Sprite sprite, sf::Vector2f position);
 	~AOEattack();
 
-	void Update();
+	void Update(sf::Vector2f position);
 	
 protected:
 

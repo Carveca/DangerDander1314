@@ -19,7 +19,7 @@ AOEattack::AOEattack(sf::Sprite sprite, sf::Vector2f position)
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(100);
+	m_collider->SetRadius(128);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -32,10 +32,13 @@ AOEattack::AOEattack(sf::Sprite sprite, sf::Vector2f position)
 
 AOEattack::~AOEattack()
 {
-
+	delete m_collider;
+	m_collider = nullptr;
 }
 
-void AOEattack::Update()
+void AOEattack::Update(sf::Vector2f position)
 {
+	m_position = position;
+	m_sprite.setPosition(m_position);
 	m_collider->SetPosition(m_position);	
 }

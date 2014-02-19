@@ -8,6 +8,7 @@ class SpriteManager
 {
 public:
 	SpriteManager();
+	~SpriteManager();
 
 	bool Initialize(const sf::String &directory);
 	void LoadSprite( std::string file_name, std::string sprite_name, int x, int y, int width, int height, float scale_X, float scale_Y);

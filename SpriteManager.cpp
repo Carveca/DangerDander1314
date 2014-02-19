@@ -8,6 +8,13 @@ SpriteManager::SpriteManager()
 	
 }
 
+SpriteManager::~SpriteManager()
+{
+	m_textures.clear();
+	m_sprites.clear();
+
+}
+
 bool SpriteManager::Initialize(const sf::String &directory)
 {
 	m_filepath = directory;
