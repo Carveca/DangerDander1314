@@ -16,15 +16,11 @@ public:
 	std::map<std::string, sf::Sprite> GetSprites();
 	std::map<std::string, sf::Texture> GetTextures();
 
-	/*
-	std::map<std::string, sf::Sprite> m_sprites; // remember to move th to protected and make a method for calling on it
-	std::map<std::string, sf::Texture> m_textures;
-	*/
 
 protected:
 	std::string m_filepath;
 
-	std::map<std::string, sf::Sprite> m_sprites; // remember to move th to protected and make a method for calling on it
+	std::map<std::string, sf::Sprite> m_sprites; 
 	std::map<std::string, sf::Texture> m_textures;
 
 };

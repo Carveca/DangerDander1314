@@ -42,10 +42,14 @@ void SpriteManager::LoadSprite( std::string file_name, std::string sprite_name, 
 
 }
 
+
+
 std::map<std::string, sf::Sprite> SpriteManager::GetSprites()
 {
 	return m_sprites;
 }
+
+
 
 std::map<std::string, sf::Texture> SpriteManager::GetTextures()
 {

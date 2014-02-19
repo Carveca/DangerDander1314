@@ -32,11 +32,11 @@ void SpawnerAOEenemy::Update(float elapsedTime)
 	if(m_spawnTimer <= 0.0)
 	{
 		m_spawning = true;
-		m_spawnTimer = 3.0f;
+		m_spawnTimer = 1.0f;
 
 		m_spawnPosition.x += 100;
-		if(m_spawnPosition.x >= 1600)
-			m_spawnPosition.x = 400;
+		if(m_spawnPosition.x >= 1500)
+			m_spawnPosition.x = 500;
 	}
 }
 

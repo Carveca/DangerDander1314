@@ -94,15 +94,16 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 		m_hpDrain = -1;
 	}
 	
-	//Bounds
-	if(m_position.x < 280)
-		m_position.x = 280;
-	if(m_position.x > 1640)
-		m_position.x = 1640;
-	if(m_position.y < 0)
-		m_position.y = 0;
-	if(m_position.y > 1080)
-		m_position.y = 1080;
+	//X-Bounds
+	if(m_position.x < 360)
+		m_position.x = 360;
+	if(m_position.x > 1560)
+		m_position.x = 1560;
+	//Y-Bounds
+	if(m_position.y < 80)
+		m_position.y = 80;
+	if(m_position.y > 1000)
+		m_position.y = 1000;
 }
 
 void Player::HandleCollision()

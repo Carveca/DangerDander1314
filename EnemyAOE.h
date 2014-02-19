@@ -44,7 +44,9 @@ public:
 	*/
 
 protected:
-	int m_yDirection;
+	int m_yDirection, m_xDirection;
+
+	float m_moveTimer;
 
 	AOEattack* m_attack;
 };

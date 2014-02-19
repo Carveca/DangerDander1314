@@ -37,15 +37,6 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
-	/*
-	typedef int det_är_en_int;
-	det_är_en_int x = 10;
-
-	typedef float Int;
-	*/
-
-	sf::Clock initTimer;
-
 	m_window.create(sf::VideoMode(1920, 1080), "Dangerous Dander");
 		
 	m_collisionManager = new CollisionManager;
@@ -56,68 +47,47 @@ bool Engine::Initialize()
 	//Level
 	m_sprite_manager->LoadSprite("new_gamespace.png", "Level", 0, 0, 1920, 1080, 1, 1);
 	LevelTexture = m_sprite_manager->GetTextures()["LevelTexture"];
-	LevelSprite = m_sprite_manager->GetSprites()["Level"];
 	LevelSprite.setTexture(LevelTexture);
-	
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1080.0f);
 	m_level_top = new Level(LevelSprite, LevelPos);
+
 	sf::Vector2f LevelPos2 = sf::Vector2f(0.0f, 0.0f);
 	m_level_bottom = new Level(LevelSprite, LevelPos2);
-	
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//PumpMeter
 	m_sprite_manager->LoadSprite("pumpbar.png", "PumpMeter", 0, 0, 500, 65, 1, 1);
 	PumpTexture = m_sprite_manager->GetTextures()["PumpMeterTexture"];
-	PumpSprite = m_sprite_manager->GetSprites()["PumpMeter"];
 	PumpSprite.setTexture(PumpTexture);
 	sf::Vector2f PumpPos = sf::Vector2f(100, 50);
 	m_pumpMeter = new PumpMeter(PumpSprite, PumpPos);
 
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
-
 	//Player
-	m_sprite_manager->LoadSprite("player_move.png", "Player", 0, 0, 2048, 256, 1, 1);
+	m_sprite_manager->LoadSprite("player_weapon.png", "Player", 0, 0, 2048, 256, 1, 1);
 	PlayerTexture = m_sprite_manager->GetTextures()["PlayerTexture"];
-	PlayerSprite = m_sprite_manager->GetSprites()["Player"];
 	PlayerSprite.setTexture(PlayerTexture);
 	sf::Vector2f playerPOS = sf::Vector2f(960.0f, 500.0f);
 	m_player = new Player(PlayerSprite, playerPOS);
-	
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//Enemy
 	m_sprite_manager->LoadSprite("AOE.png", "EnemyAoe", 0, 0, 1024, 128, 1, 1);
 	EnemyAoeTexture = m_sprite_manager->GetTextures()["EnemyAoeTexture"];
-	EnemyAoeSprite = m_sprite_manager->GetSprites()["EnemyAoe"];
 	EnemyAoeSprite.setTexture(EnemyAoeTexture);
 
 	m_sprite_manager->LoadSprite("aoe_attack.png", "AOE", 0, 0, 256, 256, 1, 1);
 	AOEtexture = m_sprite_manager->GetTextures()["AOETexture"];
-	AOEsprite = m_sprite_manager->GetSprites()["AOE"];
 	AOEsprite.setTexture(AOEtexture);
 
-	sf::Vector2f enemyPOS = sf::Vector2f(400.0f, -90.0f);
+	sf::Vector2f enemyPOS = sf::Vector2f(500.0f, -90.0f);
 
 	m_spawner_AOEenemy = new SpawnerAOEenemy(EnemyAoeSprite, AOEsprite, enemyPOS);
 
 	m_AOEenemyContainer.push_back(m_spawner_AOEenemy->Spawn());
 
-
-	//sf::Vector2f enemyPOS2 = sf::Vector2f(900.0f, 900.0f);
-	//m_AOEenemyContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS, AOEsprite));
-	//m_AOEenemyContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS2, AOEsprite));
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
-
 	//Attack
-	m_sprite_manager->LoadSprite("image.png", "Attack", 0, 0, 96, 128, 1, 1);
+	m_sprite_manager->LoadSprite("pow_effect.png", "Attack", 0, 0, 128, 128, 1, 1);
 	AttackTexture = m_sprite_manager->GetTextures()["AttackTexture"];
-	AttackSprite = m_sprite_manager->GetSprites()["Attack"];
 	AttackSprite.setTexture(AttackTexture);	
-
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 				
 	return true;
 }

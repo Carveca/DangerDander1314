@@ -15,7 +15,7 @@ EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksp
 	m_extension.y = 128;
 	m_position = position;
 	m_name = "EnemyAOE";
-	m_speed = 300;
+	m_speed = 250;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
@@ -33,6 +33,8 @@ EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksp
 	m_frameCounter = 0.0f;
 
 	m_yDirection = 1;
+	m_xDirection = 0;
+	m_moveTimer = 1.0f;
 }
 
 EnemyAOE::~EnemyAOE()
@@ -51,17 +53,32 @@ void EnemyAOE::Attack()
 
 void EnemyAOE::Update(float elapsedTime)
 {
-	m_deltatime += elapsedTime;
+	//Movement
+	m_position.y += m_yDirection * m_speed * elapsedTime;
 
-	if(m_deltatime >= 0.01)
+	m_moveTimer -= elapsedTime;
+	if(m_moveTimer <= 0.0)
 	{
-		m_position.y += m_yDirection * m_speed * m_deltatime;
-		m_deltatime = 0.0f;
+		unsigned int randomize = rand() % 100 +1;
+		if(randomize <= 100 && randomize >= 51)
+		{
+			m_xDirection = 1;
+		}
+		else if(randomize <= 50 && randomize >= 0)
+		{
+			m_xDirection = -1;
+		}
+
+		m_moveTimer = 1.0;
+
 	}
-
+	m_position.x += m_xDirection * m_speed * elapsedTime;
+		
 	m_collider->SetPosition(m_position);
-	m_sprite.setPosition(m_position);
 
+	//Sprite
+	m_sprite.setPosition(m_position);
+	
 	m_sprite.setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
 	m_frameCounter += elapsedTime;
 	if(m_frameCounter >= 0.1f)
@@ -74,18 +91,18 @@ void EnemyAOE::Update(float elapsedTime)
 	
 	HandleCollision();
 
-		//Bounds
-	if(m_position.x < 0)
-		m_position.x = 0;
-	if(m_position.x > 1920)
-		m_position.x = 1920;
+	//X-Bounds
+	if(m_position.x < 360)
+		m_position.x = 360;
+	if(m_position.x > 1560)
+		m_position.x = 1560;
+	//Y-Bounds
 	if(m_position.y < -100)
 	{
 		m_position.y = 0;
-		m_yDirection = -m_yDirection;
-		m_sprite.rotate(180);
 	}
-	
+
+	//attack
 	m_attack->Update(m_position);
 }
 

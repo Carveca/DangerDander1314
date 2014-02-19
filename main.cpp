@@ -6,9 +6,13 @@
 #include "Player.h"
 
 #include <iostream>
+#include <time.h>
+#include <math.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {	
+
+	srand(time(0));
 	
 	Engine engine;
 
