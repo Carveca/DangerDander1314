@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Player::Player(sf::Sprite sprite, sf::Vector2f position) 
+Player::Player(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attackSprite) 
 {
 	m_extension.x = 128;
 	m_extension.y = 128;
@@ -26,14 +26,22 @@ Player::Player(sf::Sprite sprite, sf::Vector2f position)
 	m_sprite = sprite;
 	m_sprite.setOrigin(128, 128);
 	
+	m_attackSprite = attackSprite;
+	m_attackSprite.setOrigin(128, 128);
+
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
+
+	m_attackImageNR = 0;
+	m_attackAnimationTimer = 0.0;
 	
 	m_attackTimer = 0.0f;
 	m_drainTimer = 0.0f;
 
 	m_weaponSize = 60;
 	m_isAttacking = false;
+	m_attackAnimation = false;
+	m_attackAnimationTimer = 0.3;
 }
 
 Player::~Player()
@@ -58,28 +66,53 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 	Move(direction, elapsedtime);
 	m_collider->SetPosition(m_position);
 	m_sprite.setPosition(m_position);
+	m_attackSprite.setPosition(m_position);
 	
 	//Attack
 	m_isAttacking = false;
 
 	if(m_attackTimer <= 0.2 && m_attackTimer > 0.0)
+	{
 		m_isAttacking = true;
-	
+		//m_attackAnimation = true;
+	}	
+
 	m_attackTimer -= elapsedtime;
 	if(m_attackTimer < -10)
+	{
 		m_attackTimer = 0.0f;
+	}	
 
 	//Sprite
-	m_sprite.setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
-	m_frameCounter += elapsedtime;
-	if(m_frameCounter >= 0.1f)
+
+	if(m_attackAnimation)
 	{
-		m_imageNR++;
-		m_frameCounter = 0.0f;
-		if(m_imageNR > 7)
-			m_imageNR = 0;
+		m_attackSprite.setTextureRect(sf::IntRect( 257 * m_attackImageNR, 0, 256, 256));
+		m_attackFrameCounter += elapsedtime;
+		if(m_attackFrameCounter >= 0.1f)
+		{
+			m_attackImageNR++;
+			m_attackFrameCounter = 0.0f;
+			if(m_attackImageNR > 2)
+				m_attackImageNR = 0;
+		}
+		//m_attackSprite.setScale(2.0f, 2.0f);
+		m_attackSprite.setRotation(angle);
 	}
-	m_sprite.setRotation(angle);
+
+	else if(!m_attackAnimation)
+	{
+		m_sprite.setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
+		m_frameCounter += elapsedtime;
+		if(m_frameCounter >= 0.1f)
+		{
+			m_imageNR++;
+			m_frameCounter = 0.0f;
+			if(m_imageNR > 7)
+				m_imageNR = 0;
+		}
+		m_sprite.setRotation(angle);
+	}
 		
 	//Collision
 	HandleCollision();
@@ -144,6 +177,8 @@ void Player::Attack()
 {
 	if(m_attackTimer <= 0)
 		m_attackTimer = 0.3;
+	m_attackAnimation = true;
+	m_attackAnimationTimer = 0.3;
 }
 
 float Player::GetAttackTimer()
@@ -174,4 +209,21 @@ void Player::ChangeHP(int value)
 		m_hp = 100;
 	else if(m_hp < 0)
 		m_hp = 0;
+}
+
+void Player::SetAttackAnimationStop()
+{
+	m_attackAnimation = false;
+	m_attackFrameCounter = 0.0;
+	m_attackImageNR = 0;
+}
+
+bool Player::GetAttackAnimation()
+{
+	return m_attackAnimation;
+}
+
+sf::Sprite Player::GetAttackSprite()
+{
+	return m_attackSprite;
 }

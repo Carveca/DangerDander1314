@@ -66,8 +66,14 @@ bool Engine::Initialize()
 	m_sprite_manager->LoadSprite("player_weapon.png", "Player", 0, 0, 2048, 256, 1, 1);
 	PlayerTexture = m_sprite_manager->GetTextures()["PlayerTexture"];
 	PlayerSprite.setTexture(PlayerTexture);
+
+	m_sprite_manager->LoadSprite("Main_Character_Attack_SpriteSheet.png", "PlayerAttack", 0, 0, 1024, 256, 2, 2);
+	PlayerAttackTexture = m_sprite_manager->GetTextures()["PlayerAttackTexture"];
+	PlayerAttackSprite.setTexture(PlayerAttackTexture);
+
 	sf::Vector2f playerPOS = sf::Vector2f(960.0f, 500.0f);
-	m_player = new Player(PlayerSprite, playerPOS);
+
+	m_player = new Player(PlayerSprite, playerPOS, PlayerAttackSprite);
 
 	//Enemy
 	m_sprite_manager->LoadSprite("AOE.png", "EnemyAoe", 0, 0, 1024, 128, 1, 1);
@@ -121,17 +127,6 @@ void Engine::Run()
 		{
 			m_player->Attack();
 		}
-
-		/*
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-		{
-			if(!m_HappyPillContainer.empty())
-			{
-				m_HappyPillContainer.pop_back(); //vector
-				m_player->ChangeHP(-50);
-			}
-		}
-		*/
 
 		//Movement Input
 		m_direction.x = 0.0f;
@@ -205,10 +200,8 @@ void Engine::Run()
 			else if(m_angle == 315)//up left
 				attackPOS += sf::Vector2f(-120, -128);
 
-			m_attackContainer.push_back( new PlayerAttack(AttackSprite ,attackPOS, m_player->GetWeaponSize() ) );
+			m_attackContainer.push_back( new PlayerAttack(AttackSprite , attackPOS, m_player->GetWeaponSize() ) );
 		}
-
-		//std::cout << m_player->GetHP() << std::endl;
 
 		if(!m_attackContainer.empty())
 			{
@@ -216,6 +209,7 @@ void Engine::Run()
 				if(m_attackContainer[0]->Dead())
 				{
 					m_attackContainer.pop_back();
+					m_player->SetAttackAnimationStop();
 				}
 			}
 		//Update Enemies
@@ -315,7 +309,16 @@ void Engine::Draw()
 		}
 
 		//Player
-		m_window.draw(m_player->GetSprite());
+
+		if(!m_player->GetAttackAnimation())
+		{
+			m_window.draw(m_player->GetSprite());
+		}
+
+		else 
+		{
+			m_window.draw(m_player->GetAttackSprite());
+		}
 
 
 		//Pump

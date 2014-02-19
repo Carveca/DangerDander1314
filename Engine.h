@@ -46,8 +46,8 @@ protected:
 	SpawnerAOEenemy* m_spawner_AOEenemy;
 		
 	sf::RenderWindow m_window;
-	sf::Texture PlayerTexture, EnemyMeleeTexture, EnemyAoeTexture, LevelTexture, AttackTexture, PumpTexture, AOEtexture;
-	sf::Sprite PlayerSprite, EnemyMeleeSprite, EnemyAoeSprite, LevelSprite, AttackSprite, PumpSprite, AOEsprite;
+	sf::Texture PlayerTexture, PlayerAttackTexture, EnemyMeleeTexture, EnemyAoeTexture, LevelTexture, AttackTexture, PumpTexture, AOEtexture;
+	sf::Sprite PlayerSprite, PlayerAttackSprite, EnemyMeleeSprite, EnemyAoeSprite, LevelSprite, AttackSprite, PumpSprite, AOEsprite;
 	sf::Vector2f m_direction;
 
 	float m_elapsedTime;
