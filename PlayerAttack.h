@@ -11,10 +11,14 @@ public:
 	~PlayerAttack();
 
 	void Update(float elapsedTime);
+	void HandleCollision();
 
 	bool Dead();
+	bool GetHit();
+
 
 private:
 	float m_life;
 	bool m_dead;
+	bool m_hit;
 };

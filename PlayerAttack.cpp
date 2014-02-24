@@ -7,7 +7,6 @@
 PlayerAttack::PlayerAttack(sf::Sprite sprite, sf::Vector2f position, int size)
 {
 	m_name = "PlayerAttack";
-
 	m_position = position;
 
 	m_sprite = sprite;
@@ -22,6 +21,7 @@ PlayerAttack::PlayerAttack(sf::Sprite sprite, sf::Vector2f position, int size)
 
 	m_life = 0.1f;
 	m_dead = false;
+	m_hit = false;
 }
 
 PlayerAttack::~PlayerAttack()
@@ -32,8 +32,6 @@ PlayerAttack::~PlayerAttack()
 
 void PlayerAttack::Update(float elapsedTime)
 {
-	//m_sprite.setPosition(m_position);
-	//m_collider->SetPosition(m_position);
 	m_sprite.setTextureRect(sf::IntRect(0, 0, 120, 120));
 	
 	m_life -= elapsedTime;
@@ -42,9 +40,30 @@ void PlayerAttack::Update(float elapsedTime)
 	{
 		m_dead = true;
 	}
+
+	HandleCollision();
 }
 
 bool PlayerAttack::Dead()
 {
 	return m_dead;
+}
+
+void PlayerAttack::HandleCollision()
+{
+	for(unsigned int i = 0; i < m_collisions.size(); i++)
+	{
+		if(m_collisions[i].first->GetName() != "Player" && m_collisions[i].first->GetName() != "PlayerAttack" && m_collisions[i].first->GetName() != "AOEattack")
+		{
+			m_hit = true;
+			break;
+		}
+	}
+
+	m_collisions.clear();
+}
+
+bool PlayerAttack::GetHit()
+{
+	return m_hit;
 }

@@ -26,6 +26,7 @@ EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksp
 	m_attack = new AOEattack(attacksprite, m_position); 
 
 	m_sprite = sprite;
+	m_sprite.setPosition(m_position);
 	m_sprite.setOrigin(64, 64);
 	m_sprite.rotate(180);
 	
@@ -60,24 +61,31 @@ void EnemyAOE::Update(float elapsedTime)
 	if(m_moveTimer <= 0.0)
 	{
 		unsigned int randomize = rand() % 100 +1;
-		if(randomize <= 100 && randomize >= 51)
+		if(randomize <= 100 && randomize >= 67)
 		{
 			m_xDirection = 1;
+
 		}
-		else if(randomize <= 50 && randomize >= 0)
+		else if(randomize <= 66 && randomize >= 34)
 		{
 			m_xDirection = -1;
+
+		}
+		else if(randomize <= 33 && randomize >= 1)
+		{
+			m_xDirection = 0;
+
 		}
 
 		m_moveTimer = 1.0;
 
 	}
-	m_position.x += m_xDirection * m_speed * elapsedTime;
+	m_position.x += m_xDirection * m_speed * 1.5 * elapsedTime;
 		
 	m_collider->SetPosition(m_position);
 
 	//Sprite
-	m_sprite.setPosition(m_position);
+	
 	
 	m_sprite.setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
 	m_frameCounter += elapsedTime;
@@ -97,10 +105,12 @@ void EnemyAOE::Update(float elapsedTime)
 	if(m_position.x > 1560)
 		m_position.x = 1560;
 	//Y-Bounds
-	if(m_position.y < -100)
+	if(m_position.y < -400)
 	{
 		m_position.y = 0;
 	}
+	
+	m_sprite.setPosition(m_position);
 
 	//attack
 	m_attack->Update(m_position);

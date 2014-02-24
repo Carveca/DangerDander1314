@@ -24,6 +24,7 @@ AOEattack::AOEattack(sf::Sprite sprite, sf::Vector2f position)
 	m_collider->SetPosition(GetPosition());
 
 	m_sprite = sprite;
+	m_sprite.setPosition(m_position);
 	m_sprite.setOrigin(128, 128);
 	
 	m_imageNR = 0;

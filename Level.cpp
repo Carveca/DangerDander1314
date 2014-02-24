@@ -27,9 +27,9 @@ void Level::Update(float elapsedTime)
 {
 	m_position.y += 100 * elapsedTime;
 		
-	if(m_position.y >= 1080.0f)
+	if(m_position.y >= 1079.0f)
 	{
-		m_position.y = -1080.0f;
+		m_position.y = -1079.0f;
 	}
 
 	m_sprite.setPosition(m_position);

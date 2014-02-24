@@ -17,7 +17,6 @@
 
 #include "SpawnerAOEenemy.h"
 
-
 #include "Entity.h"
 
 #include <iostream>
@@ -49,7 +48,7 @@ bool Engine::Initialize()
 	LevelTexture = m_sprite_manager->GetTextures()["LevelTexture"];
 	LevelSprite.setTexture(LevelTexture);
 
-	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1080.0f);
+	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1079.0f);
 	m_level_top = new Level(LevelSprite, LevelPos);
 
 	sf::Vector2f LevelPos2 = sf::Vector2f(0.0f, 0.0f);
@@ -84,7 +83,7 @@ bool Engine::Initialize()
 	AOEtexture = m_sprite_manager->GetTextures()["AOETexture"];
 	AOEsprite.setTexture(AOEtexture);
 
-	sf::Vector2f enemyPOS = sf::Vector2f(500.0f, -90.0f);
+	sf::Vector2f enemyPOS = sf::Vector2f(500.0f, -200.0f);
 
 	m_spawner_AOEenemy = new SpawnerAOEenemy(EnemyAoeSprite, AOEsprite, enemyPOS);
 
@@ -186,19 +185,19 @@ void Engine::Run()
 			if(m_angle == 0) //up
 				attackPOS += sf::Vector2f(0, -128);
 			else if(m_angle == 45)//up right
-				attackPOS += sf::Vector2f(120, -128);
+				attackPOS += sf::Vector2f(120, -120);
 			else if(m_angle == 90)//right
 				attackPOS += sf::Vector2f(128, 0);
 			else if(m_angle == 135)//down right
-				attackPOS += sf::Vector2f(120, 128);
+				attackPOS += sf::Vector2f(120, 120);
 			else if(m_angle == 180)//down
 				attackPOS += sf::Vector2f(0, 128);
 			else if(m_angle == 225)//down left
-				attackPOS += sf::Vector2f(-120, 128);
+				attackPOS += sf::Vector2f(-120, 120);
 			else if(m_angle == 270)//left
 				attackPOS += sf::Vector2f(-128, 0);
 			else if(m_angle == 315)//up left
-				attackPOS += sf::Vector2f(-120, -128);
+				attackPOS += sf::Vector2f(-120, -120);
 
 			m_attackContainer.push_back( new PlayerAttack(AttackSprite , attackPOS, m_player->GetWeaponSize() ) );
 		}
@@ -305,7 +304,10 @@ void Engine::Draw()
 		//attacks
 		if(!m_attackContainer.empty())
 		{
-			m_window.draw(m_attackContainer[0]->GetSprite());
+			if(m_attackContainer[0]->GetHit() == true)
+			{
+				m_window.draw(m_attackContainer[0]->GetSprite());
+			}
 		}
 
 		//Player
