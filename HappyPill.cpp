@@ -29,14 +29,24 @@ HappyPill::HappyPill(sf::Sprite sprite, sf::Vector2f position)
 
 HappyPill::~HappyPill()
 {
-	
+	m_collisions.clear();
 
+	delete m_collider;
+	m_collider = nullptr;
 }
 
 void HappyPill::Update(float elapsedTime)
 {
 	m_collider->SetPosition(m_position);
 	m_sprite.setPosition(m_position);
+
+	m_deltatime += elapsedTime;
+
+	if(m_deltatime >= 0.01)
+	{
+		m_position.y += m_speed * m_deltatime;
+		m_deltatime = 0.0f;
+	}
 
 	HandleCollision();
 

@@ -14,5 +14,5 @@ public:
 
 	
 protected:
-	
+	float m_deltatime;
 };

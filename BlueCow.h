@@ -13,5 +13,5 @@ public:
 	void HandleCollision();
 
 protected:
-
+	
 };
