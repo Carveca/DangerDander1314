@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
+EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -23,7 +23,7 @@ EnemyMelee::EnemyMelee(sf::Sprite sprite, sf::Vector2f position)
 	m_collider->SetPosition(GetPosition());
 
 	m_sprite = sprite;
-	m_sprite.setOrigin(64, 64);
+	m_sprite->setOrigin(64, 64);
 	
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
@@ -42,15 +42,15 @@ void EnemyMelee::MeleeAttack()
 
 }
 
-void EnemyMelee::Update(float elapsedTime)
+void EnemyMelee::Update(float &deltatime)
 {
-	m_position.y += m_yDirection * m_speed * elapsedTime;
+	m_position.y += m_yDirection * m_speed * deltatime;
 
 	m_collider->SetPosition(m_position);
-	m_sprite.setPosition(m_position);
+	m_sprite->setPosition(m_position);
 
-	m_sprite.setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
-	m_frameCounter += elapsedTime;
+	m_sprite->setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
+	m_frameCounter += deltatime;
 	if(m_frameCounter >= 0.1f)
 	{
 		m_imageNR++;
@@ -70,13 +70,13 @@ void EnemyMelee::Update(float elapsedTime)
 	{
 		m_position.y = 0;
 		m_yDirection = -m_yDirection;
-		m_sprite.rotate(180);
+		m_sprite->rotate(180);
 	}
 	if(m_position.y > 1080)
 	{
 		m_position.y = 1080;
 		m_yDirection = -m_yDirection;
-		m_sprite.rotate(180);
+		m_sprite->rotate(180);
 	}
 }
 

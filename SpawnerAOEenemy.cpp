@@ -9,7 +9,7 @@ SpawnerAOEenemy::SpawnerAOEenemy()
 
 }
 
-SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite sprite, sf::Sprite AOEsprite, sf::Vector2f &spawnLocation)
+SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation)
 {
 	m_sprite = sprite;
 	m_AOEsprite = AOEsprite;
@@ -19,15 +19,21 @@ SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite sprite, sf::Sprite AOEsprite, sf::Ve
 	m_spawning = false;
 }
 
+SpawnerAOEenemy::~SpawnerAOEenemy()
+{
+
+}
+
+
 EnemyAOE* SpawnerAOEenemy::Spawn()
 {
 	return new EnemyAOE(m_sprite, m_spawnPosition, m_AOEsprite);	
 }
 
-void SpawnerAOEenemy::Update(float elapsedTime)
+void SpawnerAOEenemy::Update(float &deltatime)
 {
 	m_spawning = false;
-	m_spawnTimer -= elapsedTime;
+	m_spawnTimer -= deltatime;
 
 	if(m_spawnTimer <= 0.0)
 	{

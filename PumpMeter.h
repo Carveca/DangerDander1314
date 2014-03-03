@@ -7,10 +7,10 @@
 class PumpMeter : public Entity
 {
 public:
-	PumpMeter(sf::Sprite sprite, sf::Vector2f position);
+	PumpMeter(sf::Sprite* sprite, sf::Vector2f &position);
 	~PumpMeter();
 
-	void Update(int hpvalue);
+	void Update(int &hpvalue);
 
 
 private:

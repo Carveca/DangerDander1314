@@ -6,7 +6,7 @@
 #include "AOEattack.h"
 
 
-EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksprite)
+EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -26,9 +26,9 @@ EnemyAOE::EnemyAOE(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attacksp
 	m_attack = new AOEattack(attacksprite, m_position); 
 
 	m_sprite = sprite;
-	m_sprite.setPosition(m_position);
-	m_sprite.setOrigin(64, 64);
-	m_sprite.rotate(180);
+	m_sprite->setPosition(m_position);
+	m_sprite->setOrigin(64, 64);
+	//m_sprite->rotate(180);
 	
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
@@ -52,12 +52,12 @@ void EnemyAOE::Attack()
 
 }
 
-void EnemyAOE::Update(float elapsedTime)
+void EnemyAOE::Update(float &deltatime)
 {
 	//Movement
-	m_position.y += m_yDirection * m_speed * elapsedTime;
+	m_position.y += m_yDirection * m_speed * deltatime;
 
-	m_moveTimer -= elapsedTime;
+	m_moveTimer -= deltatime;
 	if(m_moveTimer <= 0.0)
 	{
 		unsigned int randomize = rand() % 100 +1;
@@ -80,15 +80,14 @@ void EnemyAOE::Update(float elapsedTime)
 		m_moveTimer = 1.0;
 
 	}
-	m_position.x += m_xDirection * m_speed * 1.5 * elapsedTime;
+	m_position.x += m_xDirection * m_speed * 1.5 * deltatime;
 		
 	m_collider->SetPosition(m_position);
 
-	//Sprite
+	//Sprite	
 	
-	
-	m_sprite.setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
-	m_frameCounter += elapsedTime;
+	m_sprite->setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
+	m_frameCounter += deltatime;
 	if(m_frameCounter >= 0.1f)
 	{
 		m_imageNR++;
@@ -110,7 +109,7 @@ void EnemyAOE::Update(float elapsedTime)
 		m_position.y = 0;
 	}
 	
-	m_sprite.setPosition(m_position);
+	m_sprite->setPosition(m_position);
 
 	//attack
 	m_attack->Update(m_position);

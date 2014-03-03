@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Player::Player(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attackSprite) 
+Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite) 
 {
 	m_extension.x = 128;
 	m_extension.y = 128;
@@ -23,17 +23,26 @@ Player::Player(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attackSprite
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
-	m_sprite = sprite;
-	m_sprite.setOrigin(128, 128);
+	if(sprite != nullptr)
+	{
+		m_sprite = sprite;
+		m_sprite->setOrigin(128, 128);
+	}
+	else
+	{
+		std::cout << "Player Sprite fail" << std::endl;
+	}
+
 	
 	m_attackSprite = attackSprite;
-	m_attackSprite.setOrigin(128, 128);
+	m_attackSprite->setOrigin(128, 128);
 
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
 
 	m_attackImageNR = 0;
-	m_attackAnimationTimer = 0.0;
+	//m_attackAnimationTimer = 0.0;
+
 	
 	m_attackTimer = 0.0f;
 	m_drainTimer = 0.0f;
@@ -41,7 +50,6 @@ Player::Player(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attackSprite
 	m_weaponSize = 60;
 	m_isAttacking = false;
 	m_attackAnimation = false;
-	m_attackAnimationTimer = 0.3;
 }
 
 Player::~Player()
@@ -60,21 +68,24 @@ void Player::Cleanup()
 	m_collisions.clear();
 }
 
-void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
+void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 {	
 	//Move
 	Move(direction, elapsedtime);
 	m_collider->SetPosition(m_position);
-	m_sprite.setPosition(m_position);
-	m_attackSprite.setPosition(m_position);
+	m_sprite->setPosition(m_position);
+	m_attackSprite->setPosition(m_position);
 	
 	//Attack
 	m_isAttacking = false;
+	m_attackAnimation = false;
 
-	if(m_attackTimer <= 0.2 && m_attackTimer > 0.0)
+	if(m_attackTimer <= 0.3 && m_attackTimer > 0.0)
 	{
-		m_isAttacking = true;
-		//m_attackAnimation = true;
+		m_attackAnimation = true;
+
+		if(m_attackTimer <= 0.2 && m_attackTimer > 0.0)
+			m_isAttacking = true;		
 	}	
 
 	m_attackTimer -= elapsedtime;
@@ -87,7 +98,7 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 
 	if(m_attackAnimation)
 	{
-		m_attackSprite.setTextureRect(sf::IntRect( 257 * m_attackImageNR, 0, 256, 256));
+		m_attackSprite->setTextureRect(sf::IntRect( 257 * m_attackImageNR, 0, 256, 256));
 		m_attackFrameCounter += elapsedtime;
 		if(m_attackFrameCounter >= 0.1f)
 		{
@@ -96,13 +107,12 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 			if(m_attackImageNR > 2)
 				m_attackImageNR = 0;
 		}
-		//m_attackSprite.setScale(2.0f, 2.0f);
-		m_attackSprite.setRotation(angle);
+		m_attackSprite->setRotation(angle);
 	}
 
 	else if(!m_attackAnimation)
 	{
-		m_sprite.setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
+		m_sprite->setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
 		m_frameCounter += elapsedtime;
 		if(m_frameCounter >= 0.1f)
 		{
@@ -111,7 +121,7 @@ void Player::Update(float angle, sf::Vector2f direction, float elapsedtime)
 			if(m_imageNR > 7)
 				m_imageNR = 0;
 		}
-		m_sprite.setRotation(angle);
+		m_sprite->setRotation(angle);
 	}
 		
 	//Collision
@@ -155,7 +165,7 @@ void Player::HandleCollision()
 
 		else if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
-			//m_position += m_collisions[i].second;
+			
 		}
 
 		else if(m_collisions[i].first->GetName() == "AOEattack")
@@ -168,7 +178,7 @@ void Player::HandleCollision()
 	m_collisions.clear();
 }
 
-sf::Sprite Player::GetSprite()
+sf::Sprite* Player::GetSprite()
 {
 	return m_sprite;
 }
@@ -177,8 +187,6 @@ void Player::Attack()
 {
 	if(m_attackTimer <= 0)
 		m_attackTimer = 0.3;
-	m_attackAnimation = true;
-	m_attackAnimationTimer = 0.3;
 }
 
 float Player::GetAttackTimer()
@@ -223,7 +231,7 @@ bool Player::GetAttackAnimation()
 	return m_attackAnimation;
 }
 
-sf::Sprite Player::GetAttackSprite()
+sf::Sprite* Player::GetAttackSprite()
 {
 	return m_attackSprite;
 }

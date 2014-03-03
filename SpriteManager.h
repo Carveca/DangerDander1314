@@ -11,16 +11,15 @@ public:
 	~SpriteManager();
 
 	bool Initialize(const sf::String &directory);
-	void LoadSprite( std::string file_name, std::string sprite_name, int x, int y, int width, int height, float scale_X, float scale_Y);
-	
-	std::map<std::string, sf::Sprite> GetSprites();
-	std::map<std::string, sf::Texture> GetTextures();
 
+	void LoadTexture(std::string fileName, int width, int height);
+	void LoadSprite(std::string &filename, int &width, int &height);
+		
+	sf::Sprite* GetSprite(std::string filename, int width, int height);
 
 protected:
 	std::string m_filepath;
 
-	std::map<std::string, sf::Sprite> m_sprites; 
-	std::map<std::string, sf::Texture> m_textures;
-
+	std::map<std::string, sf::Texture*> m_textures;
+	std::map<std::string, sf::Sprite*> m_sprites; 	
 };

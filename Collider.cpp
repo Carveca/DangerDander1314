@@ -128,7 +128,7 @@ sf::Vector2f Collider::GetPosition()
 	return m_position;
 }
 
-void Collider::SetPosition(sf::Vector2f position)
+void Collider::SetPosition(sf::Vector2f &position)
 {
 	m_position.x = position.x;
 	m_position.y = position.y;
@@ -139,7 +139,7 @@ sf::Vector2f Collider::GetExtension()
 	return m_extension;
 }
 
-void Collider::SetExtension(sf::Vector2f extension)
+void Collider::SetExtension(sf::Vector2f &extension)
 {
 	m_extension = extension;
 }

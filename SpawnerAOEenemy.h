@@ -8,12 +8,12 @@ class SpawnerAOEenemy
 {
 public:
 	SpawnerAOEenemy();
-	SpawnerAOEenemy(sf::Sprite sprite, sf::Sprite AOEsprite, sf::Vector2f &spawnLocation);
+	SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation);
 	~SpawnerAOEenemy();
 
 	EnemyAOE* Spawn();
 
-	void Update(float elapsedTime);
+	void Update(float &deltatime);
 
 	bool SpawnerAOEenemy::GetSpawnState();
 
@@ -24,6 +24,6 @@ protected:
 
 	sf::Vector2f m_spawnPosition;
 
-	sf::Sprite m_sprite;
-	sf::Sprite m_AOEsprite;
+	sf::Sprite* m_sprite;
+	sf::Sprite* m_AOEsprite;
 };

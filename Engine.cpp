@@ -1,26 +1,74 @@
 //Engine source file
-
+/*
 #include "stdafx.h"
 #include "Engine.h"
-
-
 #include "Player.h"
 #include "PlayerAttack.h"
 #include "PumpMeter.h"
 #include "EnemyMelee.h"
 #include "EnemyAOE.h"
 #include "Level.h"
-
 #include "Collider.h"
 #include "CollisionManager.h"
 #include "SpriteManager.h"
-
 #include "SpawnerAOEenemy.h"
-
 #include "Entity.h"
-
 #include <iostream>
+*/
 
+#include "stdafx.h"
+#include "Engine.h"
+
+#include "StateManagerII.h"
+#include "MenuStateII.h"
+#include "GameStateII.h"
+
+
+Engine::Engine()
+{
+
+}
+
+Engine::~Engine()
+{
+	delete m_stateManager;
+	m_stateManager = nullptr;
+
+}
+
+bool Engine::Initialize()
+{
+	m_stateManager = new StateManagerII;
+	
+	m_stateManager->Attach(new MenuStateII);
+	m_stateManager->Attach(new GameStateII);
+
+	m_stateManager->SetState("MenuStateII");
+
+	return true;
+}
+
+void Engine::Run()
+{
+	m_clock = new sf::Clock;
+
+	while(m_stateManager->m_window->isOpen())
+	{
+		//deltatime
+		float deltatime = m_clock->restart().asSeconds();
+		
+		//Update
+		m_stateManager->Update(deltatime);
+		//Draw
+		m_stateManager->Draw();
+	}
+
+}
+
+
+//old code
+
+/*
 Engine::Engine()
 {
 	m_direction.x = 0.0f;
@@ -329,3 +377,4 @@ void Engine::Draw()
 		m_window.display();	
 
 }
+*/

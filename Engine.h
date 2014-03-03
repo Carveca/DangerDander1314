@@ -1,5 +1,6 @@
 //Engine header
 
+/*
 #pragma once
 
 class Player;
@@ -8,16 +9,46 @@ class PumpMeter;
 class EnemyMelee;
 class EnemyAOE;
 class Level;
-
-//#include "Level.h"
-
 class SpriteManager;
 class CollisionManager;
 class SpawnerAOEenemy;
-
 class Entity;
 class InteractiveObject;
+*/
 
+#pragma once
+
+class StateManagerII;
+
+class Engine
+{
+
+public:
+	Engine();
+	~Engine();
+
+	bool Initialize();
+
+	void Run();
+
+
+private:
+	StateManagerII* m_stateManager;	
+
+	sf::Clock* m_clock;
+
+};
+
+
+
+
+
+
+
+
+
+
+/*
 class Engine
 {
 public:
@@ -56,3 +87,4 @@ protected:
 	std::vector<PlayerAttack*> m_attackContainer;
 	std::vector<EnemyAOE*> m_AOEenemyContainer;
 };
+*/

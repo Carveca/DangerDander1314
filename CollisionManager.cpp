@@ -13,7 +13,7 @@ CollisionManager::CollisionManager()
 
 CollisionManager::~CollisionManager()
 {
-
+	m_colliders.clear();
 }
 
 void CollisionManager::Initialize()

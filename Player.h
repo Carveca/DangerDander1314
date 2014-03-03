@@ -7,12 +7,12 @@
 class Player : public Character
 {
 public:
-	Player(sf::Sprite sprite, sf::Vector2f position, sf::Sprite attackSprite);
+	Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite);
 	~Player();
 	
 	void Initialize();
 	void Cleanup();	
-	void Update(float angle, sf::Vector2f direction, float elapsedtime);
+	void Update(float &angle, sf::Vector2f &direction, float &deltatime);
 	void HandleCollision();
 	void Attack();
 	void WeaponStick();
@@ -25,8 +25,8 @@ public:
 	bool GetAttacking();
 	bool GetAttackAnimation();
 
-	sf::Sprite GetSprite();
-	sf::Sprite GetAttackSprite();
+	sf::Sprite* GetSprite();
+	sf::Sprite* GetAttackSprite();
 
 	void SetAttackAnimationStop();
 		
@@ -43,7 +43,7 @@ private:
 	bool m_isAttacking;
 	bool m_attackAnimation;
 	
-	sf::Sprite m_attackSprite;
+	sf::Sprite* m_attackSprite;
 	float m_attackFrameCounter;
 	int m_attackImageNR;
 

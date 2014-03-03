@@ -13,10 +13,10 @@ public:
 	bool OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &offset);
 			
 	sf::Vector2f GetPosition();
-	void SetPosition(sf::Vector2f position);
+	void SetPosition(sf::Vector2f &position);
 
 	sf::Vector2f GetExtension();
-	void SetExtension(sf::Vector2f extension);
+	void SetExtension(sf::Vector2f &extension);
 
 	float GetRadius();
 	void SetRadius(float value);

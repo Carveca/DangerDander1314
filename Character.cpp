@@ -13,7 +13,7 @@ Character::~Character()
 
 }
 
-void Character::Move(sf::Vector2f direction, float deltatime)
+void Character::Move(sf::Vector2f &direction, float &deltatime)
 {
 	m_position += direction * m_speed * deltatime;
 
