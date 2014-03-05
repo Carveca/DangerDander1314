@@ -4,18 +4,31 @@
 #include "EntityManager.h"
 
 #include "CollisionManager.h"
+#include "MusicManager.h"
+#include "SoundManager.h"
 
 #include "Player.h"
 #include "PlayerAttack.h"
+#include "PumpMeter.h"
+
 #include "EnemyAOE.h"
 
 
-EntityManager::EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* powSprite)
+EntityManager::EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager)
 {
 	m_collisionManager = new CollisionManager;
 
+	m_soundManager = soundmanager;
+	m_soundManager->LoadSound("sfx_pumpmeter_increase_1.wav", "PumpIncrease");
+
+	m_musicManager = musicmanager;
+	
 	m_powSprite = powSprite;
-	m_player = new Player(playerSprite, playerlPOS, playerAttackSprite);	
+	m_player = new Player(playerSprite, playerlPOS, playerAttackSprite, soundmanager, playerdeathsprite);
+
+	m_musicNR = 0;
+	m_musicSwitch = false;
+
 }
 
 EntityManager::~EntityManager()
@@ -40,16 +53,22 @@ EntityManager::~EntityManager()
 void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatime)
 {
 	UpdatePlayer(angle, direction, deltatime);
-	UpdateEnemyAOE(deltatime);
 
-	CollisionCheck();
+	UpdatePumpMeter(m_player->GetHP());
+
+	UpdateEnemyAOE(deltatime);
+	
+	CollisionCheck();	
 }
 
 void EntityManager::Draw(sf::RenderWindow* window)
 {
 	DrawEnemyAOE(window);
-
+		
 	DrawPlayer(window);
+
+	DrawPumpMeter(window);
+
 }
 
 void EntityManager::CollisionCheck()
@@ -66,6 +85,7 @@ void EntityManager::CollisionCheck()
 		for(unsigned int i = 0; i < m_enemyAOE.size(); i++)
 		{
 			m_collisionManager->Add(m_enemyAOE[i]);
+			m_collisionManager->Add(m_enemyAOE[i]->GetAttack());
 		}
 	}
 
@@ -78,7 +98,76 @@ void EntityManager::CheckHP()
 
 }
 
+void EntityManager::MusicSwitch()
+{
+	//music switch
+	m_musicSwitch = false;
+	m_musicNRprevious = m_musicNR;
+
+	if(m_player->GetHP() >= 80)
+	{
+		m_musicNR = 3;
+		//m_musicManager->LoadMusic("soundtrack_high_1.wav");
+		//m_musicManager->Play();
+	}
+	else if(m_player->GetHP() <= 20)
+	{
+		m_musicNR = 2;
+		//m_musicManager->LoadMusic("soundtrack_low_1.wav");
+		//m_musicManager->Play();
+	}
+	else
+	{
+		m_musicNR = 1;
+		//m_musicManager->LoadMusic("soundtrack_mid_1.wav");
+		//m_musicManager->Play();
+	}
+
+	if(m_musicNR != m_musicNRprevious)
+		m_musicSwitch = true;
+
+
+	//Music play
+
+	if(m_musicSwitch)
+	{
+		m_musicManager->Offset();		
+
+		if(m_musicNR == 3)
+		{
+			m_musicManager->LoadMusic("soundtrack_high_1.wav");
+			m_musicManager->PlayWithOffset();
+		}
+		else if(m_musicNR == 2)
+		{
+			m_musicManager->LoadMusic("soundtrack_low_1.wav");
+			m_musicManager->PlayWithOffset();
+		}
+		else
+		{
+			m_musicManager->LoadMusic("soundtrack_mid_1.wav");
+			m_musicManager->PlayWithOffset();
+		}
+
+	}
+}
+
 //Add
+
+void EntityManager::AddSounds(SoundManager* soundmanager)
+{
+	m_soundManager = soundmanager;
+}
+
+void EntityManager::AddMusic(MusicManager* musicmanager)
+{
+	m_musicManager = musicmanager;
+}
+
+void EntityManager::AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS)
+{
+	m_pumpMeter = new PumpMeter(pumpSprite, indicatorSprite, indicatorEffectSprite, leftWarningSprite, rightWarningSprite, pumpMeterPOS);
+}
 
 void EntityManager::AddEnemyAOE(EnemyAOE* enemyAOE)
 {
@@ -135,9 +224,13 @@ void EntityManager::DrawPlayer(sf::RenderWindow* window)
 
 		if(!m_playerAttack.empty())
 		{
-			if(!m_playerAttack[0]->GetHit())
+			for( unsigned int i = 0; i < m_playerAttack.size(); i++)
 			{
-				m_playerAttack[0]->GetSprite();
+				if(m_playerAttack[0]->GetHit())
+				{
+					m_powSprite->setPosition(m_playerAttack[0]->GetPosition());
+					window->draw(*m_powSprite);
+				}
 			}
 		}
 	}
@@ -149,6 +242,25 @@ void EntityManager::DrawPlayer(sf::RenderWindow* window)
 	}
 }
 
+//PumpMeter - Update and Draw
+
+void EntityManager::UpdatePumpMeter(int hpvalue)
+{
+	m_pumpMeter->Update(hpvalue);
+}
+
+void EntityManager::DrawPumpMeter(sf::RenderWindow* window)
+{
+	window->draw(*m_pumpMeter->m_leftWarningSprite);
+	window->draw(*m_pumpMeter->m_rightWarningSprite);
+	
+	window->draw(*m_pumpMeter->GetSprite());
+
+	window->draw(*m_pumpMeter->m_indicatorEffectSprite);
+	window->draw(*m_pumpMeter->m_indicatorSprite);
+}
+
+
 //EnemyAOE - Update and Draw
 
 void EntityManager::UpdateEnemyAOE(float &deltatime)
@@ -159,12 +271,19 @@ void EntityManager::UpdateEnemyAOE(float &deltatime)
 		{
 			m_enemyAOE[i]->Update(deltatime);
 
-			if(m_enemyAOE[i]->GetHP() <= 0)
+			if(m_enemyAOE[i]->GetPosition().y >= 1100)
+			{
+				delete m_enemyAOE[i];
+				m_enemyAOE[i] = nullptr;
+				m_enemyAOE.erase(m_enemyAOE.begin() + i);
+			}
+			else if(m_enemyAOE[i]->GetHP() <= 0)
 			{
 				delete m_enemyAOE[i];
 				m_enemyAOE[i] = nullptr;
 				m_enemyAOE.erase(m_enemyAOE.begin() + i);
 				m_player->ChangeHP(20);
+				m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
 	}

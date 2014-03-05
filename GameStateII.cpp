@@ -5,7 +5,10 @@
 
 #include "EntityManager.h"
 #include "SpriteManager.h"
+#include "MusicManager.h"
 #include "CollisionManager.h"
+
+#include "SoundManager.h"
 
 #include "SpawnerAOEenemy.h"
 
@@ -17,7 +20,7 @@ GameStateII::GameStateII()
 	m_done = false;
 }
 
-bool GameStateII::Enter(SpriteManager* spritemanager)
+bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager)
 {
 	m_done = false;
 
@@ -25,14 +28,26 @@ bool GameStateII::Enter(SpriteManager* spritemanager)
 	m_direction.y = 0;
 	m_angle = 0;
 
+	//Managers
 	m_spriteManager = spritemanager;
+	m_musicManager = musicmanager;
 
-	m_entityManager = new EntityManager(m_spriteManager->GetSprite("player_weapon.png", 2048, 256), sf::Vector2f(950, 540), m_spriteManager->GetSprite("player_attack.png", 1024, 256), m_spriteManager->GetSprite("pow_effect.png", 128, 128) );
+	m_musicManager->LoadMusic("soundtrack_long_1.wav");
+	m_musicManager->Play();
+
+	//new manager and spawners
+	m_soundManager = new SoundManager;
+	m_soundManager->Initialize("../Sounds/");
+	
+	m_entityManager = new EntityManager(m_spriteManager->GetSprite("player_weapon.png", 2048, 256), sf::Vector2f(950, 540), m_spriteManager->GetSprite("player_attack.png", 1024, 256), m_spriteManager->GetSprite("player_death.png", 256, 256) , m_spriteManager->GetSprite("pow_effect.png", 128, 128), m_soundManager, m_musicManager);
+	m_entityManager->AddPumpMeter(m_spriteManager->GetSprite("new_pumpmeter.png", 800, 246), m_spriteManager->GetSprite("pumpmeter_indicator.png", 70, 94), m_spriteManager->GetSprite("indicator_effect.png", 150, 150), m_spriteManager->GetSprite("meter_effect_left.png", 800, 246), m_spriteManager->GetSprite("meter_effect_right.png", 800, 246), sf::Vector2f(0, 0));
+	
+
 	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 1024, 128), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100) );
 
-	m_levelTop = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, 0));
 
-	m_levelBottom	= new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, -1079) );
+	m_levelTop = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, 0));
+	m_levelBottom = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, -1079) );
 
 
 	return true;
@@ -40,6 +55,12 @@ bool GameStateII::Enter(SpriteManager* spritemanager)
 
 void GameStateII::Exit()
 {
+	if(m_soundManager != nullptr)
+	{
+		delete m_soundManager;
+		m_soundManager = nullptr;
+	}
+
 	if(m_entityManager != nullptr)
 	{
 		delete m_entityManager;
@@ -90,6 +111,11 @@ bool GameStateII::Update(float &deltatime)
 
 	m_levelTop->Update(deltatime);
 	m_levelBottom->Update(deltatime);
+
+	if(m_entityManager->m_player->GetHP() == 100 || m_entityManager->m_player->GetHP() == 0)
+	{
+		GameOver();
+	}
 
 	return m_done;
 }
@@ -173,5 +199,23 @@ void GameStateII::Input()
 		m_angle = 90;
 	}
 
+
+}
+
+void GameStateII::GameOver()
+{
+	
+
+
+	if(m_entityManager->m_player->GetHP() == 100)
+	{
+		m_nextState = "GameOverHeart";
+		m_done = true;
+	}
+	else if(m_entityManager->m_player->GetHP() == 0)
+	{
+		m_nextState = "GameOverSleep";
+		m_done = true;
+	}
 
 }

@@ -1,12 +1,14 @@
 //Player source file
 #include "stdafx.h"
 #include "Player.h"
+
 #include "Collider.h"
 #include "PlayerAttack.h"
+#include "SoundManager.h"
 
 #include <iostream>
 
-Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite) 
+Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, SoundManager* soundmanager, sf::Sprite* deathAnimation) 
 {
 	m_extension.x = 128;
 	m_extension.y = 128;
@@ -14,7 +16,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 
 	m_name = "Player";
 	m_speed = 300.0f;
-	m_hp = 90;
+	m_hp = 70;
 	m_hpDrain = -1;
 
 	m_collider = new Collider;
@@ -23,27 +25,38 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
+	m_soundManager = soundmanager;
+	m_soundManager->LoadSound("sfx_main_character_attack_1.wav", "PlayerAttack");
+	m_soundManager->LoadSound("sfx_main_character_movement_1.wav", "PlayerMove");
+
 	if(sprite != nullptr)
 	{
 		m_sprite = sprite;
 		m_sprite->setOrigin(128, 128);
+		
 	}
 	else
 	{
 		std::cout << "Player Sprite fail" << std::endl;
 	}
-
-	
-	m_attackSprite = attackSprite;
-	m_attackSprite->setOrigin(128, 128);
-
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
-
+	
+	//Attackanimation
+	m_attackSprite = attackSprite;
+	m_attackSprite->setOrigin(128, 128);
 	m_attackImageNR = 0;
-	//m_attackAnimationTimer = 0.0;
+	m_attackFrameCounter = 0.0f;
+
+	//DeathAnimation
+	m_deathSprite = deathAnimation;
+	m_deathSprite->setOrigin(128, 128);
+	m_deathImageNR = 0;
+	m_deathFrameCounter = 0.0f;
 
 	
+	
+	m_moveSoundTimer = 0.0f;
 	m_attackTimer = 0.0f;
 	m_drainTimer = 0.0f;
 
@@ -72,6 +85,13 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 {	
 	//Move
 	Move(direction, elapsedtime);
+	m_moveSoundTimer += elapsedtime;
+	if(m_moveSoundTimer >= 0.4)
+	{
+		m_moveSoundTimer = 0.0;
+		m_soundManager->PlaySound("PlayerMove");
+	}
+
 	m_collider->SetPosition(m_position);
 	m_sprite->setPosition(m_position);
 	m_attackSprite->setPosition(m_position);
@@ -112,7 +132,7 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 
 	else if(!m_attackAnimation)
 	{
-		m_sprite->setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
+		m_sprite->setTextureRect(sf::IntRect( 257 * m_imageNR, 0, 256, 256));
 		m_frameCounter += elapsedtime;
 		if(m_frameCounter >= 0.1f)
 		{
@@ -133,9 +153,19 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 	{
 		m_hp += m_hpDrain;
 		m_drainTimer = 0.0;
-
+		
 		m_hpDrain = -1;
 	}
+
+	if(m_hp > 100)
+	{
+		m_hp = 100;
+	}
+	else if(m_hp < 0)
+	{
+		m_hp = 0;
+	}
+
 	
 	//X-Bounds
 	if(m_position.x < 360)
@@ -186,7 +216,10 @@ sf::Sprite* Player::GetSprite()
 void Player::Attack()
 {
 	if(m_attackTimer <= 0)
+	{
+		m_soundManager->PlaySound("PlayerAttack");
 		m_attackTimer = 0.3;
+	}
 }
 
 float Player::GetAttackTimer()

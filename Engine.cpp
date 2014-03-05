@@ -22,6 +22,8 @@
 #include "StateManagerII.h"
 #include "MenuStateII.h"
 #include "GameStateII.h"
+#include "GameOverHeart.h"
+#include "GameOverSleep.h"
 
 
 Engine::Engine()
@@ -42,6 +44,8 @@ bool Engine::Initialize()
 	
 	m_stateManager->Attach(new MenuStateII);
 	m_stateManager->Attach(new GameStateII);
+	m_stateManager->Attach(new GameOverHeart);
+	m_stateManager->Attach(new GameOverSleep);
 
 	m_stateManager->SetState("MenuStateII");
 

@@ -101,15 +101,17 @@ void EnemyAOE::Update(float &deltatime)
 	//X-Bounds
 	if(m_position.x < 360)
 		m_position.x = 360;
-	if(m_position.x > 1560)
+	else if(m_position.x > 1560)
 		m_position.x = 1560;
 	//Y-Bounds
 	if(m_position.y < -400)
 	{
 		m_position.y = 0;
 	}
-	
+
+
 	m_sprite->setPosition(m_position);
+
 
 	//attack
 	m_attack->Update(m_position);

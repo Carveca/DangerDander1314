@@ -5,18 +5,39 @@
 #include "StateII.h"
 
 class EntityManager;
-//class CollisionManager;
+
+class SoundManager;
 
 class SpawnerAOEenemy;
 class Player;
 class Level;
+
+/*
+Singleton
+class Foo;
+
+static Foo* instance;
+
+
+Foo::GetInstance()
+
+Getinstance()	{
+	if(instance != nullptr)	{
+		return new Foo
+	}
+	else
+	{
+		return instance;
+	}
+}
+*/
 
 class GameStateII : public StateII
 {
 public:
 	GameStateII();
 
-	bool Enter(SpriteManager* spritemanager);
+	bool Enter(SpriteManager* spritemanager, MusicManager* musicmanager);
 	void Exit();
 
 	bool Update(float &deltatime);
@@ -25,14 +46,20 @@ public:
 	std::string Next();
 	bool IsType(const std::string &type);
 
+	
+
 private:
 
 	void Input();
+	void GameOver();
 
 private:
-	EntityManager*		m_entityManager;
+	EntityManager* m_entityManager;
+	MusicManager* m_musicManager;
 
-	SpawnerAOEenemy*	m_spawnerAOEenemy;
+	SoundManager* m_soundManager;
+
+	SpawnerAOEenemy* m_spawnerAOEenemy;
 	
 	Level* m_levelTop;
 	Level* m_levelBottom;
@@ -42,7 +69,6 @@ private:
 
 private:
 	SpriteManager* m_spriteManager;
-	//CollisionManager* m_collisionManager;
 
 	bool m_done;
 	std::string m_nextState;

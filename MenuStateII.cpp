@@ -3,15 +3,31 @@
 #include "stdafx.h"
 #include "MenuStateII.h"
 
+#include "SpriteManager.h"
+#include "MusicManager.h"
+
 
 MenuStateII::MenuStateII()
 {
 	m_done = false;
+
+
+
 }
 
-bool MenuStateII::Enter(SpriteManager* spritemanager)
+bool MenuStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager)
 {
 	m_done = false;
+
+	m_spriteManager = spritemanager;
+	m_backGround = m_spriteManager->GetSprite("menuscreen.png", 1920, 1080);
+
+
+	m_musicManager = musicmanager;
+
+	m_musicManager->LoadMusic("screen_music_1.wav");
+	m_musicManager->Play();
+
 
 	return true;
 }
@@ -46,7 +62,7 @@ bool MenuStateII::Update(float &deltatime)
 void MenuStateII::Draw(sf::RenderWindow* window)
 {
 
-
+	window->draw(*m_backGround);
 
 }
 

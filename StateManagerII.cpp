@@ -18,9 +18,7 @@ StateManagerII::StateManagerII()
 
 	m_musicManager = new MusicManager;
 	m_musicManager->Initialize("../Music/");
-
-	m_musicManager->LoadMusic("soundtrack_high_1.wav");
-	m_musicManager->Play();
+		
 }
 
 StateManagerII::~StateManagerII()
@@ -85,6 +83,7 @@ void StateManagerII::SetState(const std::string &type)
 		if(m_states[i]->IsType(type))
 		{
 			m_current = m_states[i];
+			m_current->Enter(m_spriteManager, m_musicManager);
 			return;
 		}
 	}
@@ -110,7 +109,7 @@ void StateManagerII::ChangeState()
 		if(m_states[i]->IsType(nextState))
 		{
 			m_current = m_states[i];
-			m_current->Enter(m_spriteManager);
+			m_current->Enter(m_spriteManager, m_musicManager);
 			return;
 		}
 	}

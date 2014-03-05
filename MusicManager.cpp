@@ -48,3 +48,16 @@ void MusicManager::VolumeControl(int &m_volume)
 {
 	m_music.setVolume(m_volume);
 }
+
+sf::Time MusicManager::Offset()
+{
+	m_musicOffset = m_music.getPlayingOffset();
+
+	return m_musicOffset;
+}
+
+void MusicManager::PlayWithOffset()
+{
+	m_music.play();
+	m_music.setPlayingOffset(m_musicOffset);
+}

@@ -17,8 +17,12 @@ public:
 	void VolumeControl(int &m_volume);
 	bool LoadMusic(std::string filename);
 
+	sf::Time Offset();
+	void PlayWithOffset();
+
 private:	
 	std::string m_directory;
 	sf::Music m_music;
 
+	sf::Time m_musicOffset;
 };
