@@ -1,12 +1,11 @@
-//EnemyRanged.cpp
-
+//EnemyMelee source file
 #include "stdafx.h"
-#include "EnemyRanged.h"
+#include "EnemyMelee.h"
 #include "Collider.h"
 
-#include <cmath>
+#include <iostream>
 
-EnemyRanged::EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position)
+EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -17,8 +16,8 @@ EnemyRanged::EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position)
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
-	m_name = "EnemyRanged";
-	m_speed = 250;
+	m_name = "EnemyMelee";
+	m_speed = 300;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
@@ -27,31 +26,29 @@ EnemyRanged::EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position)
 	m_collider->SetPosition(GetPosition());
 
 	m_sprite = sprite;
-	m_sprite->setPosition(m_position);
 	m_sprite->setOrigin(64, 64);
 	
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
 
-	m_Direction.y = 1;
+	m_Direction.y = 0;
 	m_Direction.x = 0;
 }
 
-EnemyRanged::~EnemyRanged()
+EnemyMelee::~EnemyMelee()
 {
-	m_collisions.clear();
-
 	delete m_collider;
 	m_collider = nullptr;
 }
 
-
-void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
+void EnemyMelee::MeleeAttack()
 {
-	if(m_position.y < 100)
-	{
-		m_position.y += m_Direction.y * m_speed * deltatime;
-	}
+	if(m_attackTimer <= 0)
+		m_attackTimer = 0.3;
+}
+
+void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
+{
 	float deltax = m_position.x - refpos.x;
 	float deltay = m_position.y - refpos.y;
 	float distance = sqrtf(deltax * deltax + deltay * deltay);
@@ -60,13 +57,13 @@ void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
 	m_Direction.y = sin(angle) * -1;
 	m_isAttacking = false;
 
-	if(distance > 400)
+	if(distance > 100)
 	{
 		m_position += m_Direction * m_speed * deltatime;
 	}
 	else 
 	{	
-		RangedAttack();				
+		MeleeAttack();				
 	}
 
 	if(m_attackTimer <= 0.3 && m_attackTimer > 0.0)
@@ -83,6 +80,9 @@ void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
 		m_attackTimer = 0.0f;
 	}	
 
+	m_collider->SetPosition(m_position);
+	m_sprite->setPosition(m_position);
+
 	m_sprite->setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
 	m_frameCounter += deltatime;
 	if(m_frameCounter >= 0.1f)
@@ -93,49 +93,43 @@ void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
 			m_imageNR = 0;
 	}
 	
-
 	HandleCollision();
 
-	//X-Bounds
-	if(m_position.x < 360)
-		m_position.x = 360;
-	if(m_position.x > 1560)
-		m_position.x = 1560;
-	//Y-Bounds
-	if(m_position.y < -400)
+		//Bounds
+	if(m_position.x < 0)
+		m_position.x = 0;
+	if(m_position.x > 1920)
+		m_position.x = 1920;
+	if(m_position.y < 0)
 	{
 		m_position.y = 0;
 	}
-	m_collider->SetPosition(m_position);
-	m_sprite->setPosition(m_position);
-	m_sprite->setRotation(angle);
+	if(m_position.y > 1080)
+	{
+		m_position.y = 1080;
+	}
 }
 
-void EnemyRanged::HandleCollision()
+void EnemyMelee::HandleCollision()
 {
-	for(int i = 0; i < m_collisions.size(); i++)
+	for(unsigned int i = 0; i < m_collisions.size(); i++)
 	{
-	 	if(m_collisions[i].first->GetName() == "PlayerAttack")
+		if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
 			m_hp -= 1;
 		}
-	}
 
+	}
+	
 	m_collisions.clear();
 }
 
-bool EnemyRanged::GetAttacking()
+bool EnemyMelee::GetAttacking()
 {
 	return m_isAttacking;
 }
 
-sf::Vector2f EnemyRanged::GetDirection()
+sf::Vector2f EnemyMelee::GetDirection()
 {
 	return m_Direction;
-}
-
-void EnemyRanged::RangedAttack()
-{
-	if(m_attackTimer <= 0)
-		m_attackTimer = 2.0;
 }

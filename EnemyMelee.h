@@ -1,22 +1,20 @@
-//EnemyRanged.h
+//Enemy Mêlée header file
 
 #pragma once
-
 #include "Enemy.h"
 
-class EnemyRanged : public Enemy
+class EnemyMelee : public Enemy
 {
 public:
-	EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position);
-	~EnemyRanged();
+	EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position);
+	~EnemyMelee();
 
-	void RangedAttack();
+	void MeleeAttack();
 	void Update(float &deltatime, sf::Vector2f refpos);
 	void HandleCollision();
 
 	bool GetAttacking();
 	sf::Vector2f GetDirection();
-
 protected:
 	sf::Vector2f m_Direction;
 
