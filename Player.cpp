@@ -203,6 +203,11 @@ void Player::HandleCollision()
 			m_hpDrain = 1;
 		}
 
+		else //if(m_collisions[i].first->GetName() == "RubbishBin")
+		{
+			m_position += m_collisions[i].second;
+		}
+
 	}
 	
 	m_collisions.clear();
@@ -268,3 +273,4 @@ sf::Sprite* Player::GetAttackSprite()
 {
 	return m_attackSprite;
 }
+

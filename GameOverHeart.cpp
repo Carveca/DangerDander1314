@@ -22,6 +22,7 @@ bool GameOverHeart::Enter(SpriteManager* spritemanager, MusicManager* musicmanag
 
 	m_musicManager = musicmanager;
 	m_musicManager->LoadMusic("soundtrack_death_screen_1.wav");
+	m_musicManager->RepeatOFF();
 	m_musicManager->Play();
 	
 
@@ -58,4 +59,9 @@ std::string GameOverHeart::Next()
 bool GameOverHeart::IsType(const std::string &type)
 {
 	return type.compare("GameOverHeart") == 0;
+}
+
+void GameOverHeart::Draw(sf::RenderWindow* window, float &deltatime)
+{
+
 }

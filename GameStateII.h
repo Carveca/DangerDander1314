@@ -9,6 +9,8 @@ class EntityManager;
 class SoundManager;
 
 class SpawnerAOEenemy;
+class SpawnerRubbishBin;
+class SpawnerRubbishAndPower;
 class Player;
 class Level;
 
@@ -42,6 +44,7 @@ public:
 
 	bool Update(float &deltatime);
 	void Draw(sf::RenderWindow* window);
+	void Draw(sf::RenderWindow* window, float &deltatime);
 
 	std::string Next();
 	bool IsType(const std::string &type);
@@ -52,6 +55,8 @@ private:
 
 	void Input();
 	void GameOver();
+	void GamePause();
+	void RealTime(float &deltatime);
 
 private:
 	EntityManager* m_entityManager;
@@ -60,6 +65,8 @@ private:
 	SoundManager* m_soundManager;
 
 	SpawnerAOEenemy* m_spawnerAOEenemy;
+	SpawnerRubbishBin* m_spawnerRubbishBin;
+	SpawnerRubbishAndPower* m_spawnerRubbishAndPower;
 	
 	Level* m_levelTop;
 	Level* m_levelBottom;
@@ -70,6 +77,7 @@ private:
 private:
 	SpriteManager* m_spriteManager;
 
+	bool m_paused;
 	bool m_done;
 	std::string m_nextState;
 

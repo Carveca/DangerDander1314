@@ -19,22 +19,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		engine.Run();
 	}
 
-	
-
-	/*
-	// temporary game over 
-	std::cout << "Game Over" << std::endl;
-
-	sf::Time time = sf::milliseconds(500);
-	sf::sleep(time);
-
-	std::cin.clear();
-
-	system("pause");
-
-	// temporary game over 
-	*/
-
 	return 0;
 }
 

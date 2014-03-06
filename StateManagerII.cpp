@@ -61,14 +61,23 @@ void StateManagerII::Update(float &deltatime)
 	}
 }
 
-void StateManagerII::Draw()
+void StateManagerII::Draw(float &deltatime)
 {
 	if(m_current == nullptr)
 		return;
 
 	m_window->clear(sf::Color::Black);
 
-	m_current->Draw(m_window);
+	if(m_current->IsType("GameStateII"))
+	{
+		m_current->Draw(m_window, deltatime);
+	}
+	else
+	{
+		m_current->Draw(m_window);
+	}
+
+	
 
 	m_window->display();
 

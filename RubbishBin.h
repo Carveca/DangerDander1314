@@ -14,15 +14,22 @@ public:
 
 	void Update(float &deltatime);
 	void HandleCollision();
-	void DeathAnimation(float &deltatime);
+
+	std::pair<sf::IntRect, int> DeathAnimation(float &deltatime, float &playerangle);
 	
+	sf::Sprite* GetDeathSprite(float &deltatime, float &playerangle);
+
+	sf::Vector2f RubbishSpawn(float angle);
 
 private:
 	SoundManager* m_soundManager;
 
 	sf::Sprite* m_deathSprite;
 
-	//int m_deathImageNR;
-	//float m_deathTimer;
+	int m_angle;
 
+public:
+	bool m_dead;
+	bool m_knockedOver;
+	bool m_spawnedTrash;
 };

@@ -15,7 +15,7 @@ public:
 
 	void Update(float &deltatime);
 
-	bool SpawnerAOEenemy::GetSpawnState();
+	bool GetSpawnState();
 
 protected:
 	float m_spawnTimer;

@@ -15,7 +15,7 @@ SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::
 	m_AOEsprite = AOEsprite;
 	m_spawnPosition = spawnLocation;
 
-	m_spawnTimer = 1.0f;
+	m_spawnTimer = 3.0f;
 	m_spawning = false;
 }
 

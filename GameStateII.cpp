@@ -11,13 +11,17 @@
 #include "SoundManager.h"
 
 #include "SpawnerAOEenemy.h"
+#include "SpawnerRubbishBin.h"
+#include "SpawnerRubbishAndPower.h"
 
 #include "Player.h"
+#include "RubbishBin.h"
 #include "Level.h"
 
 GameStateII::GameStateII()
 {
 	m_done = false;
+	m_paused = false;
 }
 
 bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager)
@@ -42,10 +46,12 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	m_entityManager = new EntityManager(m_spriteManager->GetSprite("player_weapon.png", 2048, 256), sf::Vector2f(950, 540), m_spriteManager->GetSprite("player_attack.png", 1024, 256), m_spriteManager->GetSprite("player_death.png", 256, 256) , m_spriteManager->GetSprite("pow_effect.png", 128, 128), m_soundManager, m_musicManager);
 	m_entityManager->AddPumpMeter(m_spriteManager->GetSprite("new_pumpmeter.png", 800, 246), m_spriteManager->GetSprite("pumpmeter_indicator.png", 70, 94), m_spriteManager->GetSprite("indicator_effect.png", 150, 150), m_spriteManager->GetSprite("meter_effect_left.png", 800, 246), m_spriteManager->GetSprite("meter_effect_right.png", 800, 246), sf::Vector2f(0, 0));
 	
+	//Spawners
+	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 2056, 256), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100) );
+	m_spawnerRubbishBin = new SpawnerRubbishBin(m_spriteManager->GetSprite("rubbish_bin.png", 128, 128), m_spriteManager->GetSprite("rubbish_bin_death.png", 1024, 128), sf::Vector2f(400, -100), m_soundManager);
+	m_spawnerRubbishAndPower = new SpawnerRubbishAndPower(m_spriteManager->GetSprite("blue_cow.png", 256, 64), m_spriteManager->GetSprite("happy_pill.png", 256, 64), m_spriteManager->GetSprite("trash.png", 128, 128));
 
-	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 1024, 128), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100) );
-
-
+	//Level
 	m_levelTop = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, 0));
 	m_levelBottom = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, -1079) );
 
@@ -65,6 +71,12 @@ void GameStateII::Exit()
 	{
 		delete m_entityManager;
 		m_entityManager = nullptr;
+	}
+
+	if(m_spawnerRubbishBin != nullptr)
+	{
+		delete m_spawnerRubbishBin;
+		m_spawnerRubbishBin = nullptr;
 	}
 
 	if(m_spawnerAOEenemy != nullptr)
@@ -98,15 +110,35 @@ bool GameStateII::Update(float &deltatime)
 		m_nextState = "MenuStateII";
 		m_done = true;
 	}
-	
-	Input();
+	//Pause Screen
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::P) )
+	{
+		m_paused = true;
+	}
 
+	if(m_paused)
+	{
+		GamePause();
+	}
+	else
+	{
+		RealTime(deltatime);
+	}
+
+	/*
+	Input();
+	//Spawner Update
 	m_spawnerAOEenemy->Update(deltatime);
 	if(m_spawnerAOEenemy->GetSpawnState())
 	{
 		m_entityManager->AddEnemyAOE( m_spawnerAOEenemy->Spawn() );
 	}
-
+	m_spawnerRubbishBin->Update(deltatime);
+	if(m_spawnerRubbishBin->GetSpawnState())
+	{
+		m_entityManager->AddRubbishBin( m_spawnerRubbishBin->Spawn() );
+	}
+	
 	m_entityManager->Update(m_angle, m_direction, deltatime);	
 
 	m_levelTop->Update(deltatime);
@@ -116,16 +148,22 @@ bool GameStateII::Update(float &deltatime)
 	{
 		GameOver();
 	}
+	*/
 
 	return m_done;
 }
 
 void GameStateII::Draw(sf::RenderWindow* window)
 {
+
+}
+
+void GameStateII::Draw(sf::RenderWindow* window, float &deltatime)
+{
 	window->draw(*m_levelTop->GetSprite());
 	window->draw(*m_levelBottom->GetSprite());
 
-	m_entityManager->Draw(window);
+	m_entityManager->Draw(window, deltatime, m_angle);
 
 }
 
@@ -150,10 +188,14 @@ void GameStateII::Input()
 	{
 		m_entityManager->m_player->Attack();
 	}
+	
 
 	//Movement Input
 	m_direction.x = 0;
-	m_direction.y = 0;			
+	m_direction.y = 0;	
+
+	//m_angle = 0;
+
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
 		m_direction.x = -1;
@@ -204,9 +246,6 @@ void GameStateII::Input()
 
 void GameStateII::GameOver()
 {
-	
-
-
 	if(m_entityManager->m_player->GetHP() == 100)
 	{
 		m_nextState = "GameOverHeart";
@@ -217,5 +256,68 @@ void GameStateII::GameOver()
 		m_nextState = "GameOverSleep";
 		m_done = true;
 	}
+}
 
+void GameStateII::GamePause()
+{
+	
+	if( sf::Keyboard::isKeyPressed(sf::Keyboard::Q) )
+	{
+		m_nextState = "quit";
+		m_done = true;
+		m_paused = false;
+	}
+	if( sf::Keyboard::isKeyPressed(sf::Keyboard::M) )
+	{
+		m_nextState = "MenuStateII";
+		//m_done = true;
+		m_paused = false;
+	}
+	if( sf::Keyboard::isKeyPressed(sf::Keyboard::G) )
+		m_paused = false;
+	
+}
+
+void GameStateII::RealTime(float &deltatime)
+{
+	Input();
+	//Spawner AOE
+	m_spawnerAOEenemy->Update(deltatime);
+	if(m_spawnerAOEenemy->GetSpawnState())
+	{
+		m_entityManager->AddEnemyAOE( m_spawnerAOEenemy->Spawn() );
+	}
+	//Spawner Rubbish Bin
+	m_spawnerRubbishBin->Update(deltatime);
+	if(m_spawnerRubbishBin->GetSpawnState())
+	{
+		m_entityManager->AddRubbishBin( m_spawnerRubbishBin->Spawn() );
+	}
+	//Spawner Rubbish and Power
+	m_spawnerRubbishAndPower->Update();
+	if(!m_entityManager->m_rubbishBin.empty())
+	{
+		for(unsigned int i = 0; i < m_entityManager->m_rubbishBin.size(); i++)
+		{
+			if(m_entityManager->m_rubbishBin[i]->m_knockedOver)
+			{
+				if(!m_entityManager->m_rubbishBin[i]->m_spawnedTrash)
+				{
+					m_spawnerRubbishAndPower->SetSpawnPOS(m_entityManager->m_rubbishBin[i]->RubbishSpawn(m_angle));
+					m_entityManager->AddRubbishpile(m_spawnerRubbishAndPower->SpawnRubbish());
+					m_entityManager->m_rubbishBin[i]->m_spawnedTrash = true;
+				}
+			}
+		}
+	}
+	
+	m_entityManager->Update(m_angle, m_direction, deltatime);	
+
+	m_levelTop->Update(deltatime);
+	m_levelBottom->Update(deltatime);
+
+	if(m_entityManager->m_player->GetHP() == 100 || m_entityManager->m_player->GetHP() == 0)
+	{
+		GameOver();
+	}
 }

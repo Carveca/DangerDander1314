@@ -12,14 +12,17 @@
 #include "PumpMeter.h"
 
 #include "EnemyAOE.h"
-
+#include "RubbishBin.h"
+#include "Rubbishpile.h"
+#include "HappyPill.h"
+#include "BlueCow.h"
 
 EntityManager::EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager)
 {
 	m_collisionManager = new CollisionManager;
 
 	m_soundManager = soundmanager;
-	m_soundManager->LoadSound("sfx_pumpmeter_increase_1.wav", "PumpIncrease");
+	m_soundManager->LoadSound("sfx_pumpmeter_increase.wav", "PumpIncrease");
 
 	m_musicManager = musicmanager;
 	
@@ -51,18 +54,30 @@ EntityManager::~EntityManager()
 //Loop Methods
 
 void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatime)
-{
+{	
+	CollisionCheck();
+
 	UpdatePlayer(angle, direction, deltatime);
 
 	UpdatePumpMeter(m_player->GetHP());
 
 	UpdateEnemyAOE(deltatime);
+
+	UpdateRubbishBin(deltatime);
+
+	UpdateRubbishPile(deltatime);
 	
-	CollisionCheck();	
+	//CollisionCheck();	
+
+	CheckHP(deltatime, angle);
 }
 
-void EntityManager::Draw(sf::RenderWindow* window)
+void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &playerangle )
 {
+	DrawRubbishBin(window, deltatime, playerangle);
+
+	DrawRubbishPile(window);
+
 	DrawEnemyAOE(window);
 		
 	DrawPlayer(window);
@@ -89,13 +104,69 @@ void EntityManager::CollisionCheck()
 		}
 	}
 
+	if(!m_rubbishBin.empty())
+	{
+		for(unsigned int i = 0; i < m_rubbishBin.size(); i++)
+		{
+			m_collisionManager->Add(m_rubbishBin[i]);
+		}
+	}
+
 	m_collisionManager->CheckCollision();
 }
 
 
-void EntityManager::CheckHP()
+void EntityManager::CheckHP(float &deltatime, float &angle)
 {
+	if(!m_playerAttack.empty())
+	{
+		if(m_playerAttack[0]->Dead())
+		{
+			m_playerAttack.pop_back();					
+		}
+	}
 
+	if(!m_enemyAOE.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyAOE.size(); i++)
+		{
+			if(m_enemyAOE[i]->GetPosition().y >= 1100)
+			{
+				delete m_enemyAOE[i];
+				m_enemyAOE[i] = nullptr;
+				m_enemyAOE.erase(m_enemyAOE.begin() + i);
+			}
+
+			else if(m_enemyAOE[i]->GetHP() <= 0)
+			{
+				delete m_enemyAOE[i];
+				m_enemyAOE[i] = nullptr;
+				m_enemyAOE.erase(m_enemyAOE.begin() + i);
+				m_player->ChangeHP(20);
+				m_soundManager->PlaySound("PumpIncrease");
+			}
+		}
+	}
+
+	if(!m_rubbishBin.empty())
+	{
+		for(unsigned int i = 0; i < m_rubbishBin.size(); i++)
+		{
+			//Death (or knocked over)
+			if(m_rubbishBin[i]->GetHP() <= 0)
+			{
+				m_rubbishBin[i]->m_dead = true;
+				m_rubbishBin[i]->DeathAnimation(deltatime, angle);
+			}
+			if(m_rubbishBin[i]->GetPosition().y >= 1100)
+			{
+				delete m_rubbishBin[i];
+				m_rubbishBin[i] = nullptr;
+				m_rubbishBin.erase(m_rubbishBin.begin() + i);
+			}
+
+		}
+	}
 }
 
 void EntityManager::MusicSwitch()
@@ -174,6 +245,27 @@ void EntityManager::AddEnemyAOE(EnemyAOE* enemyAOE)
 	m_enemyAOE.push_back(enemyAOE);
 }
 
+void EntityManager::AddRubbishBin(RubbishBin* rubbishbin)
+{
+	m_rubbishBin.push_back(rubbishbin);
+}
+
+void EntityManager::AddRubbishpile(Rubbishpile* rubbishpile)
+{
+	m_rubbishpile.push_back(rubbishpile);
+}
+
+void EntityManager::AddBlueCow(BlueCow* bluecow)
+{
+	m_blueCow.push_back(bluecow);
+}
+
+void EntityManager::AddHappyPill(HappyPill* happypill)
+{
+	m_happyPill.push_back(happypill);
+}
+
+
 //Player - Update and Draw
 
 void EntityManager::UpdatePlayer(float &angle, sf::Vector2f &direction, float &deltatime)
@@ -206,11 +298,9 @@ void EntityManager::UpdatePlayer(float &angle, sf::Vector2f &direction, float &d
 
 	if(!m_playerAttack.empty())
 	{
-		m_playerAttack[0]->Update(deltatime);
-		if(m_playerAttack[0]->Dead())
+		for(int i = 0; i < m_playerAttack.size(); i++)
 		{
-			m_playerAttack.pop_back();
-					
+			m_playerAttack[0]->Update(deltatime);
 		}
 	}
 	 
@@ -260,7 +350,6 @@ void EntityManager::DrawPumpMeter(sf::RenderWindow* window)
 	window->draw(*m_pumpMeter->m_indicatorSprite);
 }
 
-
 //EnemyAOE - Update and Draw
 
 void EntityManager::UpdateEnemyAOE(float &deltatime)
@@ -269,22 +358,7 @@ void EntityManager::UpdateEnemyAOE(float &deltatime)
 	{
 		for(unsigned int i = 0; i < m_enemyAOE.size(); i++)
 		{
-			m_enemyAOE[i]->Update(deltatime);
-
-			if(m_enemyAOE[i]->GetPosition().y >= 1100)
-			{
-				delete m_enemyAOE[i];
-				m_enemyAOE[i] = nullptr;
-				m_enemyAOE.erase(m_enemyAOE.begin() + i);
-			}
-			else if(m_enemyAOE[i]->GetHP() <= 0)
-			{
-				delete m_enemyAOE[i];
-				m_enemyAOE[i] = nullptr;
-				m_enemyAOE.erase(m_enemyAOE.begin() + i);
-				m_player->ChangeHP(20);
-				m_soundManager->PlaySound("PumpIncrease");
-			}
+			m_enemyAOE[i]->Update(deltatime);			
 		}
 	}
 }
@@ -297,6 +371,62 @@ void EntityManager::DrawEnemyAOE(sf::RenderWindow* window)
 		{
 			window->draw(*m_enemyAOE[i]->GetAttack()->GetSprite());
 			window->draw(*m_enemyAOE[i]->GetSprite());
+		}
+	}
+}
+
+//Rubbish Bin Update and Draw
+
+void EntityManager::UpdateRubbishBin(float &deltatime)
+{
+	if(!m_rubbishBin.empty())
+	{
+		for(unsigned int i = 0; i < m_rubbishBin.size(); i++)
+		{
+			m_rubbishBin[i]->Update(deltatime);
+		}
+	}
+}
+
+void EntityManager::DrawRubbishBin(sf::RenderWindow* window, float &deltatime, float &playerangle)
+{
+	if(!m_rubbishBin.empty())
+	{
+		for(unsigned int i = 0; i < m_rubbishBin.size(); i++)
+		{
+			if(!m_rubbishBin[i]->m_dead)
+			{
+				window->draw(*m_rubbishBin[i]->GetSprite());
+			}
+			else if(m_rubbishBin[i]->m_dead)
+			{
+				window->draw(*m_rubbishBin[i]->GetDeathSprite(deltatime, playerangle));
+				//m_rubbishBin[i]->m_spawnedTrash = true;
+			}
+		}
+	}
+}
+
+//Rubbish Pile Update and Draw
+
+void EntityManager::UpdateRubbishPile(float &deltatime)
+{
+	if(!m_rubbishpile.empty())
+	{
+		for(unsigned int i = 0; i < m_rubbishpile.size(); i++)
+		{
+			m_rubbishpile[i]->Update(deltatime);
+		}
+	}
+}
+
+void EntityManager::DrawRubbishPile(sf::RenderWindow* window)
+{
+	if(!m_rubbishpile.empty())
+	{
+		for(unsigned int i = 0; i < m_rubbishpile.size(); i++)
+		{
+			window->draw(*m_rubbishpile[i]->GetSprite());
 		}
 	}
 }

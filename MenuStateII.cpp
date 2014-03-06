@@ -10,9 +10,6 @@
 MenuStateII::MenuStateII()
 {
 	m_done = false;
-
-
-
 }
 
 bool MenuStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager)
@@ -26,6 +23,7 @@ bool MenuStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	m_musicManager = musicmanager;
 
 	m_musicManager->LoadMusic("screen_music_1.wav");
+	m_musicManager->RepeatON();
 	m_musicManager->Play();
 
 
@@ -76,4 +74,9 @@ std::string MenuStateII::Next()
 bool MenuStateII::IsType(const std::string &type)
 {
 	return type.compare("MenuStateII") == 0;
+}
+
+void MenuStateII::Draw(sf::RenderWindow* window, float &deltatime)
+{
+
 }

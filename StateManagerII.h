@@ -21,7 +21,7 @@ public:
 	void ChangeState();
 
 	void Update(float &deltatime);
-	void Draw();
+	void Draw(float &deltatime);
 
 private:
 	std::vector<StateII*> m_states;

@@ -27,7 +27,7 @@ EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attac
 
 	m_sprite = sprite;
 	m_sprite->setPosition(m_position);
-	m_sprite->setOrigin(64, 64);
+	m_sprite->setOrigin(128, 128);
 	//m_sprite->rotate(180);
 	
 	m_imageNR = 0;
@@ -86,7 +86,7 @@ void EnemyAOE::Update(float &deltatime)
 
 	//Sprite	
 	
-	m_sprite->setTextureRect(sf::IntRect( 128 * m_imageNR, 0, 128, 128));
+	m_sprite->setTextureRect(sf::IntRect( 256 * m_imageNR, 0, 256, 256));
 	m_frameCounter += deltatime;
 	if(m_frameCounter >= 0.1f)
 	{

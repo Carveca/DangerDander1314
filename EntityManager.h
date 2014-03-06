@@ -11,6 +11,10 @@ class PlayerAttack;
 class PumpMeter;
 
 class EnemyAOE;
+class RubbishBin;
+class Rubbishpile;
+class HappyPill;
+class BlueCow;
 
 class EntityManager
 {
@@ -19,7 +23,7 @@ public:
 	~EntityManager();
 
 	void Update(float &angle, sf::Vector2f &direction, float &deltatime);	
-	void Draw(sf::RenderWindow* window);
+	void Draw(sf::RenderWindow* window, float &deltatime, float &playerangle );
 
 	void AddMusic(MusicManager* musicmanager);
 	void MusicSwitch();
@@ -27,13 +31,17 @@ public:
 	void AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS);
 	
 	void AddEnemyAOE(EnemyAOE* enemyAOE);
+	void AddRubbishBin(RubbishBin* rubbishbin);
+	void AddRubbishpile(Rubbishpile* rubbishpile);
+	void AddBlueCow(BlueCow* bluecow);
+	void AddHappyPill(HappyPill* happypill);
 
 private:
 	void UpdatePlayer(float &angle, sf::Vector2f &direction,float &deltatime);
 	void DrawPlayer(sf::RenderWindow* window);
 
 	void CollisionCheck();
-	void CheckHP();	//might be redundant
+	void CheckHP(float &deltatime, float &angle);	
 
 	void UpdatePumpMeter(int hpvalue);
 	void DrawPumpMeter(sf::RenderWindow* window);
@@ -41,9 +49,19 @@ private:
 	void UpdateEnemyAOE(float &deltatime);
 	void DrawEnemyAOE(sf::RenderWindow* window);
 
+	void UpdateRubbishBin(float &deltatime);
+	void DrawRubbishBin(sf::RenderWindow* window, float &deltatime, float &playerangle);
+
+	void UpdateRubbishPile(float &deltatime);
+	void DrawRubbishPile(sf::RenderWindow* window);
+
+	//update and draw happypill and bluecow!
+
 public:
 	Player* m_player;
 	sf::Sprite* m_powSprite;
+
+	std::vector<RubbishBin*> m_rubbishBin;
 
 private:
 	CollisionManager* m_collisionManager;
@@ -54,6 +72,10 @@ private:
 
 	std::vector<PlayerAttack*> m_playerAttack;
 	std::vector<EnemyAOE*> m_enemyAOE;	
+	
+	std::vector<Rubbishpile*> m_rubbishpile;
+	std::vector<BlueCow*> m_blueCow;
+	std::vector<HappyPill*> m_happyPill;
 
 	int m_musicNR;
 	int m_musicNRprevious;

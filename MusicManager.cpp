@@ -61,3 +61,13 @@ void MusicManager::PlayWithOffset()
 	m_music.play();
 	m_music.setPlayingOffset(m_musicOffset);
 }
+
+void MusicManager::RepeatON()
+{
+	m_music.setLoop(true);
+}
+
+void MusicManager::RepeatOFF()
+{
+	m_music.setLoop(false);
+}

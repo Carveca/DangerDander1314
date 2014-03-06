@@ -39,7 +39,7 @@ PlayerAttack::~PlayerAttack()
 
 void PlayerAttack::Update(float &elapsedTime)
 {
-	m_sprite->setTextureRect(sf::IntRect(0, 0, 120, 120));
+	//m_sprite->setTextureRect(sf::IntRect(0, 0, 120, 120));
 	
 	m_life -= elapsedTime;
 
@@ -58,12 +58,14 @@ bool PlayerAttack::Dead()
 
 void PlayerAttack::HandleCollision()
 {
-	for(unsigned int i = 0; i < m_collisions.size(); i++)
+	if(!m_collisions.empty())
 	{
-		if(m_collisions[i].first->GetName() != "Player" && m_collisions[i].first->GetName() != "PlayerAttack" && m_collisions[i].first->GetName() != "AOEattack")
+		for(unsigned int i = 0; i < m_collisions.size(); i++)
 		{
-			m_hit = true;
-			break;
+			if(m_collisions[i].first->GetName() != "Player" && m_collisions[i].first->GetName() != "PlayerAttack" && m_collisions[i].first->GetName() != "AOEattack")
+			{
+				m_hit = true;
+			}
 		}
 	}
 

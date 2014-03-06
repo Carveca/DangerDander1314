@@ -14,6 +14,7 @@ public:
 
 	bool Update(float &deltatime);
 	void Draw(sf::RenderWindow* window);
+	void Draw(sf::RenderWindow* window, float &deltatime);
 
 	std::string Next();
 	bool IsType(const std::string &type);

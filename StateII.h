@@ -19,6 +19,7 @@ public:
 
 	virtual bool Update(float &deltatime) = 0;
 	virtual void Draw(sf::RenderWindow* window) = 0;
+	virtual void Draw(sf::RenderWindow* window, float &deltatime) = 0;
 
 	virtual std::string Next() = 0;
 	virtual bool IsType(const std::string &type) = 0;

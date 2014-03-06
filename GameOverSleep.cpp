@@ -61,3 +61,8 @@ bool GameOverSleep::IsType(const std::string &type)
 {
 	return type.compare("GameOverSleep") == 0;
 }
+
+void GameOverSleep::Draw(sf::RenderWindow* window, float &deltatime)
+{
+
+}

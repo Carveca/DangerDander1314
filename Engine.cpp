@@ -64,7 +64,7 @@ void Engine::Run()
 		//Update
 		m_stateManager->Update(deltatime);
 		//Draw
-		m_stateManager->Draw();
+		m_stateManager->Draw(deltatime);
 	}
 
 }
