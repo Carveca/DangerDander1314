@@ -3,17 +3,19 @@
 #include "stdafx.h"
 #include "SpawnerAOEenemy.h"
 #include "EnemyAOE.h"
+#include "SoundManager.h"
 
 SpawnerAOEenemy::SpawnerAOEenemy()
 {
 
 }
 
-SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation)
+SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation, SoundManager* soundmanager)
 {
 	m_sprite = sprite;
 	m_AOEsprite = AOEsprite;
 	m_spawnPosition = spawnLocation;
+	m_soundManager = soundmanager;
 
 	m_spawnTimer = 3.0f;
 	m_spawning = false;
@@ -27,7 +29,7 @@ SpawnerAOEenemy::~SpawnerAOEenemy()
 
 EnemyAOE* SpawnerAOEenemy::Spawn()
 {
-	return new EnemyAOE(m_sprite, m_spawnPosition, m_AOEsprite);	
+	return new EnemyAOE(m_sprite, m_spawnPosition, m_AOEsprite, m_soundManager);	
 }
 
 void SpawnerAOEenemy::Update(float &deltatime)

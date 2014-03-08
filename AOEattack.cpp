@@ -9,11 +9,13 @@ AOEattack::AOEattack()
 
 }
 
-AOEattack::AOEattack(sf::Sprite* sprite, sf::Vector2f &position)
+AOEattack::AOEattack(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager)
 {
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
+
+	m_soundManager = soundmanager;
 
 	m_name = "AOEattack";
 

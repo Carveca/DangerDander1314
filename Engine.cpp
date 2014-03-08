@@ -1,20 +1,4 @@
 //Engine source file
-/*
-#include "stdafx.h"
-#include "Engine.h"
-#include "Player.h"
-#include "PlayerAttack.h"
-#include "PumpMeter.h"
-#include "EnemyMelee.h"
-#include "EnemyAOE.h"
-#include "Level.h"
-#include "Collider.h"
-#include "CollisionManager.h"
-#include "SpriteManager.h"
-#include "SpawnerAOEenemy.h"
-#include "Entity.h"
-#include <iostream>
-*/
 
 #include "stdafx.h"
 #include "Engine.h"
@@ -28,14 +12,13 @@
 
 Engine::Engine()
 {
-
+	
 }
 
 Engine::~Engine()
 {
 	delete m_stateManager;
 	m_stateManager = nullptr;
-
 }
 
 bool Engine::Initialize()

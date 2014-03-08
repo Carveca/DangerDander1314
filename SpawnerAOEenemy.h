@@ -3,12 +3,13 @@
 #pragma once
 
 class EnemyAOE;
+class SoundManager;
 
 class SpawnerAOEenemy
 {
 public:
 	SpawnerAOEenemy();
-	SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation);
+	SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation, SoundManager* soundmanager);
 	~SpawnerAOEenemy();
 
 	EnemyAOE* Spawn();
@@ -26,4 +27,6 @@ protected:
 
 	sf::Sprite* m_sprite;
 	sf::Sprite* m_AOEsprite;
+
+	SoundManager* m_soundManager;
 };

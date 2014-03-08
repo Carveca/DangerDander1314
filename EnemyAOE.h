@@ -9,7 +9,7 @@ class EnemyAOE : public Enemy
 {
 public:
 	EnemyAOE();
-	EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite);
+	EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite, SoundManager* soundmanager);
 	~EnemyAOE();
 
 	void Attack();
@@ -25,4 +25,6 @@ protected:
 	float m_moveTimer;
 
 	AOEattack* m_attack;
+
+	SoundManager* m_soundManager;
 };

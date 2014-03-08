@@ -11,7 +11,10 @@ StateManagerII::StateManagerII()
 {
 	m_current = nullptr;
 
-	m_window = new sf::RenderWindow(sf::VideoMode(1920, 1080), "Aggressive Bystander");
+	m_reader.Initialize("../Data/");
+	m_reader.LoadFile("settings.txt");
+
+	m_window = new sf::RenderWindow(sf::VideoMode(m_reader.m_settings["ScreenWidth"], m_reader.m_settings["ScreenHeight"]), "Aggressive Bystander");
 
 	m_spriteManager = new SpriteManager;
 	m_spriteManager->Initialize("../Sprites/");

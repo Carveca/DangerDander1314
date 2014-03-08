@@ -6,8 +6,9 @@
 #include "BlueCow.h"
 #include "HappyPill.h"
 #include "Rubbishpile.h"
+#include "SoundManager.h"
 
-SpawnerRubbishAndPower::SpawnerRubbishAndPower(sf::Sprite* spritebluecow, sf::Sprite* spritehappypill, sf::Sprite* spriterubbish)
+SpawnerRubbishAndPower::SpawnerRubbishAndPower(sf::Sprite* spritebluecow, sf::Sprite* spritehappypill, sf::Sprite* spriterubbish, SoundManager* soundmanager)
 {
 	m_spawning = false;
 
@@ -16,6 +17,8 @@ SpawnerRubbishAndPower::SpawnerRubbishAndPower(sf::Sprite* spritebluecow, sf::Sp
 	m_spriteBlueCow = spritebluecow;
 	m_spriteHappyPill = spritehappypill;
 	m_spriteRubbish = spriterubbish;
+
+	m_soundManager = soundmanager;
 
 }
 
@@ -46,7 +49,7 @@ HappyPill* SpawnerRubbishAndPower::SpawnHappyPill()
 
 Rubbishpile* SpawnerRubbishAndPower::SpawnRubbish()
 {
-	return new Rubbishpile(m_spriteRubbish, m_spawnPosition);
+	return new Rubbishpile(m_spriteRubbish, m_spawnPosition, m_soundManager);
 }
 
 void SpawnerRubbishAndPower::SetSpawnPOS(sf::Vector2f &spawnlocation)

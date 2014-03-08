@@ -55,7 +55,11 @@ private:
 	void UpdateRubbishPile(float &deltatime);
 	void DrawRubbishPile(sf::RenderWindow* window);
 
-	//update and draw happypill and bluecow!
+	void UpdateBlueCow(float &deltatime);
+	void DrawBlueCow(sf::RenderWindow* window);
+
+	void UpdateHappyPill(float &deltatime);
+	void DrawHappyPill(sf::RenderWindow* window);
 
 public:
 	Player* m_player;

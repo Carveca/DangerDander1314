@@ -54,11 +54,13 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_deathImageNR = 0;
 	m_deathFrameCounter = 0.0f;
 
-	
+	m_happyPills = 0;
+	m_blueCows = 0;
 	
 	m_moveSoundTimer = 0.0f;
 	m_attackTimer = 0.0f;
 	m_drainTimer = 0.0f;
+	m_blueCowTimer = 0.0f;
 
 	m_weaponSize = 60;
 	m_isAttacking = false;
@@ -83,6 +85,19 @@ void Player::Cleanup()
 
 void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 {	
+	
+	if(m_blueCowTimer < 0.0)
+	{
+		m_speed = 300;
+		m_blueCowTimer = 0.0;
+	}
+	if(m_blueCowTimer > 0.0)
+	{
+		m_speed = 600;
+	}
+
+	m_blueCowTimer -= elapsedtime;
+
 	//Move
 	Move(direction, elapsedtime);
 	m_moveSoundTimer += elapsedtime;
@@ -203,7 +218,17 @@ void Player::HandleCollision()
 			m_hpDrain = 1;
 		}
 
-		else //if(m_collisions[i].first->GetName() == "RubbishBin")
+		else if(m_collisions[i].first->GetName() == "HappyPill")
+		{
+			m_happyPills++;
+		}
+
+		else if(m_collisions[i].first->GetName() == "BlueCow")
+		{
+			m_blueCows++;
+		}
+
+		else 
 		{
 			m_position += m_collisions[i].second;
 		}
@@ -274,3 +299,22 @@ sf::Sprite* Player::GetAttackSprite()
 	return m_attackSprite;
 }
 
+void Player::UseHappyPill()
+{
+	if (m_happyPills > 0)
+	{
+		m_happyPills--;
+		ChangeHP(-30);
+	}
+
+}
+
+void Player::UseBlueCow()
+{
+	if (m_blueCows > 0)
+	{
+		m_blueCows--;
+		m_blueCowTimer = 4.0f;
+		
+	}
+}

@@ -14,6 +14,7 @@ RubbishBin::RubbishBin(sf::Sprite* binSprite, sf::Sprite* binDeathSprite, sf::Ve
 
 	m_position = position;
 	m_extension = sf::Vector2f(128, 128);
+
 	m_soundManager = soundmanager;
 
 	m_sprite = binSprite;
@@ -125,7 +126,8 @@ sf::Vector2f RubbishBin::RubbishSpawn(float angle)
 	else if(angle == 315)
 		rubbishSpawn += sf::Vector2f(-100, -100);
 
-	
+	//Vector2f(cos(v) * 100, sin(v) * 100)
+
 	return rubbishSpawn;
 }
 

@@ -30,7 +30,8 @@ public:
 
 	void SetAttackAnimationStop();
 		
-	//   power ups on 1,2 and 3?
+	void UseHappyPill();
+	void UseBlueCow();
 
 private:
 	SoundManager* m_soundManager;
@@ -53,4 +54,7 @@ private:
 	float m_deathFrameCounter;
 	int m_deathImageNR;
 
+	int m_happyPills;
+	int m_blueCows;
+	float m_blueCowTimer;
 };

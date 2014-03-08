@@ -6,7 +6,7 @@
 #include "AOEattack.h"
 
 
-EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite)
+EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite, SoundManager* soundmanager)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -17,13 +17,15 @@ EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attac
 	m_name = "EnemyAOE";
 	m_speed = 250;
 
+	m_soundManager = soundmanager;
+
 	m_collider = new Collider;
 	m_colliderCircle = true;
 	m_collider->SetRadius(60);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
-	m_attack = new AOEattack(attacksprite, m_position); 
+	m_attack = new AOEattack(attacksprite, m_position, m_soundManager); 
 
 	m_sprite = sprite;
 	m_sprite->setPosition(m_position);

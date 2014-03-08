@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position)
+EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -15,6 +15,8 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position)
 	m_position = position;
 	m_name = "EnemyMelee";
 	m_speed = 300;
+
+	m_soundManager = soundmanager;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;

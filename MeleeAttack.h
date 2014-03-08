@@ -9,7 +9,7 @@ class Player;
 class MeleeAttack : public InteractiveObject
 {
 public:
-	MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position);
+	MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position, SoundManager* soundmanager);
 	~MeleeAttack();
 
 	void Update(float &elapsedTime);
@@ -22,4 +22,6 @@ private:
 	bool m_dead;
 
 	Player* m_player;
+	SoundManager* m_soundManager;
+
 };

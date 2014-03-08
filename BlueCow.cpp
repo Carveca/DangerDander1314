@@ -8,6 +8,7 @@
 BlueCow::BlueCow(sf::Sprite* sprite, sf::Vector2f &position)
 {
 	m_hp = 1;
+	m_speed = 100;
 
 	m_extension.x = 64;
 	m_extension.y = 64;
@@ -37,21 +38,22 @@ BlueCow::~BlueCow()
 }
 
 void BlueCow::Update(float &elapsedTime)
-{
-	m_collider->SetPosition(m_position);
-	m_sprite->setPosition(m_position);
-	
-	m_deltatime += elapsedTime;
+{	
+	m_position.y += m_speed * elapsedTime;
 
-	if(m_deltatime >= 0.01)
+	m_collider->SetPosition(m_position);
+	
+	m_sprite->setTextureRect(sf::IntRect( 33 * m_imageNR, 0, 32, 64));
+	m_frameCounter += elapsedTime;
+	if(m_frameCounter >= 0.1f)
 	{
-		m_position.y += m_speed * m_deltatime;
-		m_deltatime = 0.0f;
+		m_imageNR++;
+		m_frameCounter = 0.0f;
+		if(m_imageNR > 6)
+			m_imageNR = 0;
 	}
 
 	HandleCollision();
-
-
 }
 
 void BlueCow::HandleCollision()
@@ -60,7 +62,7 @@ void BlueCow::HandleCollision()
 	{
 		if(m_collisions[i].first->GetName() == "Player")
 		{
-			m_hp--;
+			m_hp -= 1;
 		}
 	}
 	m_collisions.clear();

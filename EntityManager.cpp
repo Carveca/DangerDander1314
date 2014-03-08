@@ -60,12 +60,20 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 	UpdatePlayer(angle, direction, deltatime);
 
 	UpdatePumpMeter(m_player->GetHP());
+	
+	//enemies
 
 	UpdateEnemyAOE(deltatime);
 
 	UpdateRubbishBin(deltatime);
 
 	UpdateRubbishPile(deltatime);
+
+	//power ups
+
+	UpdateBlueCow(deltatime);
+
+	UpdateHappyPill(deltatime);
 	
 	//CollisionCheck();	
 
@@ -77,6 +85,10 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 	DrawRubbishBin(window, deltatime, playerangle);
 
 	DrawRubbishPile(window);
+
+	DrawBlueCow(window);
+
+	DrawHappyPill(window);
 
 	DrawEnemyAOE(window);
 		
@@ -112,6 +124,22 @@ void EntityManager::CollisionCheck()
 		}
 	}
 
+	if(!m_blueCow.empty())
+	{
+		for(unsigned int i = 0; i < m_blueCow.size(); i++)
+		{
+			m_collisionManager->Add(m_blueCow[i]);
+		}
+	}
+
+	if(!m_happyPill.empty())
+	{
+		for(unsigned int i = 0; i < m_happyPill.size(); i++)
+		{
+			m_collisionManager->Add(m_happyPill[i]);
+		}
+	}
+
 	m_collisionManager->CheckCollision();
 }
 
@@ -123,6 +151,32 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 		if(m_playerAttack[0]->Dead())
 		{
 			m_playerAttack.pop_back();					
+		}
+	}
+
+	if(!m_happyPill.empty())
+	{
+		for(unsigned int i = 0; i < m_happyPill.size(); i++)
+		{
+			if(m_happyPill[i]->GetHP() <= 0 || m_happyPill[i]->GetPosition().y >= 1100)
+			{
+				delete m_happyPill[i];
+				m_happyPill[i] = nullptr;
+				m_happyPill.erase(m_happyPill.begin() + i);
+			}
+		}
+	}
+
+	if(!m_blueCow.empty())
+	{
+		for(unsigned int i = 0; i < m_blueCow.size(); i++)
+		{
+			if(m_blueCow[i]->GetHP() <= 0 || m_blueCow[i]->GetPosition().y >= 1100)
+			{
+				delete m_blueCow[i];
+				m_blueCow[i] = nullptr;
+				m_blueCow.erase(m_blueCow.begin() + i);
+			}
 		}
 	}
 
@@ -164,7 +218,6 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				m_rubbishBin[i] = nullptr;
 				m_rubbishBin.erase(m_rubbishBin.begin() + i);
 			}
-
 		}
 	}
 }
@@ -426,7 +479,55 @@ void EntityManager::DrawRubbishPile(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_rubbishpile.size(); i++)
 		{
-			window->draw(*m_rubbishpile[i]->GetSprite());
+			window->draw(*m_rubbishpile[i]->GetAnimation());
+		}
+	}
+}
+
+//Blue Cow Update and Draw
+
+void EntityManager::UpdateBlueCow(float &deltatime)
+{
+	if( !m_blueCow.empty() )
+	{
+		for(unsigned int i = 0; i < m_blueCow.size(); i++)
+		{
+			m_blueCow[i]->Update(deltatime);
+		}
+	}
+}
+
+void EntityManager::DrawBlueCow(sf::RenderWindow* window)
+{
+	if( !m_blueCow.empty() )
+	{
+		for(unsigned int i = 0; i < m_blueCow.size(); i++)
+		{
+			window->draw(*m_blueCow[i]->GetSprite());
+		}
+	}
+}
+
+//Happy Pill Update and Draw
+
+void EntityManager::UpdateHappyPill(float &deltatime)
+{
+	if( !m_happyPill.empty() )
+	{
+		for(unsigned int i = 0; i < m_happyPill.size(); i++)
+		{
+			m_happyPill[i]->Update(deltatime);
+		}
+	}
+}
+
+void EntityManager::DrawHappyPill(sf::RenderWindow* window)
+{
+	if( !m_happyPill.empty() )
+	{
+		for(unsigned int i = 0; i < m_happyPill.size(); i++)
+		{
+			window->draw(*m_happyPill[i]->GetSprite());
 		}
 	}
 }

@@ -47,9 +47,9 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	m_entityManager->AddPumpMeter(m_spriteManager->GetSprite("new_pumpmeter.png", 800, 246), m_spriteManager->GetSprite("pumpmeter_indicator.png", 70, 94), m_spriteManager->GetSprite("indicator_effect.png", 150, 150), m_spriteManager->GetSprite("meter_effect_left.png", 800, 246), m_spriteManager->GetSprite("meter_effect_right.png", 800, 246), sf::Vector2f(0, 0));
 	
 	//Spawners
-	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 2056, 256), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100) );
-	m_spawnerRubbishBin = new SpawnerRubbishBin(m_spriteManager->GetSprite("rubbish_bin.png", 128, 128), m_spriteManager->GetSprite("rubbish_bin_death.png", 1024, 128), sf::Vector2f(400, -100), m_soundManager);
-	m_spawnerRubbishAndPower = new SpawnerRubbishAndPower(m_spriteManager->GetSprite("blue_cow.png", 256, 64), m_spriteManager->GetSprite("happy_pill.png", 256, 64), m_spriteManager->GetSprite("trash.png", 128, 128));
+	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 2056, 256), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100), m_soundManager );
+	m_spawnerRubbishBin = new SpawnerRubbishBin(m_spriteManager->GetSprite("rubbish_bin.png", 128, 128), m_spriteManager->GetSprite("rubbish_bin_death.png", 1024, 128), sf::Vector2f(500, -100), m_soundManager);
+	m_spawnerRubbishAndPower = new SpawnerRubbishAndPower(m_spriteManager->GetSprite("blue_cow.png", 256, 64), m_spriteManager->GetSprite("happy_pill.png", 256, 64), m_spriteManager->GetSprite("trash.png", 903, 128), m_soundManager);
 
 	//Level
 	m_levelTop = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, 0));
@@ -111,7 +111,7 @@ bool GameStateII::Update(float &deltatime)
 		m_done = true;
 	}
 	//Pause Screen
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::P) )
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) )
 	{
 		m_paused = true;
 	}
@@ -184,11 +184,19 @@ bool GameStateII::IsType(const std::string &type)
 void GameStateII::Input()
 {
 	//Attack Input
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) )
+	if( sf::Keyboard::isKeyPressed(sf::Keyboard::Space) )
 	{
 		m_entityManager->m_player->Attack();
 	}
-	
+	if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num1 ) )
+	{
+		m_entityManager->m_player->UseHappyPill();
+	}
+	if( sf::Keyboard::isKeyPressed( sf::Keyboard::Num2 ) )
+	{
+		m_entityManager->m_player->UseBlueCow();
+	}
+
 
 	//Movement Input
 	m_direction.x = 0;
@@ -304,7 +312,28 @@ void GameStateII::RealTime(float &deltatime)
 				if(!m_entityManager->m_rubbishBin[i]->m_spawnedTrash)
 				{
 					m_spawnerRubbishAndPower->SetSpawnPOS(m_entityManager->m_rubbishBin[i]->RubbishSpawn(m_angle));
-					m_entityManager->AddRubbishpile(m_spawnerRubbishAndPower->SpawnRubbish());
+
+					int drop = rand() % 100;
+
+					if(drop >= 20)
+					{
+						m_entityManager->AddRubbishpile(m_spawnerRubbishAndPower->SpawnRubbish());
+					}
+					else if (drop < 20)
+					{
+						int powerup = rand() % 100;
+
+							if(powerup > 50)
+							{
+								m_entityManager->AddBlueCow(m_spawnerRubbishAndPower->SpawnBlueCow());
+							}
+							else if(powerup <= 50)
+							{
+								m_entityManager->AddHappyPill(m_spawnerRubbishAndPower->SpawnHappyPill());
+							}
+					}
+					
+
 					m_entityManager->m_rubbishBin[i]->m_spawnedTrash = true;
 				}
 			}

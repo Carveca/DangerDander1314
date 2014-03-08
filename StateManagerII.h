@@ -3,6 +3,7 @@
 #pragma once
 
 #include <vector>
+#include "FileReader.h"
 
 class StateII;
 class SpriteManager;
@@ -30,4 +31,5 @@ private:
 	SpriteManager* m_spriteManager;
 	MusicManager* m_musicManager;
 
+	FileReader m_reader;
 };
