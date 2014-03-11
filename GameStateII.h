@@ -11,6 +11,8 @@ class SoundManager;
 class SpawnerAOEenemy;
 class SpawnerRubbishBin;
 class SpawnerRubbishAndPower;
+class SpawnerBullet;
+class SpawnerEnemyRanged;
 class Player;
 class Level;
 
@@ -65,8 +67,15 @@ private:
 	SoundManager* m_soundManager;
 
 	SpawnerAOEenemy* m_spawnerAOEenemy;
+	SpawnerBullet* m_spawnerBullet;
+	SpawnerEnemyRanged* m_spawnerEnemyRanged;
+
 	SpawnerRubbishBin* m_spawnerRubbishBin;
+	SpawnerRubbishBin* m_spawnerRubbishBin2;
+
 	SpawnerRubbishAndPower* m_spawnerRubbishAndPower;
+
+	sf::Sprite* m_pauseScreen;
 	
 	Level* m_levelTop;
 	Level* m_levelBottom;

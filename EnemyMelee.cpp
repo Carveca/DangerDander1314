@@ -5,18 +5,19 @@
 
 #include <iostream>
 
-EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager)
+EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite ,sf::Sprite* deathsprite, SoundManager* soundmanager)
 {
 	m_points = 1;
 	m_hp = 1;
+	m_isAttacking = false;
+	m_attackAnimation = false;
+	m_attackTimer = 0.0f;
 
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
 	m_name = "EnemyMelee";
 	m_speed = 300;
-
-	m_soundManager = soundmanager;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
@@ -30,7 +31,8 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, SoundManager*
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
 
-	m_yDirection = -1;
+	m_Direction.y = 0;
+	m_Direction.x = 0;
 }
 
 EnemyMelee::~EnemyMelee()
@@ -41,12 +43,42 @@ EnemyMelee::~EnemyMelee()
 
 void EnemyMelee::MeleeAttack()
 {
-
+	if(m_attackTimer <= 0)
+		m_attackTimer = 0.3;
 }
 
-void EnemyMelee::Update(float &deltatime)
+void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 {
-	m_position.y += m_yDirection * m_speed * deltatime;
+	float deltax = m_position.x - refpos.x;
+	float deltay = m_position.y - refpos.y;
+	float distance = sqrtf(deltax * deltax + deltay * deltay);
+	float angle = atan2(deltay, deltax);
+	m_Direction.x = cos(angle) * -1;
+	m_Direction.y = sin(angle) * -1;
+	m_isAttacking = false;
+
+	if(distance > 100)
+	{
+		m_position += m_Direction * m_speed * deltatime;
+	}
+	else 
+	{	
+		MeleeAttack();				
+	}
+
+	if(m_attackTimer <= 0.3 && m_attackTimer > 0.0)
+	{
+		m_attackAnimation = true;
+
+		if(m_attackTimer <= 0.2 && m_attackTimer > 0.0)
+			m_isAttacking = true;		
+	}
+
+	m_attackTimer -= deltatime;
+	if(m_attackTimer < -10)
+	{
+		m_attackTimer = 0.0f;
+	}	
 
 	m_collider->SetPosition(m_position);
 	m_sprite->setPosition(m_position);
@@ -71,14 +103,10 @@ void EnemyMelee::Update(float &deltatime)
 	if(m_position.y < 0)
 	{
 		m_position.y = 0;
-		m_yDirection = -m_yDirection;
-		m_sprite->rotate(180);
 	}
 	if(m_position.y > 1080)
 	{
 		m_position.y = 1080;
-		m_yDirection = -m_yDirection;
-		m_sprite->rotate(180);
 	}
 }
 
@@ -88,11 +116,20 @@ void EnemyMelee::HandleCollision()
 	{
 		if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
-			std::cout << "Attacked!" << std::endl;
 			m_hp -= 1;
 		}
 
 	}
 	
 	m_collisions.clear();
+}
+
+bool EnemyMelee::GetAttacking()
+{
+	return m_isAttacking;
+}
+
+sf::Vector2f EnemyMelee::GetDirection()
+{
+	return m_Direction;
 }

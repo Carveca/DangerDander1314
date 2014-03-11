@@ -19,6 +19,7 @@ bool Collider::OverlapBoxVsBox(InteractiveObject* other, sf::Vector2f &offset)
 {
 	sf::Vector2f off;
 
+	/*
 	float distance_X			= fabs( m_position.x - other->GetCollider()->GetPosition().x);
 	float control_distance_X	= (m_extension.x * 0.5f) + (other->GetCollider()->GetExtension().x * 0.5f);
 
@@ -63,7 +64,10 @@ bool Collider::OverlapBoxVsBox(InteractiveObject* other, sf::Vector2f &offset)
 			return true;	
 		}
 	}
-	
+	*/
+
+
+
 	return false;
 }
 
@@ -79,12 +83,26 @@ bool Collider::OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &off
 		centered_other.x += (other->GetCollider()->GetExtension().x * 0.5);
 		centered_other.y += (other->GetCollider()->GetExtension().y * 0.5);
 
-	float distance_X	= fabs( centered_this.x - centered_other.x );
-	float distance_Y	= fabs( centered_this.y - centered_other.y );
+	float distance_X	= ( centered_this.x - centered_other.x );
+	float distance_Y	= ( centered_this.y - centered_other.y );
 	float distance_REAL = sqrt( pow(distance_X, 2.0f) + pow(distance_Y, 2.0f) );
 
 	float radiuses_sum	= m_radius + other->GetCollider()->GetRadius();
 
+	if(radiuses_sum > distance_REAL)
+	{
+		off = other->GetCollider()->GetPosition();
+
+		float angle = std::atan2f(distance_Y, distance_X);
+
+		off.x += std::cosf(angle) * (radiuses_sum );
+		off.y += std::sinf(angle) * (radiuses_sum );
+
+		offset = off;
+		return true;
+	}
+
+/*
 	if( distance_REAL <= radiuses_sum )
 	{
 		float delta_X = fabs(radiuses_sum - distance_X);
@@ -113,11 +131,8 @@ bool Collider::OverlapCircleVsCircle(InteractiveObject* other, sf::Vector2f &off
 				off.y = -delta_Y;
 			}
 		}
-
-		offset += off;
-		return true;		
-	}
-	
+		*/
+				
 	return false;
 }
 

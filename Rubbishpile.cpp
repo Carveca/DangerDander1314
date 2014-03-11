@@ -4,11 +4,13 @@
 #include "Rubbishpile.h"
 #include "Collider.h"
 
-Rubbishpile::Rubbishpile(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager)
+Rubbishpile::Rubbishpile(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager, float &angle)
 {
 	m_name = "Rubbishpile";
 	m_position = position;
 	m_speed = 100;
+
+	m_angle = angle;
 
 	m_sprite = sprite;
 	m_sprite->setOrigin(60, 60);
@@ -59,7 +61,7 @@ void Rubbishpile::HandleCollision()
 	{
 		if(m_collisions[i].first->GetName() == "Player")
 		{
-			
+			m_hp -= 1;
 		}
 	}
 
@@ -71,6 +73,8 @@ sf::Sprite* Rubbishpile::GetAnimation()
 	m_sprite->setPosition(GetPosition());
 
 	m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
+
+	m_sprite->setRotation(m_angle);
 
 	return m_sprite;
 }

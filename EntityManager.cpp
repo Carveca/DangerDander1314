@@ -11,6 +11,8 @@
 #include "PlayerAttack.h"
 #include "PumpMeter.h"
 
+#include "Bullet.h"
+#include "EnemyRanged.h"
 #include "EnemyAOE.h"
 #include "RubbishBin.h"
 #include "Rubbishpile.h"
@@ -65,6 +67,10 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 
 	UpdateEnemyAOE(deltatime);
 
+	UpdateEnemyRanged(deltatime);
+
+	UpdateBullet(deltatime);
+
 	UpdateRubbishBin(deltatime);
 
 	UpdateRubbishPile(deltatime);
@@ -86,6 +92,8 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 
 	DrawRubbishPile(window);
 
+	DrawEnemyranged(window);
+
 	DrawBlueCow(window);
 
 	DrawHappyPill(window);
@@ -93,6 +101,8 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 	DrawEnemyAOE(window);
 		
 	DrawPlayer(window);
+
+	DrawBullet(window);
 
 	DrawPumpMeter(window);
 
@@ -105,6 +115,22 @@ void EntityManager::CollisionCheck()
 	if(!m_playerAttack.empty())
 	{
 		m_collisionManager->Add(m_playerAttack[0]);
+	}
+
+	if( !m_bullets.empty() )
+	{
+		for(unsigned int i = 0; i < m_bullets.size(); i++)
+		{
+			m_collisionManager->Add(m_bullets[i]);
+		}
+	}
+
+	if(!m_enemyRanged.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
+		{
+			m_collisionManager->Add(m_enemyRanged[i]);
+		}
 	}
 
 	if(!m_enemyAOE.empty())
@@ -143,6 +169,8 @@ void EntityManager::CollisionCheck()
 	m_collisionManager->CheckCollision();
 }
 
+//m_player->ChangeHP(20);
+//m_soundManager->PlaySound("PumpIncrease");
 
 void EntityManager::CheckHP(float &deltatime, float &angle)
 {
@@ -176,6 +204,34 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_blueCow[i];
 				m_blueCow[i] = nullptr;
 				m_blueCow.erase(m_blueCow.begin() + i);
+			}
+		}
+	}
+
+	if(!m_bullets.empty())
+	{
+		for(unsigned int i = 0; i < m_bullets.size(); i++)
+		{
+			if(m_bullets[i]->GetHP() <= 0)
+			{
+				delete m_bullets[i];
+				m_bullets[i] = nullptr;
+				m_bullets.erase(m_bullets.begin() + i);
+			}
+		}
+	}
+
+	if(!m_enemyRanged.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
+		{
+			if(m_enemyRanged[i]->GetHP() <= 0)
+			{
+				delete m_enemyRanged[i];
+				m_enemyRanged[i] = nullptr;
+				m_enemyRanged.erase(m_enemyRanged.begin() + i);
+				m_player->ChangeHP(20);
+				m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
 	}
@@ -295,7 +351,34 @@ void EntityManager::AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSp
 
 void EntityManager::AddEnemyAOE(EnemyAOE* enemyAOE)
 {
-	m_enemyAOE.push_back(enemyAOE);
+	if(m_enemyAOE.size() <= 3)
+	{
+		m_enemyAOE.push_back(enemyAOE);
+	}
+
+}
+
+void EntityManager::AddMeleeAttack(MeleeAttack* meleeattack)
+{
+	m_meleeAttacks.push_back(meleeattack);
+}
+
+void EntityManager::AddEnemyMelee(EnemyMelee* enemymelee)
+{
+	m_enemyMelee.push_back(enemymelee);
+}
+
+void EntityManager::AddBullet(Bullet* bullet)
+{
+	m_bullets.push_back(bullet);
+}
+
+void EntityManager::AddEnemyRanged(EnemyRanged* enemyranged)
+{
+	if(m_enemyRanged.size() <= 2)
+	{
+		m_enemyRanged.push_back(enemyranged);
+	}
 }
 
 void EntityManager::AddRubbishBin(RubbishBin* rubbishbin)
@@ -401,6 +484,110 @@ void EntityManager::DrawPumpMeter(sf::RenderWindow* window)
 
 	window->draw(*m_pumpMeter->m_indicatorEffectSprite);
 	window->draw(*m_pumpMeter->m_indicatorSprite);
+}
+
+//Melee attack - Update and Draw
+
+void EntityManager::UpdateMeleeAttack(float &deltatime)
+{
+	if( !m_meleeAttacks.empty() )
+	{
+		for(unsigned int i = 0; i < m_meleeAttacks.size(); i++)
+		{
+			//update
+		}
+	}
+}
+
+void EntityManager::DrawMeleeAttack(sf::RenderWindow* window)
+{
+	if( !m_meleeAttacks.empty() )
+	{
+		for(unsigned int i = 0; i < m_meleeAttacks.size(); i++)
+		{
+			//draw
+		}
+	}
+}
+
+//Enemy Melee - Update and Draw
+
+void EntityManager::UpdateEnemyMelee(float &deltatime)
+{
+	if( !m_enemyMelee.empty() )
+	{
+		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
+		{
+			//update
+		}
+	}
+}
+
+void EntityManager::DrawEnemyMelee(sf::RenderWindow* window)
+{
+	if( !m_enemyMelee.empty() )
+	{
+		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
+		{
+			//draw
+		}
+	}
+}
+
+//Bullet - Update and Draw
+
+void EntityManager::UpdateBullet(float &deltatime)
+{
+	if(!m_bullets.empty())
+	{
+		for(unsigned int i = 0; i < m_bullets.size(); i++)
+		{
+			m_bullets[i]->Update(deltatime);
+		}
+	}
+}
+
+void EntityManager::DrawBullet(sf::RenderWindow* window)
+{
+	if(!m_bullets.empty())
+	{
+		for(unsigned int i = 0; i < m_bullets.size(); i++)
+		{
+			window->draw(*m_bullets[i]->GetSprite());
+		}
+	}
+
+}
+
+//Enemy Ranged - Update and Draw
+
+void EntityManager::UpdateEnemyRanged(float &deltatime)
+{
+	if(!m_enemyRanged.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
+		{
+			m_enemyRanged[i]->Update(deltatime, m_player->GetPosition());
+		}
+	}
+}
+
+void EntityManager::DrawEnemyranged(sf::RenderWindow* window)
+{
+	if(!m_enemyRanged.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
+		{
+			if(m_enemyRanged[i]->GetAttackAnimation())
+			{
+				window->draw(*m_enemyRanged[i]->GetAttackSprite());
+			}
+			else if(!m_enemyRanged[i]->GetAttacking())
+			{
+				window->draw(*m_enemyRanged[i]->GetSprite());
+			}
+		}
+	}
 }
 
 //EnemyAOE - Update and Draw

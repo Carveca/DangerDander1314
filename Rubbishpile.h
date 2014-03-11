@@ -7,7 +7,7 @@
 class Rubbishpile : public InteractiveObject
 {
 public:
-	Rubbishpile(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager);
+	Rubbishpile(sf::Sprite* sprite, sf::Vector2f &position, SoundManager* soundmanager, float &angle);
 	~Rubbishpile();
 
 	void Update(float &deltatime);
@@ -17,5 +17,5 @@ public:
 
 private:
 	SoundManager* m_soundManager;
-
+	float m_angle;
 };

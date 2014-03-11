@@ -5,7 +5,7 @@
 #include "Collider.h"
 #include "Player.h"
 
-MeleeAttack::MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position, SoundManager* soundmanager)
+MeleeAttack::MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position)
 {
 	m_name = "PlayerAttack";
 	m_position = position;
@@ -13,8 +13,6 @@ MeleeAttack::MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position, SoundManager
 	m_sprite = sprite;
 	m_sprite->setOrigin(60, 60);
 	m_sprite->setPosition(position);
-
-	m_soundManager = soundmanager;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;

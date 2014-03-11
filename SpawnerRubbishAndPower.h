@@ -16,7 +16,7 @@ public:
 
 	BlueCow* SpawnBlueCow();
 	HappyPill* SpawnHappyPill();
-	Rubbishpile* SpawnRubbish();
+	Rubbishpile* SpawnRubbish(float &angle);
 
 	void Update();
 	void SetSpawnPOS(sf::Vector2f &spawnlocation);

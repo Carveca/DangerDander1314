@@ -47,9 +47,9 @@ HappyPill* SpawnerRubbishAndPower::SpawnHappyPill()
 	return new HappyPill(m_spriteHappyPill, m_spawnPosition);
 }
 
-Rubbishpile* SpawnerRubbishAndPower::SpawnRubbish()
+Rubbishpile* SpawnerRubbishAndPower::SpawnRubbish(float &angle)
 {
-	return new Rubbishpile(m_spriteRubbish, m_spawnPosition, m_soundManager);
+	return new Rubbishpile(m_spriteRubbish, m_spawnPosition, m_soundManager, angle);
 }
 
 void SpawnerRubbishAndPower::SetSpawnPOS(sf::Vector2f &spawnlocation)

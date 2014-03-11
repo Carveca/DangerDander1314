@@ -28,6 +28,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_soundManager = soundmanager;
 	m_soundManager->LoadSound("sfx_main_character_attack_1.wav", "PlayerAttack");
 	m_soundManager->LoadSound("sfx_main_character_movement_1.wav", "PlayerMove");
+	m_soundManager->LoadSound("sfx_blue_cow_powerup_activation_1.wav", "BlueCow");
 
 	if(sprite != nullptr)
 	{
@@ -107,7 +108,7 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 		m_soundManager->PlaySound("PlayerMove");
 	}
 
-	m_collider->SetPosition(m_position);
+	//m_collider->SetPosition(m_position);
 	m_sprite->setPosition(m_position);
 	m_attackSprite->setPosition(m_position);
 	
@@ -196,16 +197,13 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 
 void Player::HandleCollision()
 {
+	m_collider->SetPosition(GetPosition());
+
 	for(unsigned int i = 0; i < m_collisions.size(); i++)
 	{
 		if(m_collisions[i].first->GetName() == "Player")
 		{
 			
-		}
-
-		else if(m_collisions[i].first->GetName() == "EnemyAOE")
-		{
-			m_position += m_collisions[i].second;
 		}
 
 		else if(m_collisions[i].first->GetName() == "PlayerAttack")
@@ -230,7 +228,7 @@ void Player::HandleCollision()
 
 		else 
 		{
-			m_position += m_collisions[i].second;
+			m_position = m_collisions[i].second;
 		}
 
 	}
@@ -311,10 +309,11 @@ void Player::UseHappyPill()
 
 void Player::UseBlueCow()
 {
+	m_soundManager->PlaySound("BlueCow");
+
 	if (m_blueCows > 0)
 	{
 		m_blueCows--;
-		m_blueCowTimer = 4.0f;
-		
+		m_blueCowTimer = 4.0f;		
 	}
 }

@@ -13,6 +13,7 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	/*
+	//global?
 	FileReader reader;	
 	reader.Initialize("../Data/");
 	reader.LoadFile("settings.txt");
@@ -20,6 +21,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << reader.m_settings["ScreenWidth"] << std::endl;
 	std::cout << reader.m_settings["ScreenHeight"] << std::endl;
 	*/
+
+	
 
 	srand(time(0));	
 	Engine engine;

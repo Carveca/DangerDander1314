@@ -11,6 +11,10 @@ class PlayerAttack;
 class PumpMeter;
 
 class EnemyAOE;
+class MeleeAttack;
+class EnemyMelee;
+class Bullet;
+class EnemyRanged;
 class RubbishBin;
 class Rubbishpile;
 class HappyPill;
@@ -30,6 +34,10 @@ public:
 	void AddSounds(SoundManager* soundmanager);
 	void AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS);
 	
+	void AddMeleeAttack(MeleeAttack* meleeattack);
+	void AddEnemyMelee(EnemyMelee* enemymelee);
+	void AddBullet(Bullet* bullet);
+	void AddEnemyRanged(EnemyRanged* enemyranged);
 	void AddEnemyAOE(EnemyAOE* enemyAOE);
 	void AddRubbishBin(RubbishBin* rubbishbin);
 	void AddRubbishpile(Rubbishpile* rubbishpile);
@@ -49,6 +57,18 @@ private:
 	void UpdateEnemyAOE(float &deltatime);
 	void DrawEnemyAOE(sf::RenderWindow* window);
 
+	void UpdateMeleeAttack(float &deltatime);
+	void DrawMeleeAttack(sf::RenderWindow* window);
+
+	void UpdateEnemyMelee(float &deltatime);
+	void DrawEnemyMelee(sf::RenderWindow* window);
+
+	void UpdateBullet(float &deltatime);
+	void DrawBullet(sf::RenderWindow* window);
+
+	void UpdateEnemyRanged(float &deltatime);
+	void DrawEnemyranged(sf::RenderWindow* window);
+
 	void UpdateRubbishBin(float &deltatime);
 	void DrawRubbishBin(sf::RenderWindow* window, float &deltatime, float &playerangle);
 
@@ -66,6 +86,8 @@ public:
 	sf::Sprite* m_powSprite;
 
 	std::vector<RubbishBin*> m_rubbishBin;
+	std::vector<EnemyRanged*> m_enemyRanged;
+	std::vector<EnemyMelee*> m_enemyMelee;
 
 private:
 	CollisionManager* m_collisionManager;
@@ -75,7 +97,11 @@ private:
 	PumpMeter* m_pumpMeter;
 
 	std::vector<PlayerAttack*> m_playerAttack;
-	std::vector<EnemyAOE*> m_enemyAOE;	
+	std::vector<EnemyAOE*> m_enemyAOE;
+	
+	std::vector<Bullet*> m_bullets;
+	
+	std::vector<MeleeAttack*> m_meleeAttacks;
 	
 	std::vector<Rubbishpile*> m_rubbishpile;
 	std::vector<BlueCow*> m_blueCow;
