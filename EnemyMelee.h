@@ -6,7 +6,7 @@
 class EnemyMelee : public Enemy
 {
 public:
-	EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position);
+	EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite);
 	~EnemyMelee();
 
 	void MeleeAttack();
@@ -15,11 +15,21 @@ public:
 
 	bool GetAttacking();
 	sf::Vector2f GetDirection();
+	bool GetAttackAnimation();
+
+	sf::Sprite* GetSprite();
+	sf::Sprite* GetAttackSprite();
+
+	void SetAttackAnimationStop();
 protected:
 	sf::Vector2f m_Direction;
 
 	bool m_isAttacking;
 	bool m_attackAnimation;
+	
+	sf::Sprite* m_attackSprite;
+	float m_attackFrameCounter;
+	int m_attackImageNR;
 
 	float m_attackTimer;
 };
