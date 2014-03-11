@@ -6,31 +6,34 @@
 class EnemyMelee : public Enemy
 {
 public:
-	EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite ,sf::Sprite* deathsprite, SoundManager* soundmanager);
+	EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, sf::Sprite* deathsprite, SoundManager* soundmanager);
 	~EnemyMelee();
 
 	void MeleeAttack();
 	void Update(float &deltatime, sf::Vector2f refpos);
 	void HandleCollision();
 
-	bool GetAttackAnimation();
 	bool GetAttacking();
 	sf::Vector2f GetDirection();
+	bool GetAttackAnimation();
 
+	sf::Sprite* GetSprite();
 	sf::Sprite* GetAttackSprite();
-	sf::Sprite* GetDeathSprite();
+
+	void SetAttackAnimationStop();
 
 protected:
 	sf::Vector2f m_Direction;
 
 	bool m_isAttacking;
 	bool m_attackAnimation;
+	
+	sf::Sprite* m_attackSprite;
+	float m_attackFrameCounter;
+	int m_attackImageNR;
+
+	float m_attackTimer;
 
 	SoundManager* m_soundManager;
-	sf::Sprite* m_attackSprite;
-	sf::Sprite* m_deathSprite;
 
-	int m_attackImageNR;
-	float m_attackFrameCounter;
-	float m_attackTimer;
 };

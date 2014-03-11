@@ -11,6 +11,7 @@
 #include "PlayerAttack.h"
 #include "PumpMeter.h"
 
+#include "EnemyMelee.h"
 #include "Bullet.h"
 #include "EnemyRanged.h"
 #include "EnemyAOE.h"
@@ -18,6 +19,7 @@
 #include "Rubbishpile.h"
 #include "HappyPill.h"
 #include "BlueCow.h"
+
 
 EntityManager::EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager)
 {
@@ -65,6 +67,8 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 	
 	//enemies
 
+	UpdateEnemyMelee(deltatime);
+
 	UpdateEnemyAOE(deltatime);
 
 	UpdateEnemyRanged(deltatime);
@@ -91,6 +95,8 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 	DrawRubbishBin(window, deltatime, playerangle);
 
 	DrawRubbishPile(window);
+
+	DrawEnemyMelee(window);
 
 	DrawEnemyranged(window);
 
@@ -518,7 +524,7 @@ void EntityManager::UpdateEnemyMelee(float &deltatime)
 	{
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
-			//update
+			m_enemyMelee[i]->Update(deltatime, m_player->GetPosition());
 		}
 	}
 }
@@ -529,7 +535,7 @@ void EntityManager::DrawEnemyMelee(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
-			//draw
+			window->draw(*m_enemyMelee[i]->GetSprite());
 		}
 	}
 }

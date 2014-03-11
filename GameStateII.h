@@ -13,6 +13,7 @@ class SpawnerRubbishBin;
 class SpawnerRubbishAndPower;
 class SpawnerBullet;
 class SpawnerEnemyRanged;
+class SpawnerEnemyMelee;
 class Player;
 class Level;
 
@@ -69,6 +70,7 @@ private:
 	SpawnerAOEenemy* m_spawnerAOEenemy;
 	SpawnerBullet* m_spawnerBullet;
 	SpawnerEnemyRanged* m_spawnerEnemyRanged;
+	SpawnerEnemyMelee* m_spawnerEnemyMelee;
 
 	SpawnerRubbishBin* m_spawnerRubbishBin;
 	SpawnerRubbishBin* m_spawnerRubbishBin2;

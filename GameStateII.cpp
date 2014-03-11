@@ -12,6 +12,7 @@
 
 #include "SpawnerBullet.h"
 #include "SpawnerEnemyRanged.h"
+#include "SpawnerEnemyMelee.h"
 #include "SpawnerAOEenemy.h"
 #include "SpawnerRubbishBin.h"
 #include "SpawnerRubbishAndPower.h"
@@ -20,6 +21,7 @@
 #include "Player.h"
 #include "RubbishBin.h"
 #include "EnemyRanged.h"
+#include "EnemyMelee.h"
 #include "Level.h"
 
 GameStateII::GameStateII()
@@ -55,6 +57,7 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	
 	//Spawners
 	
+	m_spawnerEnemyMelee = new SpawnerEnemyMelee( m_spriteManager->GetSprite("melee_enemy_move.png", 2048, 128), m_spriteManager->GetSprite("melee_enemy_attack.png", 1024, 128), m_spriteManager->GetSprite("melee_enemy_death.png", 512, 128), sf::Vector2f(1200, -100), m_soundManager);
 	m_spawnerBullet = new SpawnerBullet(m_spriteManager->GetSprite("bullet.png", 16, 16), m_soundManager);
 	m_spawnerEnemyRanged = new SpawnerEnemyRanged(m_spriteManager->GetSprite("ranged_enemy_move.png", 2048, 128), m_spriteManager->GetSprite("ranged_enemy_attack.png", 1024, 128), m_spriteManager->GetSprite("ranged_enemy_death.png", 512, 128), sf::Vector2f(600, -200), m_soundManager);
 	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 2056, 256), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100), m_soundManager );
@@ -323,6 +326,12 @@ void GameStateII::RealTime(float &deltatime)
 {
 	Input();
 
+	//Spawner Enemy Melee
+	m_spawnerEnemyMelee->Update(deltatime);
+	if(m_spawnerEnemyMelee->GetSpawnState())
+	{
+		m_entityManager->AddEnemyMelee( m_spawnerEnemyMelee->Spawn() );
+	}
 	//Spawner Enemy Ranged
 	m_spawnerEnemyRanged->Update(deltatime);
 	if(m_spawnerEnemyRanged->GetSpawnState())
