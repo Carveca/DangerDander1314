@@ -2,10 +2,11 @@
 #include "stdafx.h"
 #include "EnemyMelee.h"
 #include "Collider.h"
+#include "SoundManager.h"
 
 #include <iostream>
 
-EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite)
+EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, sf::Sprite* deathsprite, SoundManager* soundmanager)
 {
 	m_points = 1;
 	m_hp = 1;
@@ -89,33 +90,33 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 	m_sprite->setPosition(m_position);
 	m_attackSprite->setPosition(m_position);
 
+	m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
+	m_frameCounter += deltatime;
+
+	//animation
 	if(m_attackAnimation)
 	{
-		m_attackSprite->setTextureRect(sf::IntRect( 257 * m_attackImageNR, 0, 256, 256));
 		m_attackFrameCounter += deltatime;
-		if(m_attackFrameCounter >= 0.1f)
+		if(m_attackFrameCounter >= 0.1)
 		{
 			m_attackImageNR++;
 			m_attackFrameCounter = 0.0f;
-			if(m_attackImageNR > 2)
-				m_attackImageNR = 0;
+			if(m_attackImageNR > 5)
+				m_attackImageNR = 5;
 		}
-		m_attackSprite->setRotation(angle);
 	}
-
-	else if(!m_attackAnimation)
+	else if(!m_attackAnimation && m_frameCounter >= 0.1f)
 	{
-		m_sprite->setTextureRect(sf::IntRect( 257 * m_imageNR, 0, 256, 256));
-		m_frameCounter += deltatime;
-		if(m_frameCounter >= 0.1f)
-		{
-			m_imageNR++;
-			m_frameCounter = 0.0f;
-			if(m_imageNR > 7)
-				m_imageNR = 0;
-		}
-		m_sprite->setRotation(angle);
-	}
+		//reset attackanimation
+		m_attackImageNR = 0;
+		m_attackFrameCounter = 0.0f;
+
+		//walk animation
+		m_imageNR++;
+		m_frameCounter = 0.0f;
+		if(m_imageNR > 7)
+			m_imageNR = 0;
+	}	
 	
 	HandleCollision();
 
@@ -156,13 +157,6 @@ bool EnemyMelee::GetAttacking()
 sf::Vector2f EnemyMelee::GetDirection()
 {
 	return m_Direction;
-}
-
-void EnemyMelee::SetAttackAnimationStop()
-{
-	m_attackAnimation = false;
-	m_attackFrameCounter = 0.0;
-	m_attackImageNR = 0;
 }
 
 bool EnemyMelee::GetAttackAnimation()
