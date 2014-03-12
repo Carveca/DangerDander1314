@@ -22,7 +22,7 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* a
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(60);
+	m_collider->SetRadius(40);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -30,7 +30,7 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* a
 	m_sprite->setOrigin(64, 64);
 	
 	m_attackSprite = attackSprite;
-	m_attackSprite->setOrigin(128, 128);
+	m_attackSprite->setOrigin(64, 64);
 	m_attackImageNR = 0;
 	m_attackFrameCounter = 0.0f;
 
@@ -50,7 +50,7 @@ EnemyMelee::~EnemyMelee()
 void EnemyMelee::MeleeAttack()
 {
 	if(m_attackTimer <= 0)
-		m_attackTimer = 0.3;
+		m_attackTimer = 0.5;
 }
 
 void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
@@ -72,16 +72,19 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 		MeleeAttack();				
 	}
 
-	if(m_attackTimer <= 0.3 && m_attackTimer > 0.0)
+	if(m_attackTimer <= 0.5 && m_attackTimer > 0.0)
 	{
 		m_attackAnimation = true;
 
-		if(m_attackTimer <= 0.2 && m_attackTimer > 0.0)
+		if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+		{
 			m_isAttacking = true;		
+			m_attackTimer = 0.0f;
+		}
 	}
 
 	m_attackTimer -= deltatime;
-	if(m_attackTimer < -10)
+	if(m_attackTimer < -1)
 	{
 		m_attackTimer = 0.0f;
 	}	
@@ -90,33 +93,34 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 	m_sprite->setPosition(m_position);
 	m_attackSprite->setPosition(m_position);
 
+	m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
+	m_frameCounter += deltatime;
+
+	//animation
 	if(m_attackAnimation)
 	{
-		m_attackSprite->setTextureRect(sf::IntRect( 257 * m_attackImageNR, 0, 256, 256));
 		m_attackFrameCounter += deltatime;
-		if(m_attackFrameCounter >= 0.1f)
+		if(m_attackFrameCounter >= 0.1)
 		{
 			m_attackImageNR++;
 			m_attackFrameCounter = 0.0f;
-			if(m_attackImageNR > 2)
+
+			if(m_attackImageNR > 4)
 				m_attackImageNR = 0;
 		}
-		m_attackSprite->setRotation(angle);
 	}
-
-	else if(!m_attackAnimation)
+	else if(!m_attackAnimation && m_frameCounter >= 0.1f)
 	{
-		m_sprite->setTextureRect(sf::IntRect( 257 * m_imageNR, 0, 256, 256));
-		m_frameCounter += deltatime;
-		if(m_frameCounter >= 0.1f)
-		{
-			m_imageNR++;
-			m_frameCounter = 0.0f;
-			if(m_imageNR > 7)
-				m_imageNR = 0;
-		}
-		m_sprite->setRotation(angle);
-	}
+		//reset attackanimation
+		m_attackImageNR = 0;
+		m_attackFrameCounter = 0.0f;
+
+		//walk animation
+		m_imageNR++;
+		m_frameCounter = 0.0f;
+		if(m_imageNR > 7)
+			m_imageNR = 0;
+	}	
 	
 	HandleCollision();
 
@@ -137,13 +141,26 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 
 void EnemyMelee::HandleCollision()
 {
+	m_collider->SetPosition(GetPosition());
+	bool selfcollision = false;
+
 	for(unsigned int i = 0; i < m_collisions.size(); i++)
 	{
 		if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
 			m_hp -= 1;
 		}
-
+		if( m_collisions[i].first->GetName() == "EnemyMelee" )
+		{
+			if(!selfcollision)
+			{
+				selfcollision = true;
+			}
+			else if(selfcollision)
+			{
+				m_position = m_collisions[i].second;
+			}			
+		}
 	}
 	
 	m_collisions.clear();
@@ -159,13 +176,6 @@ sf::Vector2f EnemyMelee::GetDirection()
 	return m_Direction;
 }
 
-void EnemyMelee::SetAttackAnimationStop()
-{
-	m_attackAnimation = false;
-	m_attackFrameCounter = 0.0;
-	m_attackImageNR = 0;
-}
-
 bool EnemyMelee::GetAttackAnimation()
 {
 	return m_attackAnimation;
@@ -173,10 +183,16 @@ bool EnemyMelee::GetAttackAnimation()
 
 sf::Sprite* EnemyMelee::GetAttackSprite()
 {
+	m_attackSprite->setPosition(GetPosition());
+
+	m_attackSprite->setTextureRect( sf::IntRect(m_attackImageNR * 129, 0, 128, 128) );
+
 	return m_attackSprite;
 }
 
+/*
 sf::Sprite* EnemyMelee::GetSprite()
 {
 	return m_sprite;
 }
+*/

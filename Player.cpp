@@ -46,6 +46,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	//Attackanimation
 	m_attackSprite = attackSprite;
 	m_attackSprite->setOrigin(128, 128);
+	m_attackSprite->setTextureRect(sf::IntRect(0, 0, 256, 256));
 	m_attackImageNR = 0;
 	m_attackFrameCounter = 0.0f;
 
@@ -201,16 +202,18 @@ void Player::HandleCollision()
 
 	for(unsigned int i = 0; i < m_collisions.size(); i++)
 	{
-		if(m_collisions[i].first->GetName() == "Player")
+		if(m_collisions[i].first->GetName() == "Player" || m_collisions[i].first->GetName() == "PlayerAttack")
 		{
 			
 		}
 
+		/*
 		else if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
 			
 		}
-
+		*/
+		
 		else if(m_collisions[i].first->GetName() == "AOEattack")
 		{
 			m_hpDrain = 1;
@@ -225,7 +228,10 @@ void Player::HandleCollision()
 		{
 			m_blueCows++;
 		}
+		else if(m_collisions[i].first->GetName() == "MeleeAttack")
+		{
 
+		}
 		else 
 		{
 			m_position = m_collisions[i].second;

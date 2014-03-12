@@ -99,8 +99,7 @@ private:
 	std::vector<PlayerAttack*> m_playerAttack;
 	std::vector<EnemyAOE*> m_enemyAOE;
 	
-	std::vector<Bullet*> m_bullets;
-	
+	std::vector<Bullet*> m_bullets;	
 	std::vector<MeleeAttack*> m_meleeAttacks;
 	
 	std::vector<Rubbishpile*> m_rubbishpile;

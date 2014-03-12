@@ -22,6 +22,7 @@
 #include "RubbishBin.h"
 #include "EnemyRanged.h"
 #include "EnemyMelee.h"
+#include "MeleeAttack.h"
 #include "Level.h"
 
 GameStateII::GameStateII()
@@ -326,6 +327,17 @@ void GameStateII::RealTime(float &deltatime)
 {
 	Input();
 
+	//Spawn Melee Attack
+	if(!m_entityManager->m_enemyMelee.empty())
+	{
+		for( unsigned int i = 0; i < m_entityManager->m_enemyMelee.size(); i++)
+		{
+			if(m_entityManager->m_enemyMelee[i]->GetAttacking() )
+			{
+				m_entityManager->AddMeleeAttack( new MeleeAttack(m_spriteManager->GetSprite("pow_effect.png", 128, 128), m_entityManager->m_player->GetPosition()) );
+			}
+		}
+	}
 	//Spawner Enemy Melee
 	m_spawnerEnemyMelee->Update(deltatime);
 	if(m_spawnerEnemyMelee->GetSpawnState())
@@ -398,8 +410,6 @@ void GameStateII::RealTime(float &deltatime)
 								m_entityManager->AddHappyPill(m_spawnerRubbishAndPower->SpawnHappyPill());
 							}
 					}
-					
-
 					m_entityManager->m_rubbishBin[i]->m_spawnedTrash = true;
 				}
 			}

@@ -11,6 +11,7 @@
 #include "PlayerAttack.h"
 #include "PumpMeter.h"
 
+#include "MeleeAttack.h"
 #include "EnemyMelee.h"
 #include "Bullet.h"
 #include "EnemyRanged.h"
@@ -67,6 +68,8 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 	
 	//enemies
 
+	UpdateMeleeAttack(deltatime);
+
 	UpdateEnemyMelee(deltatime);
 
 	UpdateEnemyAOE(deltatime);
@@ -108,6 +111,8 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 		
 	DrawPlayer(window);
 
+	DrawMeleeAttack(window);
+
 	DrawBullet(window);
 
 	DrawPumpMeter(window);
@@ -121,6 +126,22 @@ void EntityManager::CollisionCheck()
 	if(!m_playerAttack.empty())
 	{
 		m_collisionManager->Add(m_playerAttack[0]);
+	}
+
+	if( !m_meleeAttacks.empty() )
+	{
+		for(unsigned int i = 0; i < m_meleeAttacks.size(); i++)
+		{
+			m_collisionManager->Add(m_meleeAttacks[i]);
+		}
+	}
+
+	if( !m_enemyMelee.empty() )
+	{
+		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
+		{
+			m_collisionManager->Add(m_enemyMelee[i]);
+		}
 	}
 
 	if( !m_bullets.empty() )
@@ -210,6 +231,32 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_blueCow[i];
 				m_blueCow[i] = nullptr;
 				m_blueCow.erase(m_blueCow.begin() + i);
+			}
+		}
+	}
+
+	if( !m_meleeAttacks.empty() )
+	{
+		for(unsigned int i = 0; i < m_meleeAttacks.size(); i++)
+		{
+			if( m_meleeAttacks[i]->GetHP() <= 0 )
+			{
+				delete m_meleeAttacks[i];
+				m_meleeAttacks[i] = nullptr;
+				m_meleeAttacks.erase( m_meleeAttacks.begin() + i );
+			}
+		}
+	}
+
+	if( !m_enemyMelee.empty() )
+	{
+		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
+		{
+			if( m_enemyMelee[i]->GetHP() <= 0 )
+			{
+				delete m_enemyMelee[i];
+				m_enemyMelee[i] = nullptr;
+				m_enemyMelee.erase( m_enemyMelee.begin() + i );
 			}
 		}
 	}
@@ -338,7 +385,7 @@ void EntityManager::MusicSwitch()
 	}
 }
 
-//Add
+//Add (outdated)
 
 void EntityManager::AddSounds(SoundManager* soundmanager)
 {
@@ -349,6 +396,8 @@ void EntityManager::AddMusic(MusicManager* musicmanager)
 {
 	m_musicManager = musicmanager;
 }
+
+//Add
 
 void EntityManager::AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS)
 {
@@ -371,7 +420,10 @@ void EntityManager::AddMeleeAttack(MeleeAttack* meleeattack)
 
 void EntityManager::AddEnemyMelee(EnemyMelee* enemymelee)
 {
-	m_enemyMelee.push_back(enemymelee);
+	if(m_enemyMelee.size() <= 2)
+	{
+		m_enemyMelee.push_back(enemymelee);
+	}
 }
 
 void EntityManager::AddBullet(Bullet* bullet)
@@ -500,7 +552,7 @@ void EntityManager::UpdateMeleeAttack(float &deltatime)
 	{
 		for(unsigned int i = 0; i < m_meleeAttacks.size(); i++)
 		{
-			//update
+			m_meleeAttacks[i]->Update(deltatime);
 		}
 	}
 }
@@ -511,7 +563,7 @@ void EntityManager::DrawMeleeAttack(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_meleeAttacks.size(); i++)
 		{
-			//draw
+			window->draw(*m_meleeAttacks[i]->GetSprite());
 		}
 	}
 }
@@ -535,7 +587,14 @@ void EntityManager::DrawEnemyMelee(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
-			window->draw(*m_enemyMelee[i]->GetSprite());
+			if(!m_enemyMelee[i]->GetAttackAnimation())
+			{
+				window->draw(*m_enemyMelee[i]->GetSprite());
+			}
+			else if(m_enemyMelee[i]->GetAttackAnimation())
+			{
+				window->draw( *m_enemyMelee[i]->GetAttackSprite() );
+			}
 		}
 	}
 }

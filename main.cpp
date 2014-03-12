@@ -12,6 +12,7 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	
 	/*
 	//global?
 	FileReader reader;	
@@ -23,7 +24,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	*/
 
 	
-
 	srand(time(0));	
 	Engine engine;
 

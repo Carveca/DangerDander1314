@@ -3,11 +3,10 @@
 #include "stdafx.h"
 #include "MeleeAttack.h"
 #include "Collider.h"
-#include "Player.h"
 
 MeleeAttack::MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position)
 {
-	m_name = "PlayerAttack";
+	m_name = "MeleeAttack";
 	m_position = position;
 
 	m_sprite = sprite;
@@ -21,7 +20,7 @@ MeleeAttack::MeleeAttack(sf::Sprite* sprite ,sf::Vector2f position)
 	m_collider->SetRadius(100);
 
 	m_life = 0.1f;
-	m_dead = false;
+	//m_dead = false;
 }
 
 MeleeAttack::~MeleeAttack()
@@ -41,7 +40,7 @@ void MeleeAttack::Update(float &elapsedTime)
 
 	if(m_life <= 0.0)
 	{
-		m_dead = true;
+		m_hp -= 1;
 	}
 
 	HandleCollision();
@@ -51,16 +50,15 @@ void MeleeAttack::HandleCollision()
 {
 	for(unsigned int i = 0; i < m_collisions.size(); i++)
 	{
-		if(m_collisions[i].first->GetName() == "Player")
-		{
-			m_player->ChangeHP(10);
-		}
+		//if( m_collisions[i].first->GetName() == "
 	}
 
 	m_collisions.clear();
 }
 
+/*
 bool MeleeAttack::Dead()
 {
 	return m_dead;
 }
+*/

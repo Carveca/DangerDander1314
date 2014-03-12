@@ -15,11 +15,11 @@ public:
 	void Update(float &elapsedTime);
 	void HandleCollision();
 
-	bool Dead();
+	//bool Dead();
 
 private:
 	float m_life;
-	bool m_dead;
+	//bool m_dead;
 
 	Player* m_player;
 };
