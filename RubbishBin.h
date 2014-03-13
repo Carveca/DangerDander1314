@@ -32,4 +32,7 @@ public:
 	bool m_dead;
 	bool m_knockedOver;
 	bool m_spawnedTrash;
+
+	bool m_hitSound;
+	bool m_knockedOverSound;
 };

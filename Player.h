@@ -29,7 +29,9 @@ public:
 	sf::Sprite* GetAttackSprite();
 
 	void SetAttackAnimationStop();
-		
+	
+	void AddScore(int value);
+	int GetScore();
 	void UseHappyPill();
 	void UseBlueCow();
 
@@ -56,5 +58,6 @@ private:
 
 	int m_happyPills;
 	int m_blueCows;
+	int m_score;
 	float m_blueCowTimer;
 };

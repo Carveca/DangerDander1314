@@ -15,7 +15,10 @@ SpawnerRubbishBin::SpawnerRubbishBin(sf::Sprite* sprite, sf::Sprite* deathsprite
 	m_sprite = sprite;
 	m_deathSprite = deathsprite;
 	m_spawnPosition = spawnlocation;
+
 	m_soundManager = soundmanager;
+	m_soundManager->LoadSound("trashcan_death_1.wav", "binDeath");
+	m_soundManager->LoadSound("main_attack_trashcan.wav", "binHit");
 
 	m_spawning = false;
 	m_spawnTimer = 3.0;

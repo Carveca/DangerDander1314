@@ -25,6 +25,7 @@ private:
 	MusicManager* m_musicManager;
 
 	sf::Sprite* m_backGround;
+	
 
 	bool m_done;
 	std::string m_nextState;

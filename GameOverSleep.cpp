@@ -22,7 +22,8 @@ bool GameOverSleep::Enter(SpriteManager* spritemanager, MusicManager* musicmanag
 
 
 	m_musicManager = musicmanager;
-	m_musicManager->LoadMusic("screen_music_1.wav");
+	m_musicManager->LoadMusic("snooze_you_loose.wav");
+	m_musicManager->RepeatOFF();
 	m_musicManager->Play();
 	
 

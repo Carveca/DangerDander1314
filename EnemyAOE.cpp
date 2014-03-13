@@ -4,6 +4,7 @@
 #include "EnemyAOE.h"
 #include "Collider.h"
 #include "AOEattack.h"
+#include "SoundManager.h"
 
 
 EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite, SoundManager* soundmanager)
@@ -18,6 +19,7 @@ EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attac
 	m_speed = 250;
 
 	m_soundManager = soundmanager;
+	//m_soundManager->LoadSound("aoe_attack.wav", "AOE");
 
 	m_collider = new Collider;
 	m_colliderCircle = true;

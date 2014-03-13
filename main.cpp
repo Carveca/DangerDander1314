@@ -32,7 +32,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		engine.Run();
 	}
 
-	system("pause");
+	//system("pause");
 
 	return 0;
 }

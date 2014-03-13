@@ -28,6 +28,7 @@ EntityManager::EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, 
 
 	m_soundManager = soundmanager;
 	m_soundManager->LoadSound("sfx_pumpmeter_increase.wav", "PumpIncrease");
+	m_soundManager->LoadSound("main_attack_pow.wav", "Pow");
 
 	m_musicManager = musicmanager;
 	
@@ -244,6 +245,8 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_meleeAttacks[i];
 				m_meleeAttacks[i] = nullptr;
 				m_meleeAttacks.erase( m_meleeAttacks.begin() + i );
+				m_player->ChangeHP(-1);
+				//m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
 	}
@@ -254,9 +257,13 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 		{
 			if( m_enemyMelee[i]->GetHP() <= 0 )
 			{
+				m_player->AddScore(m_enemyMelee[i]->GetPoints());
 				delete m_enemyMelee[i];
 				m_enemyMelee[i] = nullptr;
 				m_enemyMelee.erase( m_enemyMelee.begin() + i );
+				m_player->ChangeHP(5);
+				m_soundManager->PlaySound("Pow");
+				
 			}
 		}
 	}
@@ -270,6 +277,8 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_bullets[i];
 				m_bullets[i] = nullptr;
 				m_bullets.erase(m_bullets.begin() + i);
+				m_player->ChangeHP(-1);
+				//m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
 	}
@@ -280,11 +289,12 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 		{
 			if(m_enemyRanged[i]->GetHP() <= 0)
 			{
+				m_player->AddScore(m_enemyRanged[i]->GetPoints());
 				delete m_enemyRanged[i];
 				m_enemyRanged[i] = nullptr;
 				m_enemyRanged.erase(m_enemyRanged.begin() + i);
-				m_player->ChangeHP(20);
-				m_soundManager->PlaySound("PumpIncrease");
+				m_player->ChangeHP(10);
+				m_soundManager->PlaySound("Pow");
 			}
 		}
 	}
@@ -302,11 +312,12 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 
 			else if(m_enemyAOE[i]->GetHP() <= 0)
 			{
+				m_player->AddScore(m_enemyAOE[i]->GetPoints());
 				delete m_enemyAOE[i];
 				m_enemyAOE[i] = nullptr;
 				m_enemyAOE.erase(m_enemyAOE.begin() + i);
-				m_player->ChangeHP(20);
-				m_soundManager->PlaySound("PumpIncrease");
+				m_player->ChangeHP(10);
+				m_soundManager->PlaySound("Pow");
 			}
 		}
 	}
@@ -331,6 +342,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	}
 }
 
+/*
 void EntityManager::MusicSwitch()
 {
 	//music switch
@@ -396,6 +408,8 @@ void EntityManager::AddMusic(MusicManager* musicmanager)
 {
 	m_musicManager = musicmanager;
 }
+
+*/
 
 //Add
 
@@ -514,6 +528,7 @@ void EntityManager::DrawPlayer(sf::RenderWindow* window)
 				{
 					m_powSprite->setPosition(m_playerAttack[0]->GetPosition());
 					window->draw(*m_powSprite);
+					//m_soundManager->PlaySound("Pow");
 				}
 			}
 		}

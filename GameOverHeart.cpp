@@ -21,7 +21,7 @@ bool GameOverHeart::Enter(SpriteManager* spritemanager, MusicManager* musicmanag
 	m_backGround = m_spriteManager->GetSprite("game_over_heartattack.png", 1920, 1080);
 
 	m_musicManager = musicmanager;
-	m_musicManager->LoadMusic("soundtrack_death_screen_1.wav");
+	m_musicManager->LoadMusic("death_screen_music.wav");
 	m_musicManager->RepeatOFF();
 	m_musicManager->Play();
 	

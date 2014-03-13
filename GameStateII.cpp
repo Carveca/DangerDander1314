@@ -34,6 +34,8 @@ GameStateII::GameStateII()
 bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager)
 {
 	m_done = false;
+	m_loading = true;
+	m_loadingDone = false;
 
 	m_direction.x = 0;
 	m_direction.y = 0;
@@ -41,6 +43,9 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 
 	//Managers
 	m_spriteManager = spritemanager;
+	m_loadDone = m_spriteManager->GetSprite("happy_pill.png", 256, 64);
+
+
 	m_musicManager = musicmanager;
 
 	m_musicManager->LoadMusic("soundtrack_long_1.wav");
@@ -68,11 +73,9 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	
 	m_spawnerRubbishAndPower = new SpawnerRubbishAndPower(m_spriteManager->GetSprite("blue_cow.png", 256, 64), m_spriteManager->GetSprite("happy_pill.png", 256, 64), m_spriteManager->GetSprite("trash.png", 903, 128), m_soundManager);
 	
-
 	//Level
 	m_levelTop = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, 0));
 	m_levelBottom = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, -1079) );
-
 
 	return true;
 }
@@ -135,6 +138,10 @@ bool GameStateII::Update(float &deltatime)
 {
 	//std::cout << "GameStateII" << std::endl;
 
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+	{
+		m_loading = false;
+	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::M))
 	{
 		m_nextState = "MenuStateII";
@@ -146,13 +153,16 @@ bool GameStateII::Update(float &deltatime)
 		m_paused = true;
 	}
 
-	if(m_paused)
+	if(!m_loading)
 	{
-		GamePause();
-	}
-	else
-	{
-		RealTime(deltatime);
+		if(m_paused)
+		{
+			GamePause();
+		}
+		else if(!m_paused)
+		{
+			RealTime(deltatime);
+		}
 	}
 
 	/*
@@ -190,16 +200,24 @@ void GameStateII::Draw(sf::RenderWindow* window)
 
 void GameStateII::Draw(sf::RenderWindow* window, float &deltatime)
 {
-	if(m_paused)
+	if(m_loading)
 	{
-		window->draw(*m_pauseScreen);
+		window->draw(*m_loadDone);
 	}
-	else
-	{
-		window->draw(*m_levelTop->GetSprite());
-		window->draw(*m_levelBottom->GetSprite());
 
-		m_entityManager->Draw(window, deltatime, m_angle);
+	else if(!m_loading);
+	{
+		if(m_paused)
+		{
+			window->draw(*m_pauseScreen);
+		}
+		else if(!m_paused && !m_loading)
+		{
+			window->draw(*m_levelTop->GetSprite());
+			window->draw(*m_levelBottom->GetSprite());
+
+			m_entityManager->Draw(window, deltatime, m_angle);
+		}
 	}
 
 }
@@ -233,8 +251,7 @@ void GameStateII::Input()
 	{
 		m_entityManager->m_player->UseBlueCow();
 	}
-
-
+	
 	//Movement Input
 	m_direction.x = 0;
 	m_direction.y = 0;	

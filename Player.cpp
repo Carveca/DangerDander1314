@@ -18,6 +18,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_speed = 300.0f;
 	m_hp = 70;
 	m_hpDrain = -1;
+	m_score = 0;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
@@ -29,6 +30,9 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_soundManager->LoadSound("sfx_main_character_attack_1.wav", "PlayerAttack");
 	m_soundManager->LoadSound("sfx_main_character_movement_1.wav", "PlayerMove");
 	m_soundManager->LoadSound("sfx_blue_cow_powerup_activation_1.wav", "BlueCow");
+	m_soundManager->LoadSound("bingo_1.wav", "Happy");
+
+	//m_soundManager->LoadSound("aoe_attack.wav", "AOE"); //needs timer or something
 
 	if(sprite != nullptr)
 	{
@@ -43,7 +47,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
 	
-	//Attackanimation
+	//AttackAnimation
 	m_attackSprite = attackSprite;
 	m_attackSprite->setOrigin(128, 128);
 	m_attackSprite->setTextureRect(sf::IntRect(0, 0, 256, 256));
@@ -307,19 +311,31 @@ void Player::UseHappyPill()
 {
 	if (m_happyPills > 0)
 	{
+		m_soundManager->PlaySound("Happy");
 		m_happyPills--;
-		ChangeHP(-30);
+		ChangeHP(-20);
 	}
 
 }
 
 void Player::UseBlueCow()
 {
-	m_soundManager->PlaySound("BlueCow");
+	
 
 	if (m_blueCows > 0)
 	{
+		m_soundManager->PlaySound("BlueCow");
 		m_blueCows--;
 		m_blueCowTimer = 4.0f;		
 	}
+}
+
+void Player::AddScore(int value)
+{
+	m_score += value;
+}
+
+int Player::GetScore()
+{
+	return m_score;
 }

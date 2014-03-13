@@ -22,7 +22,7 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* a
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(40);
+	m_collider->SetRadius(50);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -63,7 +63,7 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 	m_Direction.y = sin(angle) * -1;
 	m_isAttacking = false;
 
-	if(distance > 100)
+	if(distance > 120)
 	{
 		m_position += m_Direction * m_speed * deltatime;
 	}
@@ -187,12 +187,101 @@ sf::Sprite* EnemyMelee::GetAttackSprite()
 
 	m_attackSprite->setTextureRect( sf::IntRect(m_attackImageNR * 129, 0, 128, 128) );
 
+	int turnangle = 0;
+	if(m_Direction.x <= 1 && m_Direction.x > 0.2) //right
+	{
+		if(m_Direction.y <= 1 && m_Direction.y > 0.2) //down
+		{
+			turnangle = 315;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y > -0.2)
+		{
+			turnangle = 270;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y >= -1)// up
+		{
+			turnangle = 225;
+		}
+	}
+	else if(m_Direction.x <= 0.2 && m_Direction.x > -0.2) //straight 
+	{
+		if(m_Direction.y <= 1 && m_Direction.y > 0.0)
+		{
+			turnangle = 0;
+		}
+		else if(m_Direction.y <= 0.0 && m_Direction.y >= -1)
+		{
+			turnangle = 180;
+		}
+	}
+	else if(m_Direction.x <= -0.2 && m_Direction.x >= -1.0) //left
+	{
+		if(m_Direction.y <= 1 && m_Direction.y > 0.2) // down
+		{
+			turnangle = 45;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y > -0.2)
+		{
+			turnangle = 90;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y >= -1) // up
+		{
+			turnangle = 135;
+		}
+	}
+	m_attackSprite->setRotation(turnangle);
+
 	return m_attackSprite;
 }
 
-/*
+
 sf::Sprite* EnemyMelee::GetSprite()
 {
+	m_sprite->setPosition(GetPosition());
+
+	int turnangle = 0;
+	if(m_Direction.x <= 1 && m_Direction.x > 0.2) //right
+	{
+		if(m_Direction.y <= 1 && m_Direction.y > 0.2) //down
+		{
+			turnangle = 315;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y > -0.2)
+		{
+			turnangle = 270;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y >= -1)// up
+		{
+			turnangle = 225;
+		}
+	}
+	else if(m_Direction.x <= 0.2 && m_Direction.x > -0.2) //straight 
+	{
+		if(m_Direction.y <= 1 && m_Direction.y > 0.0)
+		{
+			turnangle = 0;
+		}
+		else if(m_Direction.y <= 0.0 && m_Direction.y >= -1)
+		{
+			turnangle = 180;
+		}
+	}
+	else if(m_Direction.x <= -0.2 && m_Direction.x >= -1.0) //left
+	{
+		if(m_Direction.y <= 1 && m_Direction.y > 0.2) // down
+		{
+			turnangle = 45;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y > -0.2)
+		{
+			turnangle = 90;
+		}
+		else if(m_Direction.y <= 0.2 && m_Direction.y >= -1) // up
+		{
+			turnangle = 135;
+		}
+	}
+	m_sprite->setRotation(turnangle);
+
 	return m_sprite;
 }
-*/

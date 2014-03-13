@@ -78,6 +78,7 @@ private:
 	SpawnerRubbishAndPower* m_spawnerRubbishAndPower;
 
 	sf::Sprite* m_pauseScreen;
+	sf::Sprite* m_loadDone;
 	
 	Level* m_levelTop;
 	Level* m_levelBottom;
@@ -88,8 +89,12 @@ private:
 private:
 	SpriteManager* m_spriteManager;
 
+	bool m_loading;
+	bool m_loadingDone;
+
 	bool m_paused;
 	bool m_done;
+
 	std::string m_nextState;
 
 };

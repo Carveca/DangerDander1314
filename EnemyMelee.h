@@ -17,7 +17,7 @@ public:
 	sf::Vector2f GetDirection();
 	bool GetAttackAnimation();
 
-	//sf::Sprite* GetSprite();
+	sf::Sprite* GetSprite();
 	sf::Sprite* GetAttackSprite();
 
 

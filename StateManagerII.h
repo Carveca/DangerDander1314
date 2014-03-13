@@ -31,5 +31,7 @@ private:
 	SpriteManager* m_spriteManager;
 	MusicManager* m_musicManager;
 
+	sf::Sprite* m_LoadingScreen;
+
 	FileReader m_reader;
 };

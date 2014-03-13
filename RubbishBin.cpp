@@ -27,6 +27,8 @@ RubbishBin::RubbishBin(sf::Sprite* binSprite, sf::Sprite* binDeathSprite, sf::Ve
 
 	m_spawnedTrash = false;
 	m_knockedOver = false;
+	m_knockedOverSound = false;
+	m_hitSound = false;
 	m_dead = false;
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
@@ -58,6 +60,11 @@ void RubbishBin::Update(float &deltatime)
 
 std::pair<sf::IntRect, int> RubbishBin::DeathAnimation(float &deltatime, float &playerangle) 
 {
+	if(!m_knockedOverSound)
+	{
+		m_soundManager->PlaySound("binDeath");
+		m_knockedOverSound = true;
+	}
 
 	//animation
 	
@@ -70,17 +77,6 @@ std::pair<sf::IntRect, int> RubbishBin::DeathAnimation(float &deltatime, float &
 			m_imageNR = 5;
 	}
 
-	/*
-	//rotation
-	if(!m_knockedOver)
-	{
-		m_angle = playerangle;
-		//m_deathSprite->rotate(playerangle);
-		m_knockedOver = true;
-	}
-	*/
-
-	//m_angle = playerangle;
 	std::pair<sf::IntRect, int> animationPair;
 	animationPair = std::make_pair (sf::IntRect( 128 * m_imageNR, 0, 128, 128), playerangle);
 
@@ -95,9 +91,13 @@ void RubbishBin::HandleCollision()
 		{
 
 		}
-
 		if(m_collisions[i].first->GetName() == "PlayerAttack")
 		{
+			if(!m_hitSound)
+			{
+				m_soundManager->PlaySound("binHit");
+				m_hitSound = true;
+			}
 			m_hp -= 1;
 		}
 	}

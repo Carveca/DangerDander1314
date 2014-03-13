@@ -18,11 +18,10 @@ bool MenuStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 
 	m_spriteManager = spritemanager;
 	m_backGround = m_spriteManager->GetSprite("menuscreen.png", 1920, 1080);
-
-
+	
 	m_musicManager = musicmanager;
 
-	m_musicManager->LoadMusic("screen_music_1.wav");
+	m_musicManager->LoadMusic("screen_music.wav");
 	m_musicManager->RepeatON();
 	m_musicManager->Play();
 
@@ -59,9 +58,9 @@ bool MenuStateII::Update(float &deltatime)
 
 void MenuStateII::Draw(sf::RenderWindow* window)
 {
-
-	window->draw(*m_backGround);
-
+	
+		window->draw(*m_backGround);
+	
 }
 
 //state switch

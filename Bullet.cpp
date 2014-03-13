@@ -18,7 +18,7 @@ Bullet::Bullet(sf::Sprite* sprite, sf::Vector2f position, sf::Vector2f direction
 	m_extension.x = 32;
 	m_extension.y = 32;
 	m_position = position;
-	m_speed = 300;
+	m_speed = 400;
 
 	m_soundManager = soundmanager;
 

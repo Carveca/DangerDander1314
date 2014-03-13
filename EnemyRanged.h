@@ -19,6 +19,7 @@ public:
 	bool GetAttacking();
 	sf::Vector2f GetDirection();
 
+	sf::Sprite* GetSprite();
 	sf::Sprite* GetAttackSprite();
 	sf::Sprite* GetDeathSprite();
 

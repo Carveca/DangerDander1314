@@ -19,6 +19,8 @@ StateManagerII::StateManagerII()
 	m_spriteManager = new SpriteManager;
 	m_spriteManager->Initialize("../Sprites/");
 
+	m_LoadingScreen = m_spriteManager->GetSprite("loading.png", 1920, 1080);
+
 	m_musicManager = new MusicManager;
 	m_musicManager->Initialize("../Music/");
 		
@@ -80,8 +82,6 @@ void StateManagerII::Draw(float &deltatime)
 		m_current->Draw(m_window);
 	}
 
-	
-
 	m_window->display();
 
 }
@@ -114,6 +114,13 @@ void StateManagerII::ChangeState()
 	if(nextState == "quit")
 	{
 		m_window->close();
+	}
+
+	if(nextState == "GameStateII")
+	{
+		m_window->clear();
+		m_window->draw(*m_LoadingScreen);
+		m_window->display();
 	}
 
 	for(unsigned int i = 0; i < m_states.size(); i++)
