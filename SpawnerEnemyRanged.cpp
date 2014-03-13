@@ -24,7 +24,7 @@ SpawnerEnemyRanged::SpawnerEnemyRanged(sf::Sprite* sprite, sf::Sprite* attackspr
 
 	m_soundManager = soundmanager;
 
-	m_soundManager->LoadSound("sfx_ranged_enemy_attack_1.wav", "gun");
+	m_soundManager->LoadSound("gun.wav", "gun");
 }
 
 SpawnerEnemyRanged::~SpawnerEnemyRanged()

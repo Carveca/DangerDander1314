@@ -5,10 +5,12 @@
 class CollisionManager;
 class MusicManager;
 class SoundManager;
+class SpriteManager;
 
 class Player;
 class PlayerAttack;
-class PumpMeter;
+class HUD;
+//class PumpMeter;
 
 class EnemyAOE;
 class MeleeAttack;
@@ -23,7 +25,7 @@ class BlueCow;
 class EntityManager
 {
 public:
-	EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager);
+	EntityManager(SpriteManager* spritemanager, sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager);
 	~EntityManager();
 
 	void Update(float &angle, sf::Vector2f &direction, float &deltatime);	
@@ -32,7 +34,7 @@ public:
 	void AddMusic(MusicManager* musicmanager);
 	void MusicSwitch();
 	void AddSounds(SoundManager* soundmanager);
-	void AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS);
+	//void AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS);
 	
 	void AddMeleeAttack(MeleeAttack* meleeattack);
 	void AddEnemyMelee(EnemyMelee* enemymelee);
@@ -48,11 +50,14 @@ private:
 	void UpdatePlayer(float &angle, sf::Vector2f &direction,float &deltatime);
 	void DrawPlayer(sf::RenderWindow* window);
 
+	void UpdateHUD(Player* player);
+	void DrawHud(sf::RenderWindow* window);
+
 	void CollisionCheck();
 	void CheckHP(float &deltatime, float &angle);	
 
-	void UpdatePumpMeter(int hpvalue);
-	void DrawPumpMeter(sf::RenderWindow* window);
+	//void UpdatePumpMeter(int hpvalue);
+	//void DrawPumpMeter(sf::RenderWindow* window);
 
 	void UpdateEnemyAOE(float &deltatime);
 	void DrawEnemyAOE(sf::RenderWindow* window);
@@ -93,8 +98,10 @@ private:
 	CollisionManager* m_collisionManager;
 	MusicManager* m_musicManager;
 	SoundManager* m_soundManager;
+	SpriteManager* m_spriteManager;
 
-	PumpMeter* m_pumpMeter;
+	//PumpMeter* m_pumpMeter;
+	HUD* m_HUD;
 
 	std::vector<PlayerAttack*> m_playerAttack;
 	std::vector<EnemyAOE*> m_enemyAOE;

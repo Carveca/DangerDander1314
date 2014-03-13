@@ -6,10 +6,12 @@
 #include "CollisionManager.h"
 #include "MusicManager.h"
 #include "SoundManager.h"
+#include "SpriteManager.h"
 
 #include "Player.h"
 #include "PlayerAttack.h"
-#include "PumpMeter.h"
+#include "HUD.h"
+//#include "PumpMeter.h"
 
 #include "MeleeAttack.h"
 #include "EnemyMelee.h"
@@ -22,18 +24,21 @@
 #include "BlueCow.h"
 
 
-EntityManager::EntityManager(sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager)
+EntityManager::EntityManager(SpriteManager* spritemanager ,sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager)
 {
 	m_collisionManager = new CollisionManager;
 
 	m_soundManager = soundmanager;
-	m_soundManager->LoadSound("sfx_pumpmeter_increase.wav", "PumpIncrease");
+	m_soundManager->LoadSound("pumpmeter_increase.wav", "PumpIncrease");
 	m_soundManager->LoadSound("main_attack_pow.wav", "Pow");
 
 	m_musicManager = musicmanager;
-	
+	m_spriteManager = spritemanager;
+
 	m_powSprite = powSprite;
 	m_player = new Player(playerSprite, playerlPOS, playerAttackSprite, soundmanager, playerdeathsprite);
+
+	m_HUD = new HUD(m_spriteManager);
 
 	m_musicNR = 0;
 	m_musicSwitch = false;
@@ -65,7 +70,9 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 
 	UpdatePlayer(angle, direction, deltatime);
 
-	UpdatePumpMeter(m_player->GetHP());
+	UpdateHUD(m_player);
+
+	//UpdatePumpMeter(m_player->GetHP());
 	
 	//enemies
 
@@ -116,7 +123,9 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 
 	DrawBullet(window);
 
-	DrawPumpMeter(window);
+	//DrawPumpMeter(window);
+
+	DrawHud(window);
 
 }
 
@@ -245,7 +254,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_meleeAttacks[i];
 				m_meleeAttacks[i] = nullptr;
 				m_meleeAttacks.erase( m_meleeAttacks.begin() + i );
-				m_player->ChangeHP(-1);
+				m_player->ChangeHP(1);
 				//m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
@@ -277,7 +286,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_bullets[i];
 				m_bullets[i] = nullptr;
 				m_bullets.erase(m_bullets.begin() + i);
-				m_player->ChangeHP(-1);
+				m_player->ChangeHP(1);
 				//m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
@@ -413,10 +422,12 @@ void EntityManager::AddMusic(MusicManager* musicmanager)
 
 //Add
 
+/*
 void EntityManager::AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS)
 {
 	m_pumpMeter = new PumpMeter(pumpSprite, indicatorSprite, indicatorEffectSprite, leftWarningSprite, rightWarningSprite, pumpMeterPOS);
 }
+*/
 
 void EntityManager::AddEnemyAOE(EnemyAOE* enemyAOE)
 {
@@ -541,6 +552,7 @@ void EntityManager::DrawPlayer(sf::RenderWindow* window)
 	}
 }
 
+/*
 //PumpMeter - Update and Draw
 
 void EntityManager::UpdatePumpMeter(int hpvalue)
@@ -558,6 +570,7 @@ void EntityManager::DrawPumpMeter(sf::RenderWindow* window)
 	window->draw(*m_pumpMeter->m_indicatorEffectSprite);
 	window->draw(*m_pumpMeter->m_indicatorSprite);
 }
+*/
 
 //Melee attack - Update and Draw
 
@@ -797,4 +810,27 @@ void EntityManager::DrawHappyPill(sf::RenderWindow* window)
 			window->draw(*m_happyPill[i]->GetSprite());
 		}
 	}
+}
+
+//HUD - update and draw
+
+void EntityManager::UpdateHUD(Player* player)
+{
+	m_HUD->Update(player);
+}
+
+void EntityManager::DrawHud(sf::RenderWindow* window) // window->draw(*m_HUD
+{
+	window->draw(*m_HUD->GetWarningLeft());
+	window->draw(*m_HUD->GetWarningRight());
+
+	window->draw(*m_HUD->GetPowerupframe());
+	window->draw(*m_HUD->GetPumpmeter());
+	window->draw(*m_HUD->GetScoreSprite());
+
+	window->draw(*m_HUD->GetIndicatorEffect());
+	window->draw(*m_HUD->GetIndicator());
+	window->draw(*m_HUD->GetBlueCow());
+	window->draw(*m_HUD->GetHappyPill());
+
 }

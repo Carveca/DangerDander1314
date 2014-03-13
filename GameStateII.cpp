@@ -43,12 +43,12 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 
 	//Managers
 	m_spriteManager = spritemanager;
-	m_loadDone = m_spriteManager->GetSprite("happy_pill.png", 256, 64);
+	m_loadDone = m_spriteManager->GetSprite("loading_done.png", 1920, 1080);
 
 
 	m_musicManager = musicmanager;
 
-	m_musicManager->LoadMusic("soundtrack_long_1.wav");
+	m_musicManager->LoadMusic("soundtrack_long.wav");
 	m_musicManager->Play();
 
 	//pause screen
@@ -58,8 +58,8 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	m_soundManager = new SoundManager;
 	m_soundManager->Initialize("../Sounds/");
 	
-	m_entityManager = new EntityManager(m_spriteManager->GetSprite("player_weapon.png", 2048, 256), sf::Vector2f(950, 540), m_spriteManager->GetSprite("player_attack.png", 1024, 256), m_spriteManager->GetSprite("player_death.png", 256, 256) , m_spriteManager->GetSprite("pow_effect.png", 128, 128), m_soundManager, m_musicManager);
-	m_entityManager->AddPumpMeter(m_spriteManager->GetSprite("new_pumpmeter.png", 800, 246), m_spriteManager->GetSprite("pumpmeter_indicator.png", 70, 94), m_spriteManager->GetSprite("indicator_effect.png", 150, 150), m_spriteManager->GetSprite("meter_effect_left.png", 800, 246), m_spriteManager->GetSprite("meter_effect_right.png", 800, 246), sf::Vector2f(0, 0));
+	m_entityManager = new EntityManager(m_spriteManager, m_spriteManager->GetSprite("player_weapon.png", 2048, 256), sf::Vector2f(950, 540), m_spriteManager->GetSprite("player_attack.png", 1024, 256), m_spriteManager->GetSprite("player_death.png", 256, 256) , m_spriteManager->GetSprite("pow_effect.png", 128, 128), m_soundManager, m_musicManager);
+	//m_entityManager->AddPumpMeter(m_spriteManager->GetSprite("new_pumpmeter.png", 800, 246), m_spriteManager->GetSprite("pumpmeter_indicator.png", 70, 94), m_spriteManager->GetSprite("indicator_effect.png", 150, 150), m_spriteManager->GetSprite("meter_effect_left.png", 800, 246), m_spriteManager->GetSprite("meter_effect_right.png", 800, 246), sf::Vector2f(0, 0));
 	
 	//Spawners
 	

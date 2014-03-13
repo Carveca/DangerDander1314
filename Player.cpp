@@ -27,9 +27,9 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_collider->SetPosition(GetPosition());
 
 	m_soundManager = soundmanager;
-	m_soundManager->LoadSound("sfx_main_character_attack_1.wav", "PlayerAttack");
-	m_soundManager->LoadSound("sfx_main_character_movement_1.wav", "PlayerMove");
-	m_soundManager->LoadSound("sfx_blue_cow_powerup_activation_1.wav", "BlueCow");
+	m_soundManager->LoadSound("main_attack_swing.wav", "PlayerAttack");
+	m_soundManager->LoadSound("main_movement.wav", "PlayerMove");
+	m_soundManager->LoadSound("blue_cow.wav", "BlueCow");
 	m_soundManager->LoadSound("bingo_1.wav", "Happy");
 
 	//m_soundManager->LoadSound("aoe_attack.wav", "AOE"); //needs timer or something
@@ -77,6 +77,8 @@ Player::~Player()
 {
 	delete m_collider;
 	m_collider = nullptr;
+
+	std::cout << m_score << std::endl;
 }
 
 void Player::Initialize()
