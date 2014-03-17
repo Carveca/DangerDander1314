@@ -9,8 +9,12 @@
 
 EnemyRanged::EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite ,sf::Sprite* deathsprite, SoundManager* soundmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
 	m_points = 1;
-	m_hp = 1;
+	m_hp = m_reader->m_settings["EnemyRangedHP"];
 	m_isAttacking = false;
 	m_attackAnimation = false;
 	m_attackTimer = 0.0f;
@@ -19,11 +23,11 @@ EnemyRanged::EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite*
 	m_extension.y = 128;
 	m_position = position;
 	m_name = "EnemyRanged";
-	m_speed = 250;
+	m_speed = m_reader->m_settings["EnemyRangedSpeed"];
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(40);
+	m_collider->SetRadius(m_reader->m_settings["EnemyRangedRadius"]);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -72,7 +76,7 @@ void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
 	m_attackAnimation = false;
 	m_isAttacking = false;
 
-	if(distance > 400)
+	if(distance > m_reader->m_settings["EnemyRangedDistance"])
 	{
 		m_position += m_Direction * m_speed * deltatime;
 	}
@@ -133,10 +137,10 @@ void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
 	HandleCollision();
 
 	//X-Bounds
-	if(m_position.x < 360)
-		m_position.x = 360;
-	if(m_position.x > 1560)
-		m_position.x = 1560;
+	if(m_position.x < m_reader->m_settings["BoundsLeft"])
+		m_position.x = m_reader->m_settings["BoundsLeft"];
+	if(m_position.x > m_reader->m_settings["BoundsRight"])
+		m_position.x = m_reader->m_settings["BoundsRight"];
 	//Y-Bounds
 	if(m_position.y < -400)
 	{

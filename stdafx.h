@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include "FileReader.h"
 
 #pragma warning(disable:4099)
 #define SFML_STATIC

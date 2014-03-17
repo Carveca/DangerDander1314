@@ -34,5 +34,6 @@ protected:
 	float m_attackTimer;
 
 	SoundManager* m_soundManager;
+	FileReader* m_reader;
 
 };

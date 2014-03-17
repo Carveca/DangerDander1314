@@ -10,19 +10,24 @@
 
 Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, SoundManager* soundmanager, sf::Sprite* deathAnimation) 
 {
+	//FileReader reader;
+	reader.Initialize("../Data/");
+	reader.LoadFile("settings.txt");
+
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
 
+
 	m_name = "Player";
-	m_speed = 300.0f;
-	m_hp = 70;
-	m_hpDrain = -1;
+	m_speed = reader.m_settings["PlayerSpeed"];
+	m_hp = reader.m_settings["PlayerHPStart"];
+	m_hpDrain = reader.m_settings["PlayerHPDrain"];
 	m_score = 0;
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(60);
+	m_collider->SetRadius(reader.m_settings["PlayerRadius"]);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -37,8 +42,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	if(sprite != nullptr)
 	{
 		m_sprite = sprite;
-		m_sprite->setOrigin(128, 128);
-		
+		m_sprite->setOrigin(128, 128);		
 	}
 	else
 	{
@@ -68,7 +72,7 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_drainTimer = 0.0f;
 	m_blueCowTimer = 0.0f;
 
-	m_weaponSize = 60;
+	m_weaponSize = reader.m_settings["PlayerWeaponSize"];
 	m_isAttacking = false;
 	m_attackAnimation = false;
 }
@@ -96,12 +100,12 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 	
 	if(m_blueCowTimer < 0.0)
 	{
-		m_speed = 300;
+		m_speed = reader.m_settings["PlayerSpeed"];
 		m_blueCowTimer = 0.0;
 	}
 	if(m_blueCowTimer > 0.0)
 	{
-		m_speed = 600;
+		m_speed = reader.m_settings["PlayerBoostedSpeed"];
 	}
 
 	m_blueCowTimer -= elapsedtime;
@@ -177,7 +181,7 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 		m_hp += m_hpDrain;
 		m_drainTimer = 0.0;
 		
-		m_hpDrain = -1;
+		m_hpDrain = reader.m_settings["PlayerHPDrain"];
 	}
 
 	if(m_hp > 100)
@@ -212,13 +216,6 @@ void Player::HandleCollision()
 		{
 			
 		}
-
-		/*
-		else if(m_collisions[i].first->GetName() == "PlayerAttack")
-		{
-			
-		}
-		*/
 		
 		else if(m_collisions[i].first->GetName() == "AOEattack")
 		{
@@ -236,7 +233,7 @@ void Player::HandleCollision()
 		}
 		else if(m_collisions[i].first->GetName() == "MeleeAttack")
 		{
-
+			
 		}
 		else 
 		{
@@ -315,20 +312,17 @@ void Player::UseHappyPill()
 	{
 		m_soundManager->PlaySound("Happy");
 		m_happyPills--;
-		ChangeHP(-20);
+		ChangeHP(reader.m_settings["PlayerHappyEffect"]);
 	}
-
 }
 
 void Player::UseBlueCow()
 {
-	
-
 	if (m_blueCows > 0)
 	{
 		m_soundManager->PlaySound("BlueCow");
 		m_blueCows--;
-		m_blueCowTimer = 4.0f;		
+		m_blueCowTimer = reader.m_settings["PlayerBoostedSpeedDuration"];		
 	}
 }
 

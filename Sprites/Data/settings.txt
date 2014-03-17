@@ -1,0 +1,33 @@
+ScreenWidth 1920
+ScreenHeight 1080
+
+BoundsLeft 360
+BoundsRight 1560
+BoundsUp 80
+BoundsDown 1000
+
+PlayerSpeed 300
+PlayerHPStart 50
+PlayerHPDrain -1
+PlayerRadius 60
+PlayerWeaponSize 60
+PlayerBoostedSpeed 600
+PlayerBoostedSpeedDuration 4
+PlayerHappyEffect -20
+
+BulletSpeed 500
+
+EnemyAOEHP 1
+EnemyAOESpeed 250
+EnemyAOERadius 60
+
+EnemyMeleeHP 1
+EnemyMeleeSpeed 300
+EnemyMeleeRadius 50
+EnemyMeleeDistance 120 
+
+EnemyRangedHP 1
+EnemyRangedSpeed 250
+EnemyRangedRadius 40
+EnemyRangedDistance 400
+

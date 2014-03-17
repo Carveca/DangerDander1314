@@ -8,8 +8,12 @@
 
 EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, sf::Sprite* deathsprite, SoundManager* soundmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
 	m_points = 1;
-	m_hp = 1;
+	m_hp = m_reader->m_settings["EnemyMeleeHP"];
 	m_isAttacking = false;
 	m_attackAnimation = false;
 	m_attackTimer = 0.0f;
@@ -18,11 +22,11 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* a
 	m_extension.y = 128;
 	m_position = position;
 	m_name = "EnemyMelee";
-	m_speed = 300;
+	m_speed = m_reader->m_settings["EnemyMeleeSpeed"];
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(50);
+	m_collider->SetRadius(m_reader->m_settings["EnemyMeleeRadius"]);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -63,7 +67,7 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 	m_Direction.y = sin(angle) * -1;
 	m_isAttacking = false;
 
-	if(distance > 120)
+	if(distance > m_reader->m_settings["EnemyMeleeDistance"])
 	{
 		m_position += m_Direction * m_speed * deltatime;
 	}
@@ -125,10 +129,10 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 	HandleCollision();
 
 		//Bounds
-	if(m_position.x < 0)
-		m_position.x = 0;
-	if(m_position.x > 1920)
-		m_position.x = 1920;
+	if(m_position.x < m_reader->m_settings["BoundsLeft"])
+		m_position.x = m_reader->m_settings["BoundsLeft"];
+	if(m_position.x > m_reader->m_settings["BoundsRight"])
+		m_position.x = m_reader->m_settings["BoundsRight"];
 	if(m_position.y < 0)
 	{
 		m_position.y = 0;

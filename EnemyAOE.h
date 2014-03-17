@@ -25,6 +25,6 @@ protected:
 	float m_moveTimer;
 
 	AOEattack* m_attack;
-
 	SoundManager* m_soundManager;
+	FileReader* m_reader;
 };

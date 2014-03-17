@@ -8,7 +8,6 @@
 #include <map>
 #include <fstream>
 
-
 FileReader::FileReader()
 {
 	m_directory = "";
@@ -29,7 +28,7 @@ void FileReader::LoadFile(std::string filename)
 	std::ifstream openfile(m_directory + filename);
 
 	std::string key;
-	int value = 0;
+	float value = 0;
 
 	if(openfile.is_open())
 	{
@@ -37,8 +36,9 @@ void FileReader::LoadFile(std::string filename)
 		{
 			openfile >> key >> value;
 			
-			m_settings.insert( std::pair <std::string, int>(key, value) );
+			m_settings.insert( std::pair <std::string, float>(key, value) );
 		}
+		openfile.close();
 	}
 	else
 	{

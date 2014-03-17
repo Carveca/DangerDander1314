@@ -5,7 +5,7 @@
 
 Level::Level()
 {
-
+	
 }
 
 Level::Level(sf::Sprite* sprite, sf::Vector2f &position)

@@ -13,12 +13,16 @@ Bullet::Bullet()
 
 Bullet::Bullet(sf::Sprite* sprite, sf::Vector2f position, sf::Vector2f direction, SoundManager* soundmanager)
 {
+	FileReader reader;
+	reader.Initialize("../Data/");
+	reader.LoadFile("settings.txt");
+
 	m_hp = 1;
 
 	m_extension.x = 32;
 	m_extension.y = 32;
 	m_position = position;
-	m_speed = 400;
+	m_speed = reader.m_settings["BulletSpeed"];
 
 	m_soundManager = soundmanager;
 

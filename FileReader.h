@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include <string>
+#include <map>
+
 class FileReader
 {
 public:
@@ -12,7 +15,7 @@ public:
 	void LoadFile(std::string filename);
 
 public:
-	std::map<std::string, int> m_settings;
+	std::map<std::string, float> m_settings;
 
 private:
 	std::string m_directory;

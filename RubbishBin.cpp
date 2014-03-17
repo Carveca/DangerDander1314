@@ -7,6 +7,10 @@
 
 RubbishBin::RubbishBin(sf::Sprite* binSprite, sf::Sprite* binDeathSprite, sf::Vector2f &position, SoundManager* soundmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
 	m_hp = 1;
 	m_speed = 100;
 	m_angle = 0;

@@ -821,8 +821,14 @@ void EntityManager::UpdateHUD(Player* player)
 
 void EntityManager::DrawHud(sf::RenderWindow* window) // window->draw(*m_HUD
 {
-	window->draw(*m_HUD->GetWarningLeft());
-	window->draw(*m_HUD->GetWarningRight());
+	if(m_player->GetHP() <= 20)
+	{
+		window->draw(*m_HUD->GetWarningLeft());
+	}
+	else if(m_player->GetHP() >= 80)
+	{
+		window->draw(*m_HUD->GetWarningRight());
+	}
 
 	window->draw(*m_HUD->GetPowerupframe());
 	window->draw(*m_HUD->GetPumpmeter());
@@ -830,7 +836,14 @@ void EntityManager::DrawHud(sf::RenderWindow* window) // window->draw(*m_HUD
 
 	window->draw(*m_HUD->GetIndicatorEffect());
 	window->draw(*m_HUD->GetIndicator());
-	window->draw(*m_HUD->GetBlueCow());
-	window->draw(*m_HUD->GetHappyPill());
+
+	if(m_player->m_blueCows > 0)
+	{
+		window->draw(*m_HUD->GetBlueCow());
+	}
+	if(m_player->m_happyPills > 0)
+	{
+		window->draw(*m_HUD->GetHappyPill());
+	}
 
 }

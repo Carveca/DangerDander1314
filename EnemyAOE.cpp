@@ -9,21 +9,26 @@
 
 EnemyAOE::EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite, SoundManager* soundmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
+
 	m_points = 1;
-	m_hp = 1;
+	m_hp = m_reader->m_settings["EnemyAOEHP"];
 
 	m_extension.x = 128;
 	m_extension.y = 128;
 	m_position = position;
 	m_name = "EnemyAOE";
-	m_speed = 250;
+	m_speed = m_reader->m_settings["EnemyAOESpeed"];
 
 	m_soundManager = soundmanager;
 	//m_soundManager->LoadSound("aoe_attack.wav", "AOE");
 
 	m_collider = new Collider;
 	m_colliderCircle = true;
-	m_collider->SetRadius(60);
+	m_collider->SetRadius(m_reader->m_settings["EnemyAOERadius"]);
 	m_collider->SetExtension(GetExtension());
 	m_collider->SetPosition(GetPosition());
 
@@ -103,19 +108,17 @@ void EnemyAOE::Update(float &deltatime)
 	HandleCollision();
 
 	//X-Bounds
-	if(m_position.x < 360)
-		m_position.x = 360;
-	else if(m_position.x > 1560)
-		m_position.x = 1560;
+	if(m_position.x < m_reader->m_settings["BoundsLeft"])
+		m_position.x = m_reader->m_settings["BoundsLeft"];
+	else if(m_position.x > m_reader->m_settings["BoundsRight"])
+		m_position.x = m_reader->m_settings["BoundsRight"];
 	//Y-Bounds
 	if(m_position.y < -400)
 	{
 		m_position.y = 0;
 	}
 
-
 	m_sprite->setPosition(m_position);
-
 
 	//attack
 	m_attack->Update(m_position);

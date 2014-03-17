@@ -23,6 +23,7 @@ public:
 
 private:
 	SoundManager* m_soundManager;
+	FileReader* m_reader;
 
 	sf::Sprite* m_deathSprite;
 

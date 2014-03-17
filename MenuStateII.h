@@ -25,8 +25,12 @@ private:
 	MusicManager* m_musicManager;
 
 	sf::Sprite* m_backGround;
-	
+	sf::CircleShape cursor;
 
+	sf::Vector2f cursorPOS;
+
+	float m_keytimer;
+	int m_selection;
 	bool m_done;
 	std::string m_nextState;
 

@@ -29,6 +29,7 @@ protected:
 	bool m_isAttacking;
 	bool m_attackAnimation;
 
+	FileReader* m_reader;
 	SoundManager* m_soundManager;
 	sf::Sprite* m_attackSprite;
 	sf::Sprite* m_deathSprite;

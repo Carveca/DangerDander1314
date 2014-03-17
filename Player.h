@@ -35,7 +35,12 @@ public:
 	void UseHappyPill();
 	void UseBlueCow();
 
+	int m_happyPills;
+	int m_blueCows;
+
 private:
+	FileReader reader;
+
 	SoundManager* m_soundManager;
 
 	float m_moveSoundTimer;
@@ -55,9 +60,7 @@ private:
 	sf::Sprite* m_deathSprite;
 	float m_deathFrameCounter;
 	int m_deathImageNR;
-
-	int m_happyPills;
-	int m_blueCows;
+		
 	int m_score;
 	float m_blueCowTimer;
 };
