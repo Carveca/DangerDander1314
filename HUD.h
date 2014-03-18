@@ -21,7 +21,10 @@ public:
 	sf::Sprite* GetWarningRight();
 	sf::Sprite* GetHappyPill();
 	sf::Sprite* GetBlueCow();
-
+	sf::Text* GetScoreText();
+	sf::Text* GetHappyPillText();
+	sf::Text* GetBlueCowText();
+	
 protected:
 	SpriteManager* m_spritemanager;
 
@@ -39,6 +42,9 @@ protected:
 	sf::Vector2f m_startPOS;
 	sf::Vector2f m_scorePOS;
 	sf::Vector2f m_powerupframePOS;
-
-	int m_score;
+	
+	sf::Font m_font;
+	sf::Text* m_scoretext;
+	sf::Text* m_bluecowtext;
+	sf::Text* m_happypilltext;
 };
