@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, SoundManager* soundmanager, sf::Sprite* deathAnimation) 
+Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSprite, SoundManager* soundmanager, sf::Sprite* deathAnimation, sf::Sprite* blueeffectanimation, sf::Sprite* happyeffectanimation) 
 {
 	//FileReader reader;
 	reader.Initialize("../Data/");
@@ -37,8 +37,6 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_soundManager->LoadSound("blue_cow.wav", "BlueCow");
 	m_soundManager->LoadSound("bingo_1.wav", "Happy");
 
-	//m_soundManager->LoadSound("aoe_attack.wav", "AOE"); //needs timer or something
-
 	if(sprite != nullptr)
 	{
 		m_sprite = sprite;
@@ -64,17 +62,35 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_deathImageNR = 0;
 	m_deathFrameCounter = 0.0f;
 
-	m_happyPills = 0;
-	m_blueCows = 0;
+	//Blue Animation
+	m_blueEffectSprite = blueeffectanimation;
+	m_blueEffectSprite->setOrigin(128, 128);
+	m_blueImageNR = 0;
+	m_blueFrameCounter = 0.0f;
+
+	//HappyAnimation
+	m_happyEffectSprite = happyeffectanimation;
+	m_happyEffectSprite->setOrigin(128, 128);
+	m_happyImageNR = 0;
+	m_happyFrameCounter = 0.0f;
+
+	//misc
+	m_happyPills = 2;
+	m_blueCows = 5;
 	
 	m_moveSoundTimer = 0.0f;
 	m_attackTimer = 0.0f;
 	m_drainTimer = 0.0f;
 	m_blueCowTimer = 0.0f;
+	m_happyPillTimer = 0.0f;
 
 	m_weaponSize = reader.m_settings["PlayerWeaponSize"];
 	m_isAttacking = false;
 	m_attackAnimation = false;
+	m_dead = false;
+
+	m_drainFactor = reader.m_settings["PlayerHPDrainTimer"];
+
 }
 
 Player::~Player()
@@ -97,18 +113,47 @@ void Player::Cleanup()
 
 void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 {	
-	
+	//BlueCow
 	if(m_blueCowTimer < 0.0)
 	{
 		m_speed = reader.m_settings["PlayerSpeed"];
 		m_blueCowTimer = 0.0;
 	}
-	if(m_blueCowTimer > 0.0)
+	else if(m_blueCowTimer > 0.0)
 	{
+		m_blueEffectSprite->setTextureRect( sf::IntRect(m_blueImageNR * 257, 0, 256, 256) );
+		m_blueFrameCounter += elapsedtime;
+		if(m_blueFrameCounter >= 0.1f)
+		{
+			m_blueImageNR++;
+			m_blueFrameCounter = 0.0f;
+			if(m_blueImageNR > 6)
+				m_blueImageNR = 0;
+		}
+		m_blueEffectSprite->setRotation(angle);
 		m_speed = reader.m_settings["PlayerBoostedSpeed"];
 	}
-
 	m_blueCowTimer -= elapsedtime;
+
+	//HappyPill
+	if(m_happyPillTimer < 0.0)
+	{
+		m_happyPillTimer = 0.0;
+	}
+	else if(m_happyPillTimer > 0.0)
+	{
+		m_happyEffectSprite->setTextureRect( sf::IntRect(m_happyImageNR * 257, 0, 256, 256) );
+		m_happyFrameCounter += elapsedtime;
+		if(m_happyFrameCounter >= 0.1f)
+		{
+			m_happyImageNR++;
+			m_happyFrameCounter = 0.0f;
+			if(m_happyImageNR > 4)
+				m_imageNR = 0;
+		}
+		m_happyEffectSprite->setRotation(angle);
+	}
+	m_happyPillTimer -= elapsedtime;
 
 	//Move
 	Move(direction, elapsedtime);
@@ -136,13 +181,12 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 	}	
 
 	m_attackTimer -= elapsedtime;
-	if(m_attackTimer < -10)
+	if(m_attackTimer < -1)
 	{
 		m_attackTimer = 0.0f;
 	}	
 
 	//Sprite
-
 	if(m_attackAnimation)
 	{
 		m_attackSprite->setTextureRect(sf::IntRect( 257 * m_attackImageNR, 0, 256, 256));
@@ -156,7 +200,6 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 		}
 		m_attackSprite->setRotation(angle);
 	}
-
 	else if(!m_attackAnimation)
 	{
 		m_sprite->setTextureRect(sf::IntRect( 257 * m_imageNR, 0, 256, 256));
@@ -174,9 +217,10 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 	//Collision
 	HandleCollision();
 
+	
 	//HP
 	m_drainTimer += elapsedtime;
-	if(m_drainTimer >= 0.1)
+	if(m_drainTimer >= m_drainFactor)
 	{
 		m_hp += m_hpDrain;
 		m_drainTimer = 0.0;
@@ -192,6 +236,7 @@ void Player::Update(float &angle, sf::Vector2f &direction, float &elapsedtime)
 	{
 		m_hp = 0;
 	}
+	
 
 	
 	//X-Bounds
@@ -308,20 +353,21 @@ sf::Sprite* Player::GetAttackSprite()
 
 void Player::UseHappyPill()
 {
-	if (m_happyPills > 0)
+	if (m_happyPills > 0 && m_happyPillTimer <= 0)
 	{
 		m_soundManager->PlaySound("Happy");
-		m_happyPills--;
+		m_happyPills -= 1;
+		m_happyPillTimer = 0.5;
 		ChangeHP(reader.m_settings["PlayerHappyEffect"]);
 	}
 }
 
 void Player::UseBlueCow()
 {
-	if (m_blueCows > 0)
+	if (m_blueCows > 0 && m_blueCowTimer <= 0)
 	{
 		m_soundManager->PlaySound("BlueCow");
-		m_blueCows--;
+		m_blueCows -= 1;
 		m_blueCowTimer = reader.m_settings["PlayerBoostedSpeedDuration"];		
 	}
 }
@@ -334,4 +380,36 @@ void Player::AddScore(int value)
 int Player::GetScore()
 {
 	return m_score;
+}
+
+float Player::GetBlueCowTimer()
+{
+	return m_blueCowTimer;
+}
+
+float Player::GetHappyPillTimer()
+{
+	return m_happyPillTimer;
+}
+
+sf::Sprite* Player::GetBlueSprite()
+{
+	m_blueEffectSprite->setPosition(GetPosition());
+	return m_blueEffectSprite;
+}
+
+sf::Sprite* Player::GetHappySprite()
+{
+	m_happyEffectSprite->setPosition(GetPosition());
+	return m_happyEffectSprite;
+}
+
+void Player::SetDrainTutorial()
+{
+	m_drainFactor = 0.5;
+}
+
+void Player::SetDrainNormal()
+{
+	m_drainFactor = reader.m_settings["PlayerHPDrainTimer"];
 }

@@ -57,7 +57,6 @@ void RubbishBin::Update(float &deltatime)
 	m_collider->SetPosition(GetPosition());
 
 	HandleCollision();
-
 }
 
 

@@ -11,7 +11,8 @@ public:
 	HUD(SpriteManager* spritemanager);
 	~HUD();
 	 
-	void Update(Player* player); 
+	void Update(Player* player, float &deltatime); 
+
 	sf::Sprite* GetPumpmeter();
 	sf::Sprite* GetPowerupframe();
 	sf::Sprite* GetScoreSprite();
@@ -21,7 +22,16 @@ public:
 	sf::Sprite* GetWarningRight();
 	sf::Sprite* GetHappyPill();
 	sf::Sprite* GetBlueCow();
+	sf::Sprite* GetBlueArrow();
+	sf::Sprite* GetRedArrow();
 
+	sf::Text* GetScoreText();
+	sf::Text* GetHappyPillText();
+	sf::Text* GetBlueCowText();
+
+	float GetBlueArrowTimer();
+	float GetRedArrowTimer();
+	
 protected:
 	SpriteManager* m_spritemanager;
 
@@ -34,11 +44,19 @@ protected:
 	sf::Sprite* m_happypill; 
 	sf::Sprite* m_bluecow; 
 	sf::Sprite* m_powerupframe;
+	sf::Sprite* m_blueArrow;
+	sf::Sprite* m_redArrow;
 
 	sf::Vector2f m_pumpmeterPOS;
 	sf::Vector2f m_startPOS;
 	sf::Vector2f m_scorePOS;
 	sf::Vector2f m_powerupframePOS;
+	
+	sf::Font m_font;
+	sf::Text* m_scoretext;
+	sf::Text* m_bluecowtext;
+	sf::Text* m_happypilltext;
 
-	int m_score;
+	float m_redArrowTimer;
+	float m_blueArrowTimer;
 };

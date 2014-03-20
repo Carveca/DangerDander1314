@@ -17,6 +17,7 @@ class MeleeAttack;
 class EnemyMelee;
 class Bullet;
 class EnemyRanged;
+class EnemyRanged2;
 class RubbishBin;
 class Rubbishpile;
 class HappyPill;
@@ -34,12 +35,12 @@ public:
 	void AddMusic(MusicManager* musicmanager);
 	void MusicSwitch();
 	void AddSounds(SoundManager* soundmanager);
-	//void AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS);
-	
+		
 	void AddMeleeAttack(MeleeAttack* meleeattack);
 	void AddEnemyMelee(EnemyMelee* enemymelee);
 	void AddBullet(Bullet* bullet);
 	void AddEnemyRanged(EnemyRanged* enemyranged);
+	void AddEnemyRanged2(EnemyRanged2* enemyranged);
 	void AddEnemyAOE(EnemyAOE* enemyAOE);
 	void AddRubbishBin(RubbishBin* rubbishbin);
 	void AddRubbishpile(Rubbishpile* rubbishpile);
@@ -50,14 +51,11 @@ private:
 	void UpdatePlayer(float &angle, sf::Vector2f &direction,float &deltatime);
 	void DrawPlayer(sf::RenderWindow* window);
 
-	void UpdateHUD(Player* player);
+	void UpdateHUD(Player* player, float &deltatime);
 	void DrawHud(sf::RenderWindow* window);
 
 	void CollisionCheck();
 	void CheckHP(float &deltatime, float &angle);	
-
-	//void UpdatePumpMeter(int hpvalue);
-	//void DrawPumpMeter(sf::RenderWindow* window);
 
 	void UpdateEnemyAOE(float &deltatime);
 	void DrawEnemyAOE(sf::RenderWindow* window);
@@ -73,6 +71,9 @@ private:
 
 	void UpdateEnemyRanged(float &deltatime);
 	void DrawEnemyranged(sf::RenderWindow* window);
+	
+	void UpdateEnemyRanged2(float &deltatime);
+	void DrawEnemyranged2(sf::RenderWindow* window);
 
 	void UpdateRubbishBin(float &deltatime);
 	void DrawRubbishBin(sf::RenderWindow* window, float &deltatime, float &playerangle);
@@ -92,6 +93,7 @@ public:
 
 	std::vector<RubbishBin*> m_rubbishBin;
 	std::vector<EnemyRanged*> m_enemyRanged;
+	std::vector<EnemyRanged2*> m_enemyRanged2;
 	std::vector<EnemyMelee*> m_enemyMelee;
 
 private:
@@ -99,6 +101,7 @@ private:
 	MusicManager* m_musicManager;
 	SoundManager* m_soundManager;
 	SpriteManager* m_spriteManager;
+	FileReader* m_reader;
 
 	//PumpMeter* m_pumpMeter;
 	HUD* m_HUD;

@@ -49,6 +49,8 @@ EnemyRanged::EnemyRanged(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite*
 
 	m_Direction.y = 1;
 	m_Direction.x = 0;
+
+	m_dead = false;
 }
 
 EnemyRanged::~EnemyRanged()
@@ -62,96 +64,108 @@ EnemyRanged::~EnemyRanged()
 
 void EnemyRanged::Update(float &deltatime, sf::Vector2f refpos)
 {
-	if(m_position.y < 100)
+	if(m_dead)
 	{
-		m_position.y += m_Direction.y * m_speed * deltatime;
-	}
-	float deltax = m_position.x - refpos.x;
-	float deltay = m_position.y - refpos.y;
-	float distance = sqrtf(deltax * deltax + deltay * deltay);
-	float angle = atan2(deltay, deltax);
-	m_Direction.x = cos(angle) * -1;
-	m_Direction.y = sin(angle) * -1;
-	
-	m_attackAnimation = false;
-	m_isAttacking = false;
+		m_position.y += 1 * 100 * deltatime;
+		m_deathTimer -= deltatime;
 
-	if(distance > m_reader->m_settings["EnemyRangedDistance"])
-	{
-		m_position += m_Direction * m_speed * deltatime;
-	}
-	else 
-	{	
-		RangedAttack();				
-	}
-	
-	//
-	
-	if(m_attackTimer <= 0.5 && m_attackTimer > 0.0)
-	{
-		m_attackAnimation = true;
-
-		if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+		m_deathFrameCounter += deltatime;
+		if(m_deathFrameCounter >= 0.1)
 		{
-			m_soundManager->PlaySound("gun");
-			m_isAttacking = true;
+			m_deathFrameCounter = 0.0f;
+			m_deathImageNR++;
+			if(m_deathImageNR > 5)
+				m_deathImageNR = 0;
+		}
+		m_deathSprite->setTextureRect(sf::IntRect(m_deathImageNR * 129, 0, 128, 128));
+	}
+	else if(!m_dead)
+	{
+		if(m_position.y < 100)
+		{
+			m_position.y += m_Direction.y * m_speed * deltatime;
+		}
+		float deltax = m_position.x - refpos.x;
+		float deltay = m_position.y - refpos.y;
+		float distance = sqrtf(deltax * deltax + deltay * deltay);
+		float angle = atan2(deltay, deltax);
+		m_Direction.x = cos(angle) * -1;
+		m_Direction.y = sin(angle) * -1;
+	
+		m_attackAnimation = false;
+		m_isAttacking = false;
+
+		if(distance > m_reader->m_settings["EnemyRangedDistance"])
+		{
+			m_position += m_Direction * m_speed * deltatime;
+		}
+		else 
+		{	
+			RangedAttack();				
+		}
+	
+		//
+	
+		if(m_attackTimer <= 0.5 && m_attackTimer > 0.0)
+		{
+			m_attackAnimation = true;
+
+			if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+			{
+				m_soundManager->PlaySound("gun");
+				m_isAttacking = true;
+				m_attackTimer = 0.0f;
+			}
+		}
+
+		m_attackTimer -= deltatime;
+		if(m_attackTimer < -1.0)
+		{
 			m_attackTimer = 0.0f;
-		}
-	}
+		}	
 
-	m_attackTimer -= deltatime;
-	if(m_attackTimer < -1.0)
-	{
-		m_attackTimer = 0.0f;
-	}	
+		m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
+		m_frameCounter += deltatime;
 
-	m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
-	m_frameCounter += deltatime;
-
-	//animation
-	if(m_attackAnimation)
-	{
-		m_attackFrameCounter += deltatime;
-		if(m_attackFrameCounter >= 0.1)
+		//animation
+		if(m_attackAnimation)
 		{
-			m_attackImageNR++;
+			m_attackFrameCounter += deltatime;
+			if(m_attackFrameCounter >= 0.1)
+			{
+				m_attackImageNR++;
+				m_attackFrameCounter = 0.0f;
+				if(m_attackImageNR > 5)
+					m_attackImageNR = 5;
+			}
+		}
+		else if(!m_attackAnimation && m_frameCounter >= 0.1f)
+		{
+			//reset attackanimation
+			m_attackImageNR = 0;
 			m_attackFrameCounter = 0.0f;
-			if(m_attackImageNR > 5)
-				m_attackImageNR = 5;
+
+			//walk animation
+			m_imageNR++;
+			m_frameCounter = 0.0f;
+			if(m_imageNR > 7)
+				m_imageNR = 0;
+		}	
+	
+	
+		HandleCollision();
+
+		//X-Bounds
+		if(m_position.x < m_reader->m_settings["BoundsLeft"])
+			m_position.x = m_reader->m_settings["BoundsLeft"];
+		if(m_position.x > m_reader->m_settings["BoundsRight"])
+			m_position.x = m_reader->m_settings["BoundsRight"];
+		//Y-Bounds
+		if(m_position.y < -400)
+		{
+			m_position.y = 0;
 		}
 	}
-	else if(!m_attackAnimation && m_frameCounter >= 0.1f)
-	{
-		//reset attackanimation
-		m_attackImageNR = 0;
-		m_attackFrameCounter = 0.0f;
-
-		//walk animation
-		m_imageNR++;
-		m_frameCounter = 0.0f;
-		if(m_imageNR > 7)
-			m_imageNR = 0;
-	}	
-	
-	
-	HandleCollision();
-
-	//X-Bounds
-	if(m_position.x < m_reader->m_settings["BoundsLeft"])
-		m_position.x = m_reader->m_settings["BoundsLeft"];
-	if(m_position.x > m_reader->m_settings["BoundsRight"])
-		m_position.x = m_reader->m_settings["BoundsRight"];
-	//Y-Bounds
-	if(m_position.y < -400)
-	{
-		m_position.y = 0;
-	}
-
-	//m_collider->SetPosition(m_position);
-	//m_sprite->setPosition(m_position);
-	//m_sprite->setRotation(angle);
-
-	// ^ seriously WTF? ^
 }
 
 void EnemyRanged::HandleCollision()
@@ -175,12 +189,6 @@ void EnemyRanged::HandleCollision()
 			}
 			else
 			{
-				//float newposX = m_collisions[i].second.x / 2;
-				//float newposY = m_collisions[i].second.y / 2;
-
-				//m_position.x = newposX;
-				//m_position.y = newposY;
-
 				m_position = m_collisions[i].second;
 			}
 		}
@@ -209,10 +217,8 @@ sf::Vector2f EnemyRanged::GetDirection()
 
 void EnemyRanged::RangedAttack()
 {
-	//m_soundManager->PlaySound("gun");
-
 	if(m_attackTimer <= 0)
-		m_attackTimer = 5.0;
+		m_attackTimer = 2.0;
 }
 
 sf::Sprite* EnemyRanged::GetAttackSprite()
@@ -271,9 +277,7 @@ sf::Sprite* EnemyRanged::GetAttackSprite()
 sf::Sprite* EnemyRanged::GetDeathSprite()
 {
 	m_deathSprite->setPosition(GetPosition());
-
 	
-
 	return m_deathSprite;
 }
 

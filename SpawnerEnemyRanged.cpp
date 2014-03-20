@@ -13,7 +13,11 @@ SpawnerEnemyRanged::SpawnerEnemyRanged()
 
 SpawnerEnemyRanged::SpawnerEnemyRanged(sf::Sprite* sprite, sf::Sprite* attacksprite, sf::Sprite* deathsprite, sf::Vector2f &spawnLocation, SoundManager* soundmanager)
 {
-	 m_spawnTimer = 0.0f;	
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
+	m_spawnTimer = m_reader->m_settings["RangedSpawnerInitialTimer"];	
 	m_spawning = false;
 
 	m_spawnPosition = spawnLocation;
@@ -43,7 +47,7 @@ void SpawnerEnemyRanged::Update(float &deltatime)
 
 	m_spawnTimer += deltatime;
 
-	if(m_spawnTimer >= 2.5)
+	if(m_spawnTimer >= m_reader->m_settings["RangedSpawnerTimer"])
 	{
 		m_spawnTimer = 0.0f;
 		m_spawning = true;

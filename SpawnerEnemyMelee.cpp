@@ -13,7 +13,11 @@ SpawnerEnemyMelee::SpawnerEnemyMelee()
 
 SpawnerEnemyMelee::SpawnerEnemyMelee(sf::Sprite* sprite, sf::Sprite* attacksprite, sf::Sprite* deathsprite, sf::Vector2f &spawnLocation, SoundManager* soundmanager)
 {
-	 m_spawnTimer = 0.0f;	
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
+	m_spawnTimer = m_reader->m_settings["MeleeSpawnerInitialTimer"];	
 	m_spawning = false;
 
 	m_spawnPosition = spawnLocation;
@@ -42,12 +46,11 @@ void SpawnerEnemyMelee::Update(float &deltatime)
 
 	m_spawnTimer += deltatime;
 
-	if(m_spawnTimer >= 2.5)
+	if(m_spawnTimer >= m_reader->m_settings["MeleeSpawnerTimer"])
 	{
 		m_spawnTimer = 0.0f;
 		m_spawning = true;
 	}
-
 }
 
 bool SpawnerEnemyMelee::GetSpawnState()

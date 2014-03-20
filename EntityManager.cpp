@@ -1,4 +1,5 @@
 //Entity Manager source file
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include "stdafx.h"
 #include "EntityManager.h"
@@ -11,12 +12,12 @@
 #include "Player.h"
 #include "PlayerAttack.h"
 #include "HUD.h"
-//#include "PumpMeter.h"
 
 #include "MeleeAttack.h"
 #include "EnemyMelee.h"
 #include "Bullet.h"
 #include "EnemyRanged.h"
+#include "EnemyRanged2.h"
 #include "EnemyAOE.h"
 #include "RubbishBin.h"
 #include "Rubbishpile.h"
@@ -26,6 +27,10 @@
 
 EntityManager::EntityManager(SpriteManager* spritemanager ,sf::Sprite* playerSprite, sf::Vector2f playerlPOS, sf::Sprite* playerAttackSprite, sf::Sprite* playerdeathsprite, sf::Sprite* powSprite, SoundManager* soundmanager, MusicManager* musicmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
 	m_collisionManager = new CollisionManager;
 
 	m_soundManager = soundmanager;
@@ -36,7 +41,7 @@ EntityManager::EntityManager(SpriteManager* spritemanager ,sf::Sprite* playerSpr
 	m_spriteManager = spritemanager;
 
 	m_powSprite = powSprite;
-	m_player = new Player(playerSprite, playerlPOS, playerAttackSprite, soundmanager, playerdeathsprite);
+	m_player = new Player(playerSprite, playerlPOS, playerAttackSprite, soundmanager, playerdeathsprite, m_spriteManager->GetSprite("blue_cow_effect.png", 2048, 256), m_spriteManager->GetSprite("happy_effect.png", 2048, 256) );
 
 	m_HUD = new HUD(m_spriteManager);
 
@@ -70,7 +75,7 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 
 	UpdatePlayer(angle, direction, deltatime);
 
-	UpdateHUD(m_player);
+	UpdateHUD(m_player, deltatime);
 
 	//UpdatePumpMeter(m_player->GetHP());
 	
@@ -83,6 +88,8 @@ void EntityManager::Update(float &angle, sf::Vector2f &direction,float &deltatim
 	UpdateEnemyAOE(deltatime);
 
 	UpdateEnemyRanged(deltatime);
+
+	UpdateEnemyRanged2(deltatime);
 
 	UpdateBullet(deltatime);
 
@@ -111,6 +118,8 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 
 	DrawEnemyranged(window);
 
+	DrawEnemyranged2(window);
+
 	DrawBlueCow(window);
 
 	DrawHappyPill(window);
@@ -122,8 +131,6 @@ void EntityManager::Draw(sf::RenderWindow* window, float &deltatime, float &play
 	DrawMeleeAttack(window);
 
 	DrawBullet(window);
-
-	//DrawPumpMeter(window);
 
 	DrawHud(window);
 
@@ -150,6 +157,7 @@ void EntityManager::CollisionCheck()
 	{
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
+			if(!m_enemyMelee[i]->isDead())
 			m_collisionManager->Add(m_enemyMelee[i]);
 		}
 	}
@@ -166,7 +174,17 @@ void EntityManager::CollisionCheck()
 	{
 		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
 		{
+			if(!m_enemyRanged[i]->isDead())
 			m_collisionManager->Add(m_enemyRanged[i]);
+		}
+	}
+
+	if(!m_enemyRanged2.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged2.size(); i++)
+		{
+			if(!m_enemyRanged2[i]->isDead())
+			m_collisionManager->Add(m_enemyRanged2[i]);
 		}
 	}
 
@@ -174,8 +192,11 @@ void EntityManager::CollisionCheck()
 	{
 		for(unsigned int i = 0; i < m_enemyAOE.size(); i++)
 		{
-			m_collisionManager->Add(m_enemyAOE[i]);
-			m_collisionManager->Add(m_enemyAOE[i]->GetAttack());
+			if(!m_enemyAOE[i]->isDead())
+			{
+				m_collisionManager->Add(m_enemyAOE[i]);
+				m_collisionManager->Add(m_enemyAOE[i]->GetAttack());
+			}
 		}
 	}
 
@@ -213,7 +234,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 {
 	if(!m_playerAttack.empty())
 	{
-		if(m_playerAttack[0]->Dead())
+		if(m_playerAttack[0]->isDead())
 		{
 			m_playerAttack.pop_back();					
 		}
@@ -264,12 +285,20 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	{
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
-			if( m_enemyMelee[i]->GetHP() <= 0 )
+			if(m_enemyMelee[i]->GetPosition().y >= 1100 || m_enemyMelee[i]->GetDeathTimer() <= 0.0)
 			{
-				m_player->AddScore(m_enemyMelee[i]->GetPoints());
 				delete m_enemyMelee[i];
 				m_enemyMelee[i] = nullptr;
-				m_enemyMelee.erase( m_enemyMelee.begin() + i );
+				m_enemyMelee.erase(m_enemyMelee.begin() + i);
+			}
+
+			else if( m_enemyMelee[i]->GetHP() <= 0 && !m_enemyMelee[i]->isDead())
+			{
+				m_enemyMelee[i]->Dead();
+				m_player->AddScore(m_enemyMelee[i]->GetPoints());
+				//delete m_enemyMelee[i];
+				//m_enemyMelee[i] = nullptr;
+				//m_enemyMelee.erase( m_enemyMelee.begin() + i );
 				m_player->ChangeHP(5);
 				m_soundManager->PlaySound("Pow");
 				
@@ -281,6 +310,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	{
 		for(unsigned int i = 0; i < m_bullets.size(); i++)
 		{
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			if(m_bullets[i]->GetHP() <= 0)
 			{
 				delete m_bullets[i];
@@ -296,12 +326,47 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	{
 		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
 		{
-			if(m_enemyRanged[i]->GetHP() <= 0)
+			if(m_enemyRanged[i]->GetPosition().y >= 1100 || m_enemyRanged[i]->GetDeathTimer() <= 0.0)
 			{
-				m_player->AddScore(m_enemyRanged[i]->GetPoints());
 				delete m_enemyRanged[i];
 				m_enemyRanged[i] = nullptr;
 				m_enemyRanged.erase(m_enemyRanged.begin() + i);
+			}
+
+
+			else if(m_enemyRanged[i]->GetHP() <= 0 && !m_enemyRanged[i]->isDead())
+			{
+				m_enemyRanged[i]->Dead();
+				m_player->AddScore(m_enemyRanged[i]->GetPoints());
+				//delete m_enemyRanged[i];
+				//m_enemyRanged[i] = nullptr;
+				//m_enemyRanged.erase(m_enemyRanged.begin() + i);
+				m_player->ChangeHP(10);
+				m_soundManager->PlaySound("Pow");
+			}
+		}
+	}
+
+	if(!m_enemyRanged2.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged2.size(); i++)
+		{
+			if(m_enemyRanged2[i]->GetPosition().y >= 1100 || m_enemyRanged2[i]->GetDeathTimer() <= 0.0)
+			{
+				delete m_enemyRanged2[i];
+				m_enemyRanged2[i] = nullptr;
+				m_enemyRanged2.erase(m_enemyRanged2.begin() + i);
+			}
+
+
+			else if(m_enemyRanged2[i]->GetHP() <= 0 && !m_enemyRanged2[i]->isDead())
+			{
+				m_enemyRanged2[i]->Dead();
+			
+				m_player->AddScore(m_enemyRanged2[i]->GetPoints());
+				//delete m_enemyRanged2[i];
+				//m_enemyRanged2[i] = nullptr;
+				//m_enemyRanged2.erase(m_enemyRanged2.begin() + i);
 				m_player->ChangeHP(10);
 				m_soundManager->PlaySound("Pow");
 			}
@@ -312,19 +377,17 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	{
 		for(unsigned int i = 0; i < m_enemyAOE.size(); i++)
 		{
-			if(m_enemyAOE[i]->GetPosition().y >= 1100)
+			if(m_enemyAOE[i]->GetPosition().y >= 1100 || m_enemyAOE[i]->GetDeathTimer() <= 0.0)
 			{
 				delete m_enemyAOE[i];
 				m_enemyAOE[i] = nullptr;
 				m_enemyAOE.erase(m_enemyAOE.begin() + i);
 			}
-
-			else if(m_enemyAOE[i]->GetHP() <= 0)
+			
+			else if(m_enemyAOE[i]->GetHP() <= 0 && !m_enemyAOE[i]->isDead())
 			{
+				m_enemyAOE[i]->Dead();
 				m_player->AddScore(m_enemyAOE[i]->GetPoints());
-				delete m_enemyAOE[i];
-				m_enemyAOE[i] = nullptr;
-				m_enemyAOE.erase(m_enemyAOE.begin() + i);
 				m_player->ChangeHP(10);
 				m_soundManager->PlaySound("Pow");
 			}
@@ -335,7 +398,6 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	{
 		for(unsigned int i = 0; i < m_rubbishBin.size(); i++)
 		{
-			//Death (or knocked over)
 			if(m_rubbishBin[i]->GetHP() <= 0)
 			{
 				m_rubbishBin[i]->m_dead = true;
@@ -351,87 +413,11 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 	}
 }
 
-/*
-void EntityManager::MusicSwitch()
-{
-	//music switch
-	m_musicSwitch = false;
-	m_musicNRprevious = m_musicNR;
-
-	if(m_player->GetHP() >= 80)
-	{
-		m_musicNR = 3;
-		//m_musicManager->LoadMusic("soundtrack_high_1.wav");
-		//m_musicManager->Play();
-	}
-	else if(m_player->GetHP() <= 20)
-	{
-		m_musicNR = 2;
-		//m_musicManager->LoadMusic("soundtrack_low_1.wav");
-		//m_musicManager->Play();
-	}
-	else
-	{
-		m_musicNR = 1;
-		//m_musicManager->LoadMusic("soundtrack_mid_1.wav");
-		//m_musicManager->Play();
-	}
-
-	if(m_musicNR != m_musicNRprevious)
-		m_musicSwitch = true;
-
-
-	//Music play
-
-	if(m_musicSwitch)
-	{
-		m_musicManager->Offset();		
-
-		if(m_musicNR == 3)
-		{
-			m_musicManager->LoadMusic("soundtrack_high_1.wav");
-			m_musicManager->PlayWithOffset();
-		}
-		else if(m_musicNR == 2)
-		{
-			m_musicManager->LoadMusic("soundtrack_low_1.wav");
-			m_musicManager->PlayWithOffset();
-		}
-		else
-		{
-			m_musicManager->LoadMusic("soundtrack_mid_1.wav");
-			m_musicManager->PlayWithOffset();
-		}
-
-	}
-}
-
-//Add (outdated)
-
-void EntityManager::AddSounds(SoundManager* soundmanager)
-{
-	m_soundManager = soundmanager;
-}
-
-void EntityManager::AddMusic(MusicManager* musicmanager)
-{
-	m_musicManager = musicmanager;
-}
-
-*/
-
 //Add
-
-/*
-void EntityManager::AddPumpMeter(sf::Sprite* pumpSprite, sf::Sprite* indicatorSprite, sf::Sprite* indicatorEffectSprite, sf::Sprite* leftWarningSprite, sf::Sprite* rightWarningSprite, sf::Vector2f &pumpMeterPOS)
-{
-	m_pumpMeter = new PumpMeter(pumpSprite, indicatorSprite, indicatorEffectSprite, leftWarningSprite, rightWarningSprite, pumpMeterPOS);
-}
-*/
 
 void EntityManager::AddEnemyAOE(EnemyAOE* enemyAOE)
 {
-	if(m_enemyAOE.size() <= 3)
+	if(m_enemyAOE.size() < m_reader->m_settings["AOEEnemyNR"])
 	{
 		m_enemyAOE.push_back(enemyAOE);
 	}
@@ -445,7 +431,7 @@ void EntityManager::AddMeleeAttack(MeleeAttack* meleeattack)
 
 void EntityManager::AddEnemyMelee(EnemyMelee* enemymelee)
 {
-	if(m_enemyMelee.size() <= 2)
+	if(m_enemyMelee.size() < m_reader->m_settings["MeleeEnemyNR"])
 	{
 		m_enemyMelee.push_back(enemymelee);
 	}
@@ -458,9 +444,17 @@ void EntityManager::AddBullet(Bullet* bullet)
 
 void EntityManager::AddEnemyRanged(EnemyRanged* enemyranged)
 {
-	if(m_enemyRanged.size() <= 2)
+	if(m_enemyRanged.size() < m_reader->m_settings["RangedEnemyNR"])
 	{
 		m_enemyRanged.push_back(enemyranged);
+	}
+}
+
+void EntityManager::AddEnemyRanged2(EnemyRanged2* enemyranged)
+{
+	if(m_enemyRanged2.size() < m_reader->m_settings["Ranged2EnemyNR"])
+	{
+		m_enemyRanged2.push_back(enemyranged);
 	}
 }
 
@@ -527,6 +521,15 @@ void EntityManager::UpdatePlayer(float &angle, sf::Vector2f &direction, float &d
 
 void EntityManager::DrawPlayer(sf::RenderWindow* window)
 {
+	if(m_player->GetBlueCowTimer() > 0.0)
+	{
+		window->draw(*m_player->GetBlueSprite());
+	}
+	if(m_player->GetHappyPillTimer() > 0.0)
+	{
+		window->draw(*m_player->GetHappySprite());
+	}
+
 	if(m_player->GetAttackTimer() <= 0.3 && m_player->GetAttackTimer() > 0.0)
 	{
 		window->draw(*m_player->GetAttackSprite());
@@ -551,26 +554,6 @@ void EntityManager::DrawPlayer(sf::RenderWindow* window)
 		window->draw(*m_player->GetSprite());
 	}
 }
-
-/*
-//PumpMeter - Update and Draw
-
-void EntityManager::UpdatePumpMeter(int hpvalue)
-{
-	m_pumpMeter->Update(hpvalue);
-}
-
-void EntityManager::DrawPumpMeter(sf::RenderWindow* window)
-{
-	window->draw(*m_pumpMeter->m_leftWarningSprite);
-	window->draw(*m_pumpMeter->m_rightWarningSprite);
-	
-	window->draw(*m_pumpMeter->GetSprite());
-
-	window->draw(*m_pumpMeter->m_indicatorEffectSprite);
-	window->draw(*m_pumpMeter->m_indicatorSprite);
-}
-*/
 
 //Melee attack - Update and Draw
 
@@ -615,13 +598,20 @@ void EntityManager::DrawEnemyMelee(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
-			if(!m_enemyMelee[i]->GetAttackAnimation())
+			if(m_enemyMelee[i]->isDead())
 			{
-				window->draw(*m_enemyMelee[i]->GetSprite());
+				window->draw(*m_enemyMelee[i]->GetDeathSprite());
 			}
-			else if(m_enemyMelee[i]->GetAttackAnimation())
+			else if(!m_enemyMelee[i]->isDead())
 			{
-				window->draw( *m_enemyMelee[i]->GetAttackSprite() );
+				if(!m_enemyMelee[i]->GetAttackAnimation())
+				{
+					window->draw(*m_enemyMelee[i]->GetSprite());
+				}
+				else if(m_enemyMelee[i]->GetAttackAnimation())
+				{
+					window->draw( *m_enemyMelee[i]->GetAttackSprite() );
+				}
 			}
 		}
 	}
@@ -671,13 +661,21 @@ void EntityManager::DrawEnemyranged(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_enemyRanged.size(); i++)
 		{
-			if(m_enemyRanged[i]->GetAttackAnimation())
+			if(m_enemyRanged[i]->isDead())
 			{
-				window->draw(*m_enemyRanged[i]->GetAttackSprite());
+				window->draw(*m_enemyRanged[i]->GetDeathSprite());
 			}
-			else if(!m_enemyRanged[i]->GetAttacking())
+
+			else if(!m_enemyRanged[i]->isDead())
 			{
-				window->draw(*m_enemyRanged[i]->GetSprite());
+				if(m_enemyRanged[i]->GetAttackAnimation())
+				{
+					window->draw(*m_enemyRanged[i]->GetAttackSprite());
+				}
+				else if(!m_enemyRanged[i]->GetAttacking())
+				{
+					window->draw(*m_enemyRanged[i]->GetSprite());
+				}
 			}
 		}
 	}
@@ -702,8 +700,55 @@ void EntityManager::DrawEnemyAOE(sf::RenderWindow* window)
 	{
 		for(unsigned int i = 0; i < m_enemyAOE.size(); i++)
 		{
-			window->draw(*m_enemyAOE[i]->GetAttack()->GetSprite());
-			window->draw(*m_enemyAOE[i]->GetSprite());
+			if(m_enemyAOE[i]->isDead())
+			{
+				window->draw(*m_enemyAOE[i]->GetDeathSprite());
+			}
+			else
+			{
+				window->draw(*m_enemyAOE[i]->GetAttack()->GetSprite());
+				window->draw(*m_enemyAOE[i]->GetSprite());
+			}
+
+		}
+	}
+}
+
+//Enemy Ranged2 - Update and Draw
+
+void EntityManager::UpdateEnemyRanged2(float &deltatime)
+{
+	if(!m_enemyRanged2.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged2.size(); i++)
+		{
+			m_enemyRanged2[i]->Update(deltatime, m_player->GetPosition());
+		}
+	}
+}
+
+void EntityManager::DrawEnemyranged2(sf::RenderWindow* window)
+{
+	if(!m_enemyRanged2.empty())
+	{
+		for(unsigned int i = 0; i < m_enemyRanged2.size(); i++)
+		{
+			if(m_enemyRanged2[i]->isDead())
+			{
+				window->draw(*m_enemyRanged2[i]->GetDeathSprite());
+			}
+
+			else if(!m_enemyRanged2[i]->isDead())
+			{
+				if(m_enemyRanged2[i]->GetAttackAnimation())
+				{
+					window->draw(*m_enemyRanged2[i]->GetAttackSprite());
+				}
+				else if(!m_enemyRanged2[i]->GetAttacking())
+				{
+					window->draw(*m_enemyRanged2[i]->GetSprite());
+				}
+			}
 		}
 	}
 }
@@ -814,9 +859,9 @@ void EntityManager::DrawHappyPill(sf::RenderWindow* window)
 
 //HUD - update and draw
 
-void EntityManager::UpdateHUD(Player* player)
+void EntityManager::UpdateHUD(Player* player, float &deltatime)
 {
-	m_HUD->Update(player);
+	m_HUD->Update(player, deltatime);
 }
 
 void EntityManager::DrawHud(sf::RenderWindow* window) // window->draw(*m_HUD
@@ -846,4 +891,18 @@ void EntityManager::DrawHud(sf::RenderWindow* window) // window->draw(*m_HUD
 		window->draw(*m_HUD->GetHappyPill());
 	}
 
+	if(m_HUD->GetBlueArrowTimer() < 4.0 && m_HUD->GetBlueArrowTimer() > 0.0)
+	{
+		window->draw(*m_HUD->GetBlueArrow());
+	}
+
+	if(m_HUD->GetRedArrowTimer() < 6.0 && m_HUD->GetRedArrowTimer() > 0.0)
+	{
+		window->draw(*m_HUD->GetRedArrow());
+	}
+
+
+	window->draw(*m_HUD->GetBlueCowText());
+	window->draw(*m_HUD->GetHappyPillText());
+	window->draw(*m_HUD->GetScoreText());
 }

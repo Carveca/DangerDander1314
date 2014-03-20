@@ -19,6 +19,7 @@ public:
 
 	sf::Sprite* GetSprite();
 	sf::Sprite* GetAttackSprite();
+	sf::Sprite* GetDeathSprite();
 
 
 protected:
@@ -27,9 +28,12 @@ protected:
 	bool m_isAttacking;
 	bool m_attackAnimation;
 	
-	sf::Sprite* m_attackSprite;
+	sf::Sprite* m_attackSprite;	
 	float m_attackFrameCounter;
 	int m_attackImageNR;
+	sf::Sprite* m_deathSprite;
+	float m_deathFrameCounter;
+	int m_deathImageNR;
 
 	float m_attackTimer;
 

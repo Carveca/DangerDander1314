@@ -10,16 +10,21 @@ SpawnerAOEenemy::SpawnerAOEenemy()
 
 }
 
-SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation, SoundManager* soundmanager)
+SpawnerAOEenemy::SpawnerAOEenemy(sf::Sprite* sprite, sf::Sprite* AOEsprite, sf::Vector2f &spawnLocation, sf::Sprite* deathsprite , SoundManager* soundmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
+
 	m_sprite = sprite;
 	m_AOEsprite = AOEsprite;
 	m_spawnPosition = spawnLocation;
+	m_deathSprite = deathsprite;
 
-	m_soundManager = soundmanager;
-	
+	m_soundManager = soundmanager;	
 
-	m_spawnTimer = 3.0f;
+	m_spawnTimer = m_reader->m_settings["AOESpawnerInitialTimer"];
 	m_spawning = false;
 }
 
@@ -31,7 +36,7 @@ SpawnerAOEenemy::~SpawnerAOEenemy()
 
 EnemyAOE* SpawnerAOEenemy::Spawn()
 {
-	return new EnemyAOE(m_sprite, m_spawnPosition, m_AOEsprite, m_soundManager);	
+	return new EnemyAOE(m_sprite, m_spawnPosition, m_AOEsprite, m_deathSprite, m_soundManager);	
 }
 
 void SpawnerAOEenemy::Update(float &deltatime)
@@ -42,7 +47,7 @@ void SpawnerAOEenemy::Update(float &deltatime)
 	if(m_spawnTimer <= 0.0)
 	{
 		m_spawning = true;
-		m_spawnTimer = 1.0f;
+		m_spawnTimer = m_reader->m_settings["AOESpawnerTimer"];
 
 		m_spawnPosition.x += 100;
 		if(m_spawnPosition.x >= 1500)

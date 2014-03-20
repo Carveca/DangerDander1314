@@ -63,6 +63,7 @@ void Bullet::Update(float elapsedTime)
 	m_sprite->setPosition(m_position);
 
 	HandleCollision();
+
 }
 
 void Bullet::HandleCollision()

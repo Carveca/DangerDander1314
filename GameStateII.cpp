@@ -12,6 +12,7 @@
 
 #include "SpawnerBullet.h"
 #include "SpawnerEnemyRanged.h"
+#include "SpawnerEnemyRanged2.h"
 #include "SpawnerEnemyMelee.h"
 #include "SpawnerAOEenemy.h"
 #include "SpawnerRubbishBin.h"
@@ -20,6 +21,7 @@
 #include "Player.h"
 #include "RubbishBin.h"
 #include "EnemyRanged.h"
+#include "EnemyRanged2.h"
 #include "EnemyMelee.h"
 #include "MeleeAttack.h"
 #include "Level.h"
@@ -32,9 +34,23 @@ GameStateII::GameStateII()
 
 bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
 	m_done = false;
 	m_loading = true;
 	m_loadingDone = false;
+
+	m_tutorialState = false;
+	m_tutorialTimer = 0.0f;
+	m_wave1 = false;
+	m_wave2 = false;
+	m_wave3 = false;
+	m_wave4 = false;
+	m_wave5 = false;
+	m_wave6 = false;
+
 
 	m_direction.x = 0;
 	m_direction.y = 0;
@@ -60,10 +76,11 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	
 	//Spawners
 	
-	m_spawnerEnemyMelee = new SpawnerEnemyMelee( m_spriteManager->GetSprite("melee_enemy_move.png", 2048, 128), m_spriteManager->GetSprite("melee_enemy_attack.png", 1024, 128), m_spriteManager->GetSprite("melee_enemy_death.png", 512, 128), sf::Vector2f(1200, -100), m_soundManager);
-	m_spawnerBullet = new SpawnerBullet(m_spriteManager->GetSprite("bullet.png", 16, 16), m_soundManager);
-	m_spawnerEnemyRanged = new SpawnerEnemyRanged(m_spriteManager->GetSprite("ranged_enemy_move.png", 2048, 128), m_spriteManager->GetSprite("ranged_enemy_attack.png", 1024, 128), m_spriteManager->GetSprite("ranged_enemy_death.png", 512, 128), sf::Vector2f(600, -200), m_soundManager);
-	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 2056, 256), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(400, -100), m_soundManager );
+	m_spawnerEnemyMelee = new SpawnerEnemyMelee( m_spriteManager->GetSprite("melee_enemy_move.png", 2048, 128), m_spriteManager->GetSprite("melee_enemy_attack.png", 1024, 128), m_spriteManager->GetSprite("death.png", 1024, 128), sf::Vector2f(1200, -100), m_soundManager);
+	m_spawnerBullet = new SpawnerBullet(m_spriteManager, m_soundManager);
+	m_spawnerEnemyRanged = new SpawnerEnemyRanged(m_spriteManager->GetSprite("ranged_enemy_move.png", 2048, 128), m_spriteManager->GetSprite("ranged_enemy_attack.png", 1024, 128), m_spriteManager->GetSprite("death.png", 1024, 128), sf::Vector2f(600, -200), m_soundManager);
+	m_spawnerEnemyRanged2 = new SpawnerEnemyRanged2(m_spriteManager->GetSprite("ranged2_move.png", 4096, 256), m_spriteManager->GetSprite("ranged2_attack.png", 2048, 256), m_spriteManager->GetSprite("death.png", 1024, 128), sf::Vector2f(600, -200), m_soundManager);
+	m_spawnerAOEenemy = new SpawnerAOEenemy(m_spriteManager->GetSprite("AOE.png", 2056, 256), m_spriteManager->GetSprite("aoe_attack.png", 256, 256), sf::Vector2f(1000, -100), m_spriteManager->GetSprite("death.png", 1024, 128), m_soundManager );
 	
 	m_spawnerRubbishBin = new SpawnerRubbishBin(m_spriteManager->GetSprite("rubbish_bin.png", 128, 128), m_spriteManager->GetSprite("rubbish_bin_death.png", 1024, 128), sf::Vector2f(500, -100), m_soundManager);
 	m_spawnerRubbishBin2 = new SpawnerRubbishBin(m_spriteManager->GetSprite("rubbish_bin.png", 128, 128), m_spriteManager->GetSprite("rubbish_bin_death.png", 1024, 128), sf::Vector2f(1400, -100), m_soundManager);
@@ -71,8 +88,7 @@ bool GameStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	m_spawnerRubbishAndPower = new SpawnerRubbishAndPower(m_spriteManager->GetSprite("blue_cow.png", 256, 64), m_spriteManager->GetSprite("happy_pill.png", 256, 64), m_spriteManager->GetSprite("trash.png", 903, 128), m_soundManager);
 	
 	//Level
-	m_levelTop = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, 0));
-	m_levelBottom = new Level( m_spriteManager->GetSprite("new_gamespace.png", 1920, 1080), sf::Vector2f(0, -1079) );
+	m_level = new Level(m_spriteManager);
 
 	return true;
 }
@@ -115,18 +131,11 @@ void GameStateII::Exit()
 		m_spawnerAOEenemy = nullptr;
 	}
 
-	if(m_levelTop != nullptr)
+	if(m_level != nullptr)
 	{
-		delete m_levelTop;
-		m_levelTop = nullptr;
+		delete m_level;
+		m_level = nullptr;
 	}
-
-	if(m_levelBottom != nullptr)
-	{
-		delete m_levelBottom;
-		m_levelBottom = nullptr;
-	}
-
 }
 
 //State loop
@@ -138,6 +147,8 @@ bool GameStateII::Update(float &deltatime)
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
 	{
 		m_loading = false;
+		m_tutorialState = true;
+		m_entityManager->m_player->SetDrainTutorial();
 	}
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::M))
 	{
@@ -145,7 +156,7 @@ bool GameStateII::Update(float &deltatime)
 		m_done = true;
 	}
 	//Pause Screen
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) )
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) && m_loading == false)
 	{
 		m_paused = true;
 	}
@@ -158,34 +169,16 @@ bool GameStateII::Update(float &deltatime)
 		}
 		else if(!m_paused)
 		{
-			RealTime(deltatime);
+			if(m_tutorialState)
+			{
+				Tutorial(deltatime);
+			}
+			else
+			{
+				RealTime(deltatime);
+			}
 		}
 	}
-
-	/*
-	Input();
-	//Spawner Update
-	m_spawnerAOEenemy->Update(deltatime);
-	if(m_spawnerAOEenemy->GetSpawnState())
-	{
-		m_entityManager->AddEnemyAOE( m_spawnerAOEenemy->Spawn() );
-	}
-	m_spawnerRubbishBin->Update(deltatime);
-	if(m_spawnerRubbishBin->GetSpawnState())
-	{
-		m_entityManager->AddRubbishBin( m_spawnerRubbishBin->Spawn() );
-	}
-	
-	m_entityManager->Update(m_angle, m_direction, deltatime);	
-
-	m_levelTop->Update(deltatime);
-	m_levelBottom->Update(deltatime);
-
-	if(m_entityManager->m_player->GetHP() == 100 || m_entityManager->m_player->GetHP() == 0)
-	{
-		GameOver();
-	}
-	*/
 
 	return m_done;
 }
@@ -210,8 +203,7 @@ void GameStateII::Draw(sf::RenderWindow* window, float &deltatime)
 		}
 		else if(!m_paused && !m_loading)
 		{
-			window->draw(*m_levelTop->GetSprite());
-			window->draw(*m_levelBottom->GetSprite());
+			m_level->Draw(window);
 
 			m_entityManager->Draw(window, deltatime, m_angle);
 		}
@@ -375,6 +367,24 @@ void GameStateII::RealTime(float &deltatime)
 			}
 		}
 	}
+	//Spawner Enemy Ranged2
+	m_spawnerEnemyRanged2->Update(deltatime);
+	if(m_spawnerEnemyRanged2->GetSpawnState())
+	{
+		m_entityManager->AddEnemyRanged2( m_spawnerEnemyRanged2->Spawn() );
+	}
+	//Spawn Bullet2
+	if(!m_entityManager->m_enemyRanged2.empty())
+	{
+		for(unsigned int i = 0; i < m_entityManager->m_enemyRanged2.size(); i++)
+		{
+			if( m_entityManager->m_enemyRanged2[i]->GetAttacking() )
+			{
+				m_entityManager->AddBullet(m_spawnerBullet->Spawn2(m_entityManager->m_enemyRanged2[i]->GetPosition(), m_entityManager->m_enemyRanged2[i]->GetDirection()) );
+			}
+		}
+	}
+
 
 	//Spawner AOE
 	m_spawnerAOEenemy->Update(deltatime);
@@ -407,11 +417,11 @@ void GameStateII::RealTime(float &deltatime)
 
 					int drop = rand() % 100;
 
-					if(drop >= 20)
+					if(drop > 20)
 					{
 						m_entityManager->AddRubbishpile(m_spawnerRubbishAndPower->SpawnRubbish(m_angle));
 					}
-					else if (drop < 20)
+					else if (drop <= m_reader->m_settings["PowerUpDropRate"])
 					{
 						int powerup = rand() % 100;
 
@@ -432,11 +442,100 @@ void GameStateII::RealTime(float &deltatime)
 	
 	m_entityManager->Update(m_angle, m_direction, deltatime);	
 
-	m_levelTop->Update(deltatime);
-	m_levelBottom->Update(deltatime);
+	m_level->Update(deltatime);
 
 	if(m_entityManager->m_player->GetHP() == 100 || m_entityManager->m_player->GetHP() == 0)
 	{
 		GameOver();
 	}
+}
+
+void GameStateII::Tutorial(float &deltatime)
+{
+	//m_entityManager->m_player->SetDrainTutorial();
+	m_tutorialTimer += deltatime;
+	if(m_tutorialTimer >= 18.0)
+	{
+		m_tutorialState = false;
+		m_entityManager->m_player->SetDrainNormal();
+	}
+
+	//Waves
+	if(m_wave1 == false && m_tutorialTimer >= 3.0)
+	{
+		m_wave1 = true;
+
+		m_entityManager->AddEnemyAOE(m_spawnerAOEenemy->Spawn());
+	}
+	else if(m_wave2 == false && m_tutorialTimer >= 6.0)
+	{
+		m_wave2 = true;
+
+		m_entityManager->AddEnemyMelee(m_spawnerEnemyMelee->Spawn());
+	}
+	else if(m_wave3 == false && m_tutorialTimer >= 9.0)
+	{
+		m_wave3 = true;
+
+		m_entityManager->AddEnemyRanged2(m_spawnerEnemyRanged2->Spawn());
+	}
+	else if(m_wave4 == false && m_tutorialTimer >= 12.0)
+	{
+		m_wave4 = true;
+
+		m_entityManager->AddEnemyRanged(m_spawnerEnemyRanged->Spawn());
+	}
+	else if(m_wave5 == false && m_tutorialTimer >= 15.0)
+	{
+		m_wave5 = true;
+
+		m_entityManager->AddEnemyMelee(m_spawnerEnemyMelee->Spawn());
+		m_entityManager->AddEnemyRanged2(m_spawnerEnemyRanged2->Spawn());
+		m_entityManager->AddEnemyRanged(m_spawnerEnemyRanged->Spawn());
+	}
+
+/*
+	else if(m_wave6 == false && m_tutorialTimer >= 24.0)
+	{
+		m_wave6 = true;
+		m_entityManager->AddEnemyMelee(m_spawnerEnemyMelee->Spawn());
+		m_entityManager->AddEnemyMelee(m_spawnerEnemyMelee->Spawn());
+		m_entityManager->AddEnemyRanged2(m_spawnerEnemyRanged2->Spawn());
+		m_entityManager->AddEnemyRanged2(m_spawnerEnemyRanged2->Spawn());
+		m_entityManager->AddEnemyRanged(m_spawnerEnemyRanged->Spawn());
+		m_entityManager->AddEnemyRanged(m_spawnerEnemyRanged->Spawn());
+		m_entityManager->AddEnemyAOE(m_spawnerAOEenemy->Spawn());
+		m_entityManager->AddEnemyAOE(m_spawnerAOEenemy->Spawn());
+	}
+*/	
+
+	//bullets
+	if(!m_entityManager->m_enemyRanged.empty())
+	{
+		for(unsigned int i = 0; i < m_entityManager->m_enemyRanged.size(); i++)
+		{
+			if( m_entityManager->m_enemyRanged[i]->GetAttacking() )
+			{
+				m_entityManager->AddBullet(m_spawnerBullet->Spawn(m_entityManager->m_enemyRanged[i]->GetPosition(), m_entityManager->m_enemyRanged[i]->GetDirection()) );
+			}
+		}
+	}
+
+	if(!m_entityManager->m_enemyRanged2.empty())
+	{
+		for(unsigned int i = 0; i < m_entityManager->m_enemyRanged2.size(); i++)
+		{
+			if( m_entityManager->m_enemyRanged2[i]->GetAttacking() )
+			{
+				m_entityManager->AddBullet(m_spawnerBullet->Spawn2(m_entityManager->m_enemyRanged2[i]->GetPosition(), m_entityManager->m_enemyRanged2[i]->GetDirection()) );
+			}
+		}
+	}
+
+
+
+	//Update
+	Input();
+	m_entityManager->Update(m_angle, m_direction, deltatime);	
+	m_level->Update(deltatime);
 }

@@ -9,7 +9,7 @@ class EnemyAOE : public Enemy
 {
 public:
 	EnemyAOE();
-	EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite, SoundManager* soundmanager);
+	EnemyAOE(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attacksprite, sf::Sprite* deathsprite, SoundManager* soundmanager);
 	~EnemyAOE();
 
 	void Attack();
@@ -17,7 +17,7 @@ public:
 	void HandleCollision();
 
 	AOEattack* GetAttack();
-
+	sf::Sprite* GetDeathSprite();
 
 protected:
 	int m_yDirection, m_xDirection;
@@ -27,4 +27,6 @@ protected:
 	AOEattack* m_attack;
 	SoundManager* m_soundManager;
 	FileReader* m_reader;
+	sf::Sprite* m_deathSprite;
+
 };

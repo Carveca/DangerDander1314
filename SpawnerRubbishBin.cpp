@@ -12,6 +12,10 @@ SpawnerRubbishBin::SpawnerRubbishBin()
 
 SpawnerRubbishBin::SpawnerRubbishBin(sf::Sprite* sprite, sf::Sprite* deathsprite, sf::Vector2f &spawnlocation, SoundManager* soundmanager)
 {
+	m_reader = new FileReader;
+	m_reader->Initialize("../Data/");
+	m_reader->LoadFile("settings.txt");
+
 	m_sprite = sprite;
 	m_deathSprite = deathsprite;
 	m_spawnPosition = spawnlocation;
@@ -21,7 +25,7 @@ SpawnerRubbishBin::SpawnerRubbishBin(sf::Sprite* sprite, sf::Sprite* deathsprite
 	m_soundManager->LoadSound("main_attack_trashcan.wav", "binHit");
 
 	m_spawning = false;
-	m_spawnTimer = 3.0;
+	m_spawnTimer = m_reader->m_settings["BinSpawnerInitialTimer"];
 }
 
 SpawnerRubbishBin::~SpawnerRubbishBin()
@@ -43,7 +47,7 @@ void SpawnerRubbishBin::Update(float &deltatime)
 	if(m_spawnTimer <= 0.0)
 	{
 		m_spawning = true;
-		m_spawnTimer = 4.0f;
+		m_spawnTimer = m_reader->m_settings["BinSpawnerTimer"];
 	}
 }
 

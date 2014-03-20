@@ -51,7 +51,7 @@ void PlayerAttack::Update(float &elapsedTime)
 	HandleCollision();
 }
 
-bool PlayerAttack::Dead()
+bool PlayerAttack::isDead()
 {
 	return m_dead;
 }

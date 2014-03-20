@@ -14,7 +14,7 @@ public:
 	void Update(float &elapsedTime);
 	void HandleCollision();
 
-	bool Dead();
+	bool isDead();
 	bool GetHit();
 
 

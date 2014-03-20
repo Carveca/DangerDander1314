@@ -1,0 +1,6 @@
+gamespace_housesprites0000 = 0 0 305 1080
+gamespace_housesprites0001 = 306 0 305 1080
+gamespace_housesprites0002 = 612 0 305 1080
+gamespace_housesprites0003 = 918 0 305 1080
+gamespace_housesprites0004 = 1224 0 305 1080
+gamespace_housesprites0005 = 1530 0 305 1080

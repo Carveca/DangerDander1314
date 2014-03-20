@@ -29,4 +29,5 @@ protected:
 	sf::Sprite* m_deathSprite;
 
 	SoundManager* m_soundManager;
+	FileReader* m_reader;
 };

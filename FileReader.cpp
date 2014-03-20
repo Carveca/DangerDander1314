@@ -35,6 +35,9 @@ void FileReader::LoadFile(std::string filename)
 		while(!openfile.eof())
 		{
 			openfile >> key >> value;
+
+			if(key == "PlayerHPDrain")
+				std::cout << value << std::endl;
 			
 			m_settings.insert( std::pair <std::string, float>(key, value) );
 		}

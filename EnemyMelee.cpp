@@ -38,11 +38,18 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* a
 	m_attackImageNR = 0;
 	m_attackFrameCounter = 0.0f;
 
+	m_deathSprite = deathsprite;
+	m_deathSprite->setOrigin(64, 64);
+	m_deathImageNR = 0;
+	m_attackFrameCounter = 0.0f;
+
 	m_imageNR = 0;
 	m_frameCounter = 0.0f;
 
 	m_Direction.y = 0;
 	m_Direction.x = 0;
+
+	m_dead = false;
 }
 
 EnemyMelee::~EnemyMelee()
@@ -59,87 +66,105 @@ void EnemyMelee::MeleeAttack()
 
 void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 {
-	float deltax = m_position.x - refpos.x;
-	float deltay = m_position.y - refpos.y;
-	float distance = sqrtf(deltax * deltax + deltay * deltay);
-	float angle = atan2(deltay, deltax);
-	m_Direction.x = cos(angle) * -1;
-	m_Direction.y = sin(angle) * -1;
-	m_isAttacking = false;
-
-	if(distance > m_reader->m_settings["EnemyMeleeDistance"])
+	if(m_dead)
 	{
-		m_position += m_Direction * m_speed * deltatime;
-	}
-	else 
-	{	
-		MeleeAttack();				
-	}
+		m_position.y += 1 * 100 * deltatime;
+		m_deathTimer -= deltatime;
 
-	if(m_attackTimer <= 0.5 && m_attackTimer > 0.0)
-	{
-		m_attackAnimation = true;
-
-		if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+		m_deathFrameCounter += deltatime;
+		if(m_deathFrameCounter >= 0.1)
 		{
-			m_isAttacking = true;		
-			m_attackTimer = 0.0f;
+			m_deathFrameCounter = 0.0f;
+			m_deathImageNR++;
+			if(m_deathImageNR > 5)
+				m_deathImageNR = 0;
 		}
+		m_deathSprite->setTextureRect(sf::IntRect(m_deathImageNR * 129, 0, 128, 128));
 	}
-
-	m_attackTimer -= deltatime;
-	if(m_attackTimer < -1)
+	else if(!m_dead)
 	{
-		m_attackTimer = 0.0f;
-	}	
+		float deltax = m_position.x - refpos.x;
+		float deltay = m_position.y - refpos.y;
+		float distance = sqrtf(deltax * deltax + deltay * deltay);
+		float angle = atan2(deltay, deltax);
+		m_Direction.x = cos(angle) * -1;
+		m_Direction.y = sin(angle) * -1;
+		m_isAttacking = false;
 
-	m_collider->SetPosition(m_position);
-	m_sprite->setPosition(m_position);
-	m_attackSprite->setPosition(m_position);
-
-	m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
-	m_frameCounter += deltatime;
-
-	//animation
-	if(m_attackAnimation)
-	{
-		m_attackFrameCounter += deltatime;
-		if(m_attackFrameCounter >= 0.1)
+		if(distance > m_reader->m_settings["EnemyMeleeDistance"])
 		{
-			m_attackImageNR++;
+			m_position += m_Direction * m_speed * deltatime;
+		}
+		else 
+		{	
+			MeleeAttack();				
+		}
+
+		if(m_attackTimer <= 0.5 && m_attackTimer > 0.0)
+		{
+			m_attackAnimation = true;
+
+			if(m_attackTimer <= 0.1 && m_attackTimer > 0.0)
+			{
+				m_isAttacking = true;		
+				m_attackTimer = 0.0f;
+			}
+		}
+
+		m_attackTimer -= deltatime;
+		if(m_attackTimer < -1)
+		{
+			m_attackTimer = 0.0f;
+		}	
+
+		m_collider->SetPosition(m_position);
+		m_sprite->setPosition(m_position);
+		m_attackSprite->setPosition(m_position);
+
+		m_sprite->setTextureRect(sf::IntRect( 129 * m_imageNR, 0, 128, 128));
+		m_frameCounter += deltatime;
+
+		//animation
+		if(m_attackAnimation)
+		{
+			m_attackFrameCounter += deltatime;
+			if(m_attackFrameCounter >= 0.1)
+			{
+				m_attackImageNR++;
+				m_attackFrameCounter = 0.0f;
+
+				if(m_attackImageNR > 4)
+					m_attackImageNR = 0;
+			}
+		}
+		else if(!m_attackAnimation && m_frameCounter >= 0.1f)
+		{
+			//reset attackanimation
+			m_attackImageNR = 0;
 			m_attackFrameCounter = 0.0f;
 
-			if(m_attackImageNR > 4)
-				m_attackImageNR = 0;
-		}
-	}
-	else if(!m_attackAnimation && m_frameCounter >= 0.1f)
-	{
-		//reset attackanimation
-		m_attackImageNR = 0;
-		m_attackFrameCounter = 0.0f;
-
-		//walk animation
-		m_imageNR++;
-		m_frameCounter = 0.0f;
-		if(m_imageNR > 7)
-			m_imageNR = 0;
-	}	
+			//walk animation
+			m_imageNR++;
+			m_frameCounter = 0.0f;
+			if(m_imageNR > 7)
+				m_imageNR = 0;
+		}	
 	
-	HandleCollision();
+		HandleCollision();
 
-		//Bounds
-	if(m_position.x < m_reader->m_settings["BoundsLeft"])
-		m_position.x = m_reader->m_settings["BoundsLeft"];
-	if(m_position.x > m_reader->m_settings["BoundsRight"])
-		m_position.x = m_reader->m_settings["BoundsRight"];
-	if(m_position.y < 0)
-	{
-		m_position.y = 0;
-	}
-	if(m_position.y > 1080)
-	{
-		m_position.y = 1080;
+			//Bounds
+		if(m_position.x < m_reader->m_settings["BoundsLeft"])
+			m_position.x = m_reader->m_settings["BoundsLeft"];
+		if(m_position.x > m_reader->m_settings["BoundsRight"])
+			m_position.x = m_reader->m_settings["BoundsRight"];
+		if(m_position.y < 0)
+		{
+			m_position.y = 0;
+		}
+		if(m_position.y > 1080)
+		{
+			m_position.y = 1080;
+		}
 	}
 }
 
@@ -164,6 +189,10 @@ void EnemyMelee::HandleCollision()
 			{
 				m_position = m_collisions[i].second;
 			}			
+		}
+		else if( m_collisions[i].first->GetName() != "Bullet" && m_collisions[i].first->GetName() != "MeleeAttack")
+		{
+			m_position = m_collisions[i].second;
 		}
 	}
 	
@@ -238,6 +267,12 @@ sf::Sprite* EnemyMelee::GetAttackSprite()
 	return m_attackSprite;
 }
 
+sf::Sprite* EnemyMelee::GetDeathSprite()
+{
+	m_deathSprite->setPosition(GetPosition());
+	//m_deathSprite->setTextureRect(sf::IntRect(0, 0, 128, 128));
+	return m_deathSprite;
+}
 
 sf::Sprite* EnemyMelee::GetSprite()
 {
