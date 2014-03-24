@@ -14,8 +14,12 @@ public:
 	void Update(float elapsedTime);
 	void HandleCollision();
 
+	float GetLife();
+
 protected:
 	sf::Vector2f m_Direction;
 
 	SoundManager* m_soundManager;
+
+	float m_bulletLife;
 };

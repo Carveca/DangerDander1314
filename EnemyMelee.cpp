@@ -50,6 +50,10 @@ EnemyMelee::EnemyMelee(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* a
 	m_Direction.x = 0;
 
 	m_dead = false;
+
+	m_soundManager = soundmanager;
+	m_soundManager->Initialize("../Sounds/");
+	m_soundManager->LoadSound("melee.wav", "melee");
 }
 
 EnemyMelee::~EnemyMelee()
@@ -61,7 +65,10 @@ EnemyMelee::~EnemyMelee()
 void EnemyMelee::MeleeAttack()
 {
 	if(m_attackTimer <= 0)
+	{
 		m_attackTimer = 0.5;
+		m_soundManager->PlaySound("melee");
+	}
 }
 
 void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
@@ -95,9 +102,9 @@ void EnemyMelee::Update(float &deltatime, sf::Vector2f refpos)
 		{
 			m_position += m_Direction * m_speed * deltatime;
 		}
-		else 
+		else
 		{	
-			MeleeAttack();				
+			MeleeAttack();	
 		}
 
 		if(m_attackTimer <= 0.5 && m_attackTimer > 0.0)

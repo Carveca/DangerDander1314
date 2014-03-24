@@ -27,6 +27,7 @@ SpawnerEnemyMelee::SpawnerEnemyMelee(sf::Sprite* sprite, sf::Sprite* attacksprit
 	m_deathSprite = deathsprite;
 
 	m_soundManager = soundmanager;
+	
 
 }
 

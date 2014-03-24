@@ -452,7 +452,6 @@ void GameStateII::RealTime(float &deltatime)
 
 void GameStateII::Tutorial(float &deltatime)
 {
-	//m_entityManager->m_player->SetDrainTutorial();
 	m_tutorialTimer += deltatime;
 	if(m_tutorialTimer >= 18.0)
 	{

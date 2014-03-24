@@ -31,8 +31,8 @@ Bullet::Bullet(sf::Sprite* sprite, sf::Vector2f position, sf::Vector2f direction
 	m_collider = new Collider;
 	m_colliderCircle = true;
 	m_collider->SetRadius(32);
-	m_collider->SetExtension(GetExtension());
-	m_collider->SetPosition(GetPosition());
+	m_collider->SetExtension( GetExtension() );
+	m_collider->SetPosition( GetPosition() );
 
 	if(sprite != nullptr)
 	{
@@ -47,6 +47,8 @@ Bullet::Bullet(sf::Sprite* sprite, sf::Vector2f position, sf::Vector2f direction
 	m_frameCounter = 0.0f;
 
 	m_Direction = direction;
+
+	m_bulletLife = 20.0f;
 }
 
 Bullet::~Bullet()
@@ -57,6 +59,11 @@ Bullet::~Bullet()
 
 void Bullet::Update(float elapsedTime)
 {
+	m_bulletLife -= elapsedTime;
+
+	if(m_bulletLife < 0.0)
+		m_hp--;
+
 	m_position += m_Direction * m_speed * elapsedTime;
 
 	m_collider->SetPosition(m_position);
@@ -79,4 +86,9 @@ void Bullet::HandleCollision()
 	
 	m_collisions.clear();
 
+}
+
+float Bullet::GetLife()
+{
+	return m_bulletLife;
 }

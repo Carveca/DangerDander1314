@@ -3,7 +3,7 @@ ScreenHeight 1080
 
 BoundsLeft 360
 BoundsRight 1560
-BoundsUp 80
+BoundsUp 120
 BoundsDown 1000
 
 PlayerSpeed 300

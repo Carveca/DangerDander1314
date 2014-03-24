@@ -14,7 +14,7 @@ StateManagerII::StateManagerII()
 	m_reader.Initialize("../Data/");
 	m_reader.LoadFile("settings.txt");
 
-	m_window = new sf::RenderWindow(sf::VideoMode(m_reader.m_settings["ScreenWidth"], m_reader.m_settings["ScreenHeight"]), "Aggressive Bystander", sf::Style::Fullscreen);
+	m_window = new sf::RenderWindow(sf::VideoMode(m_reader.m_settings["ScreenWidth"], m_reader.m_settings["ScreenHeight"]), "Aggressive Bystander", sf::Style::None);
 
 	m_spriteManager = new SpriteManager;
 	m_spriteManager->Initialize("../Sprites/");
