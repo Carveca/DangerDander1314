@@ -17,7 +17,7 @@ bool MenuStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 {
 	m_done = false;
 	m_selection = 1;
-	m_keytimer = 0.0f;
+	m_keytimer = 0.2f;
 
 	m_spriteManager = spritemanager;
 	m_backGround = m_spriteManager->GetSprite("menuscreen.png", 1920, 1080);
@@ -90,7 +90,7 @@ bool MenuStateII::Update(float &deltatime)
 		}
 	}
 
-	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Return) && m_keytimer <= 0.0)
 	{
 		if(m_selection == 1)
 		{
@@ -102,11 +102,17 @@ bool MenuStateII::Update(float &deltatime)
 			m_nextState = "OptionsState";
 			m_done = true;
 		}
+		else if(m_selection == 4)
+		{
+			m_nextState = "CreditsState";
+			m_done = true;
+		}
 		else if(m_selection == 5)
 		{
 			m_nextState = "quit";
 			m_done = true;
 		}
+		m_keytimer = 0.2;
  	}
 
 	if(m_selection == 1)
