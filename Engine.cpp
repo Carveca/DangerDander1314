@@ -3,27 +3,65 @@
 #include "stdafx.h"
 #include "Engine.h"
 
+#include "StateManagerII.h"
+#include "MenuStateII.h"
+#include "GameStateII.h"
+#include "GameOverHeart.h"
+#include "GameOverSleep.h"
+#include "OptionsState.h"
+#include "CreditsState.h"
+#include "HighscoreState.h"
 
-#include "Player.h"
-#include "PlayerAttack.h"
-#include "PumpMeter.h"
-#include "EnemyMelee.h"
-#include "EnemyAOE.h"
-#include "Level.h"
-#include "HappyPill.h"
-#include "BlueCow.h"
+Engine::Engine()
+{
+	
+}
 
-#include "Collider.h"
-#include "CollisionManager.h"
-#include "SpriteManager.h"
+Engine::~Engine()
+{
+	delete m_stateManager;
+	m_stateManager = nullptr;
+}
 
-#include "SpawnerAOEenemy.h"
+bool Engine::Initialize()
+{
+	m_stateManager = new StateManagerII;
+	
+	m_stateManager->Attach(new MenuStateII);
+	m_stateManager->Attach(new GameStateII);
+	m_stateManager->Attach(new GameOverHeart);
+	m_stateManager->Attach(new GameOverSleep);
+	m_stateManager->Attach(new OptionsState);
+	m_stateManager->Attach(new CreditsState);
+	m_stateManager->Attach(new HighscoreState);
+
+	m_stateManager->SetState("MenuStateII");
 
 
-#include "Entity.h"
+	return true;
+}
 
-#include <iostream>
+void Engine::Run()
+{
+	m_clock = new sf::Clock;
 
+	while(m_stateManager->m_window->isOpen())
+	{
+		//deltatime
+		float deltatime = m_clock->restart().asSeconds();
+		
+		//Update
+		m_stateManager->Update(deltatime);
+		//Draw
+		m_stateManager->Draw(deltatime);
+	}
+
+}
+
+
+//old code
+
+/*
 Engine::Engine()
 {
 	m_direction.x = 0.0f;
@@ -39,10 +77,6 @@ Engine::~Engine()
 
 bool Engine::Initialize()
 {
-	
-
-	sf::Clock initTimer;
-
 	m_window.create(sf::VideoMode(1920, 1080), "Dangerous Dander");
 		
 	m_collisionManager = new CollisionManager;
@@ -53,82 +87,53 @@ bool Engine::Initialize()
 	//Level
 	m_sprite_manager->LoadSprite("new_gamespace.png", "Level", 0, 0, 1920, 1080, 1, 1);
 	LevelTexture = m_sprite_manager->GetTextures()["LevelTexture"];
-	LevelSprite = m_sprite_manager->GetSprites()["Level"];
 	LevelSprite.setTexture(LevelTexture);
-	
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
-	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1080.0f);
+	sf::Vector2f LevelPos = sf::Vector2f(0.0f, -1079.0f);
 	m_level_top = new Level(LevelSprite, LevelPos);
+
 	sf::Vector2f LevelPos2 = sf::Vector2f(0.0f, 0.0f);
 	m_level_bottom = new Level(LevelSprite, LevelPos2);
-	
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 
 	//PumpMeter
 	m_sprite_manager->LoadSprite("pumpbar.png", "PumpMeter", 0, 0, 500, 65, 1, 1);
 	PumpTexture = m_sprite_manager->GetTextures()["PumpMeterTexture"];
-	PumpSprite = m_sprite_manager->GetSprites()["PumpMeter"];
 	PumpSprite.setTexture(PumpTexture);
 	sf::Vector2f PumpPos = sf::Vector2f(100, 50);
 	m_pumpMeter = new PumpMeter(PumpSprite, PumpPos);
 
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
-
 	//Player
-	m_sprite_manager->LoadSprite("player_move.png", "Player", 0, 0, 2048, 256, 1, 1);
+	m_sprite_manager->LoadSprite("player_weapon.png", "Player", 0, 0, 2048, 256, 1, 1);
 	PlayerTexture = m_sprite_manager->GetTextures()["PlayerTexture"];
-	PlayerSprite = m_sprite_manager->GetSprites()["Player"];
 	PlayerSprite.setTexture(PlayerTexture);
+
+	m_sprite_manager->LoadSprite("Main_Character_Attack_SpriteSheet.png", "PlayerAttack", 0, 0, 1024, 256, 2, 2);
+	PlayerAttackTexture = m_sprite_manager->GetTextures()["PlayerAttackTexture"];
+	PlayerAttackSprite.setTexture(PlayerAttackTexture);
+
 	sf::Vector2f playerPOS = sf::Vector2f(960.0f, 500.0f);
-	m_player = new Player(PlayerSprite, playerPOS);
-	
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
+
+	m_player = new Player(PlayerSprite, playerPOS, PlayerAttackSprite);
 
 	//Enemy
 	m_sprite_manager->LoadSprite("AOE.png", "EnemyAoe", 0, 0, 1024, 128, 1, 1);
 	EnemyAoeTexture = m_sprite_manager->GetTextures()["EnemyAoeTexture"];
-	EnemyAoeSprite = m_sprite_manager->GetSprites()["EnemyAoe"];
-	EnemyAoeSprite.setTexture(EnemyAoeTexture); 
+	EnemyAoeSprite.setTexture(EnemyAoeTexture);
 
 	m_sprite_manager->LoadSprite("aoe_attack.png", "AOE", 0, 0, 256, 256, 1, 1);
 	AOEtexture = m_sprite_manager->GetTextures()["AOETexture"];
-	AOEsprite = m_sprite_manager->GetSprites()["AOE"];
 	AOEsprite.setTexture(AOEtexture);
 
-	m_sprite_manager->LoadSprite("image.png", "HappyPill", 0, 0, 96, 128, 1, 1);
-	HappyPillTexture = m_sprite_manager->GetTextures()["HappyPillTexture"];
-	HappyPillSprite = m_sprite_manager->GetSprites()["HappyPill"];
-	HappyPillSprite.setTexture(HappyPillTexture);
-	sf::Vector2f pillPOS = sf::Vector2f(960.0f, 200.0f);
-	m_pill = new HappyPill(HappyPillSprite, pillPOS);
-
-	m_sprite_manager->LoadSprite("aoe_attack.png", "BlueCow", 0, 0, 96, 128, 0.5, 0.5);
-	BlueCowTexture = m_sprite_manager->GetTextures()["BlueCowTexture"];
-	BlueCowSprite = m_sprite_manager->GetSprites()["BlueCow"];
-	BlueCowSprite.setTexture(BlueCowTexture);
-	sf::Vector2f cowPOS = sf::Vector2f(960.0f, 300.0f);
-	m_cow = new BlueCow(BlueCowSprite, cowPOS);
-
-	sf::Vector2f enemyPOS = sf::Vector2f(400.0f, -90.0f);
+	sf::Vector2f enemyPOS = sf::Vector2f(500.0f, -200.0f);
 
 	m_spawner_AOEenemy = new SpawnerAOEenemy(EnemyAoeSprite, AOEsprite, enemyPOS);
 
 	m_AOEenemyContainer.push_back(m_spawner_AOEenemy->Spawn());
 
-
-	//sf::Vector2f enemyPOS2 = sf::Vector2f(900.0f, 900.0f);
-	//m_AOEenemyContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS, AOEsprite));
-	//m_AOEenemyContainer.push_back(new EnemyAOE(EnemyAoeSprite, enemyPOS2, AOEsprite));
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
-
 	//Attack
-	m_sprite_manager->LoadSprite("image.png", "Attack", 0, 0, 96, 128, 1, 1);
+	m_sprite_manager->LoadSprite("pow_effect.png", "Attack", 0, 0, 128, 128, 1, 1);
 	AttackTexture = m_sprite_manager->GetTextures()["AttackTexture"];
-	AttackSprite = m_sprite_manager->GetSprites()["Attack"];
 	AttackSprite.setTexture(AttackTexture);	
-
-	//std::cout << initTimer.restart().asSeconds() << std::endl;
 				
 	return true;
 }
@@ -162,7 +167,6 @@ void Engine::Run()
 		{
 			m_player->Attack();
 		}
-
 
 		//Movement Input
 		m_direction.x = 0.0f;
@@ -211,24 +215,7 @@ void Engine::Run()
 			m_direction.x = 1;
 			m_angle = 90;
 		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num1))
-		{
-			if(m_player->m_happypillcontainer > 0)
-			{
-				m_player->m_happypillcontainer--;
-				m_player->ChangeHP(-50);
-			}
-		}
-		if(sf::Keyboard::isKeyPressed(sf::Keyboard::Num2))
-		{
-			if(m_player->m_bluecowcontainer > 0)
-			{
-				m_player->m_bluecowcontainer--;
-				m_player->m_speed *= 2;
-				m_player->m_powerupTimer = 0;
-			}
-		}
-
+						
 		//Update Player
 		m_player->Update(m_angle, m_direction, m_elapsedTime);	
 		//Player Attack
@@ -239,24 +226,22 @@ void Engine::Run()
 			if(m_angle == 0) //up
 				attackPOS += sf::Vector2f(0, -128);
 			else if(m_angle == 45)//up right
-				attackPOS += sf::Vector2f(120, -128);
+				attackPOS += sf::Vector2f(120, -120);
 			else if(m_angle == 90)//right
 				attackPOS += sf::Vector2f(128, 0);
 			else if(m_angle == 135)//down right
-				attackPOS += sf::Vector2f(120, 128);
+				attackPOS += sf::Vector2f(120, 120);
 			else if(m_angle == 180)//down
 				attackPOS += sf::Vector2f(0, 128);
 			else if(m_angle == 225)//down left
-				attackPOS += sf::Vector2f(-120, 128);
+				attackPOS += sf::Vector2f(-120, 120);
 			else if(m_angle == 270)//left
 				attackPOS += sf::Vector2f(-128, 0);
 			else if(m_angle == 315)//up left
-				attackPOS += sf::Vector2f(-120, -128);
+				attackPOS += sf::Vector2f(-120, -120);
 
-			m_attackContainer.push_back( new PlayerAttack(AttackSprite ,attackPOS, m_player->GetWeaponSize() ) );
+			m_attackContainer.push_back( new PlayerAttack(AttackSprite , attackPOS, m_player->GetWeaponSize() ) );
 		}
-
-		//std::cout << m_player->GetHP() << std::endl;
 
 		if(!m_attackContainer.empty())
 			{
@@ -264,6 +249,7 @@ void Engine::Run()
 				if(m_attackContainer[0]->Dead())
 				{
 					m_attackContainer.pop_back();
+					m_player->SetAttackAnimationStop();
 				}
 			}
 		//Update Enemies
@@ -290,26 +276,7 @@ void Engine::Run()
 
 			}
 		}
-		if(m_pill != nullptr)
-		{
-			m_pill->Update(m_elapsedTime);
 
-			if(m_pill->GetHP() == 0)
-			{
-				delete m_pill;
-				m_pill = nullptr;
-			}
-		}
-		if(m_cow != nullptr)
-		{
-			m_cow->Update(m_elapsedTime);
-
-			if(m_cow->GetHP() == 0)
-			{
-				delete m_cow;
-				m_cow = nullptr;
-			}
-		}
 		//Update misc
 		m_pumpMeter->Update(m_player->GetHP());
 		
@@ -342,16 +309,7 @@ void Engine::Run()
 		if(!m_attackContainer.empty())
 		{
 			m_collisionManager->Add(m_attackContainer[0]);
-		}
-
-		if(m_pill != nullptr)
-		{
-			m_collisionManager->Add(m_pill);
-		}
-		if(m_cow != nullptr)
-		{
-			m_collisionManager->Add(m_cow);
-		}
+		}		
 		m_collisionManager->CheckCollision();
 
 
@@ -384,24 +342,26 @@ void Engine::Draw()
 			}
 		}
 		
-		//Powerups
-		if(m_pill != nullptr)
-		{
-			m_window.draw(m_pill->GetSprite());
-		}
-		if(m_cow != nullptr)
-		{
-			m_window.draw(m_cow->GetSprite());
-		}
-
 		//attacks
 		if(!m_attackContainer.empty())
 		{
-			m_window.draw(m_attackContainer[0]->GetSprite());
+			if(m_attackContainer[0]->GetHit() == true)
+			{
+				m_window.draw(m_attackContainer[0]->GetSprite());
+			}
 		}
 
 		//Player
-		m_window.draw(m_player->GetSprite());
+
+		if(!m_player->GetAttackAnimation())
+		{
+			m_window.draw(m_player->GetSprite());
+		}
+
+		else 
+		{
+			m_window.draw(m_player->GetAttackSprite());
+		}
 
 
 		//Pump
@@ -410,3 +370,4 @@ void Engine::Draw()
 		m_window.display();	
 
 }
+*/

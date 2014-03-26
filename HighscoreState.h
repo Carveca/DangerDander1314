@@ -1,13 +1,17 @@
-//MenuState II header File
+//HighscoreState.h
 
 #pragma once
 
 #include "StateII.h"
 
-class MenuStateII : public StateII
+class SpriteManager;
+class MusicManager;
+class Sprite;
+
+class HighscoreState : public StateII
 {
 public:
-	MenuStateII();
+	HighscoreState();
 
 	bool Enter(SpriteManager* spritemanager, MusicManager* musicmanager);
 	void Exit();
@@ -19,20 +23,12 @@ public:
 	std::string Next();
 	bool IsType(const std::string &type);
 
-private:
-	//StateManager* m_stateManager;
+protected:
 	SpriteManager* m_spriteManager;
 	MusicManager* m_musicManager;
-	FileReader m_reader;
 
-	sf::Sprite* m_backGround;
-	sf::CircleShape cursor;
+	sf::Sprite* m_background;
 
-	sf::Vector2f cursorPOS;
-
-	float m_keytimer;
-	int m_selection;
 	bool m_done;
 	std::string m_nextState;
-
 };

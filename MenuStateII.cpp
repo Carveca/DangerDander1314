@@ -28,6 +28,10 @@ bool MenuStateII::Enter(SpriteManager* spritemanager, MusicManager* musicmanager
 	m_musicManager->RepeatON();
 	m_musicManager->Play();
 	
+	m_reader.Initialize("../Data/");
+	m_reader.LoadFile("SoundSettings.txt");
+	m_musicManager->VolumeControl(m_reader.m_settings["MusicVolume"]);
+
 	cursor.setRadius(45);
 	
 	cursor.setFillColor(sf::Color::Transparent);
@@ -95,6 +99,11 @@ bool MenuStateII::Update(float &deltatime)
 		if(m_selection == 1)
 		{
 			m_nextState = "GameStateII";
+			m_done = true;
+		}
+		else if(m_selection == 2)
+		{
+			m_nextState = "HighscoreState";
 			m_done = true;
 		}
 		else if(m_selection == 3)

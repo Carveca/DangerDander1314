@@ -45,5 +45,11 @@ void SoundManager::LoadSound(std::string file_name, std::string sound_name)
 void SoundManager::PlaySound(std::string name)
 {
 	m_sounds[name].setBuffer(m_buffer[name + "Buffer"]);
+	m_sounds[name].setVolume(m_volume);
 	m_sounds[name].play();
+}
+
+void SoundManager::VolumeControl(float volume)
+{
+	m_volume = volume;
 }

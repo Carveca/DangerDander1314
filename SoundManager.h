@@ -15,9 +15,11 @@ public:
 	void Cleanup();
 	void LoadSound(std::string file_name, std::string sound_name);
 	void PlaySound(std::string name);
+	void VolumeControl(float volume);
 
 private:
 	std::string m_pathname;
+	float m_volume;
 
 	std::map<std::string, sf::Sound> m_sounds;
 	std::map<std::string, sf::SoundBuffer> m_buffer; 
