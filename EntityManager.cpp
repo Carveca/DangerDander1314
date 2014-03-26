@@ -275,7 +275,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_meleeAttacks[i];
 				m_meleeAttacks[i] = nullptr;
 				m_meleeAttacks.erase( m_meleeAttacks.begin() + i );
-				m_player->ChangeHP(1);
+				m_player->ChangeHP(m_reader->m_settings["MeleeDMG"]);
 				//m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
@@ -316,7 +316,7 @@ void EntityManager::CheckHP(float &deltatime, float &angle)
 				delete m_bullets[i];
 				m_bullets[i] = nullptr;
 				m_bullets.erase(m_bullets.begin() + i);
-				m_player->ChangeHP(1);
+				m_player->ChangeHP(m_reader->m_settings["BulletDMG"]);
 				//m_soundManager->PlaySound("PumpIncrease");
 			}
 		}
@@ -588,6 +588,11 @@ void EntityManager::UpdateEnemyMelee(float &deltatime)
 		for(unsigned int i = 0; i < m_enemyMelee.size(); i++)
 		{
 			m_enemyMelee[i]->Update(deltatime, m_player->GetPosition());
+			if(m_enemyMelee[i]->GetAttacking())
+			{
+				//AddMeleeAttack(//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			}
+
 		}
 	}
 }

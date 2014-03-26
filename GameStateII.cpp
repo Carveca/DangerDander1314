@@ -508,6 +508,20 @@ void GameStateII::Tutorial(float &deltatime)
 	}
 */	
 
+
+	//Spawn Melee Attack
+	if(!m_entityManager->m_enemyMelee.empty())
+	{
+		for( unsigned int i = 0; i < m_entityManager->m_enemyMelee.size(); i++)
+		{
+			if(m_entityManager->m_enemyMelee[i]->GetAttacking() )
+			{
+				m_entityManager->AddMeleeAttack( new MeleeAttack(m_spriteManager->GetSprite("pow_effect.png", 128, 128), m_entityManager->m_player->GetPosition()) );
+			}
+		}
+	}
+
+
 	//bullets
 	if(!m_entityManager->m_enemyRanged.empty())
 	{

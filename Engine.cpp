@@ -6,6 +6,7 @@
 #include "StateManagerII.h"
 #include "MenuStateII.h"
 #include "GameStateII.h"
+#include "CreditsState.h"
 #include "GameOverHeart.h"
 #include "GameOverSleep.h"
 
@@ -27,6 +28,7 @@ bool Engine::Initialize()
 	
 	m_stateManager->Attach(new MenuStateII);
 	m_stateManager->Attach(new GameStateII);
+	m_stateManager->Attach(new CreditsState);
 	m_stateManager->Attach(new GameOverHeart);
 	m_stateManager->Attach(new GameOverSleep);
 

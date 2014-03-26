@@ -1,2 +1,59 @@
 ScreenWidth 1920
 ScreenHeight 1080
+
+BoundsLeft 360
+BoundsRight 1560
+BoundsUp 120
+BoundsDown 1000
+
+PlayerSpeed 300
+PlayerHPStart 50
+PlayerHPDrain -0.5
+PlayerHPDrainTimer 0.1
+PlayerRadius 60
+PlayerWeaponSize 60
+PlayerBoostedSpeed 600
+PlayerBoostedSpeedDuration 6
+PlayerHappyEffect -20
+PlayerStartingHappyPills 1
+PlayerStartingBlueCows 1
+
+BulletSpeed 500
+BulletDMG 10
+MeleeDMG -5
+
+EnemyAOEHP 1
+EnemyAOESpeed 250
+EnemyAOERadius 60
+
+PowerUpDropRate 60
+EnemyMeleeHP 1
+EnemyMeleeSpeed 300
+EnemyMeleeRadius 50
+EnemyMeleeDistance 120 
+
+EnemyRangedHP 1
+EnemyRangedSpeed 250
+EnemyRangedRadius 40
+EnemyRangedDistance 550
+
+EnemyRanged2HP 1
+EnemyRanged2Speed 300
+EnemyRanged2Radius 50
+EnemyRanged2Distance 400
+
+AOESpawnerInitialTimer 2.0
+AOESpawnerTimer 1.5
+MeleeSpawnerInitialTimer 1.0
+MeleeSpawnerTimer 1.5
+RangedSpawnerInitialTimer 0.5
+RangedSpawnerTimer 3.0
+Ranged2SpawnerInitialTimer 0.5
+Ranged2SpawnerTimer 3.0
+BinSpawnerInitialTimer 2.0
+BinSpawnerTimer 8
+
+AOEEnemyNR 3
+MeleeEnemyNR 3
+RangedEnemyNR 3
+Ranged2EnemyNR 3

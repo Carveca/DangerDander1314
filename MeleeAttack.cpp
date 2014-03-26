@@ -50,7 +50,10 @@ void MeleeAttack::HandleCollision()
 {
 	for(unsigned int i = 0; i < m_collisions.size(); i++)
 	{
-		//if( m_collisions[i].first->GetName() == "
+		if( m_collisions[i].first->GetName() == "Player" )
+		{
+			m_hp -= 1;
+		}
 	}
 
 	m_collisions.clear();

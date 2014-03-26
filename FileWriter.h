@@ -11,10 +11,10 @@ public:
 	FileWriter();
 	~FileWriter();
 
-	bool Initialize(std::string &directory); //bool FileWriter::Initialize(std::string &directory)
+	void Initialize(std::string directory); //bool FileWriter::Initialize(std::string &directory)
 
-	void AddData(std::string &key, int &value);
-	void WriteToFile(std::string &filename);
+	void AddData(std::string key, int value);
+	void WriteToFile(std::string filename);
 
 private:
 	std::map<std::string, int> m_saveData;

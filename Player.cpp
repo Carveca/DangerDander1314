@@ -75,8 +75,8 @@ Player::Player(sf::Sprite* sprite, sf::Vector2f &position, sf::Sprite* attackSpr
 	m_happyFrameCounter = 0.0f;
 
 	//misc
-	m_happyPills = 2;
-	m_blueCows = 5;
+	m_happyPills = reader.m_settings["PlayerStartingHappyPills"];
+	m_blueCows = reader.m_settings["PlayerStartingBlueCows"];
 	
 	m_moveSoundTimer = 0.0f;
 	m_attackTimer = 0.0f;

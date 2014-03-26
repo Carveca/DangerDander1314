@@ -64,8 +64,10 @@ EnemyMelee::~EnemyMelee()
 
 void EnemyMelee::MeleeAttack()
 {
+	m_isAttacking = false;
 	if(m_attackTimer <= 0)
 	{
+		m_isAttacking = true;
 		m_attackTimer = 0.5;
 		m_soundManager->PlaySound("melee");
 	}
