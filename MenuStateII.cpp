@@ -68,7 +68,7 @@ bool MenuStateII::Update(float &deltatime)
 
 	if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && m_keytimer <= 0.0)
 	{
-		if(m_selection != 5)
+		if(m_selection != 3)
 		{
 			m_selection++;
 			m_keytimer = 0.2;
@@ -89,7 +89,7 @@ bool MenuStateII::Update(float &deltatime)
 		}
 		else
 		{
-			m_selection = 5;
+			m_selection = 3;
 			m_keytimer = 0.2;
 		}
 	}
@@ -103,57 +103,36 @@ bool MenuStateII::Update(float &deltatime)
 		}
 		else if(m_selection == 2)
 		{
-			m_nextState = "HighscoreState";
+			m_nextState = "CreditsState";
 			m_done = true;
 		}
 		else if(m_selection == 3)
 		{
-			m_nextState = "OptionsState";
-			m_done = true;
-		}
-		else if(m_selection == 4)
-		{
-			m_nextState = "CreditsState";
-			m_done = true;
-		}
-		else if(m_selection == 5)
-		{
 			m_nextState = "quit";
 			m_done = true;
 		}
+		
 		m_keytimer = 0.2;
  	}
 
 	if(m_selection == 1)
 	{
 		cursorPOS.x = 490;
-		cursorPOS.y = 330;		
+		cursorPOS.y = 451;		
 	}
 	
 	if(m_selection == 2)
 	{
-		cursorPOS.x = 525;
-		cursorPOS.y = 475;		
+		cursorPOS.x = 620;
+		cursorPOS.y = 615;		
 	}
 	
 	if(m_selection == 3)
 	{
-		cursorPOS.x = 580;
-		cursorPOS.y = 615;		
+		cursorPOS.x = 538;
+		cursorPOS.y = 795;		
 	}
 	
-	if(m_selection == 4)
-	{
-		cursorPOS.x = 620;
-		cursorPOS.y = 740;		
-	}
-
-	if(m_selection == 5)
-	{
-		cursorPOS.x = 535;
-		cursorPOS.y = 875;		
-	}
-
 	m_keytimer -= deltatime;
 	if(m_keytimer < -10)
 	{
